@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace HttpSender
@@ -31,6 +25,10 @@ namespace HttpSender
         }
         private async void sendBtn_Click(object sender, EventArgs e)
         {
+            var regManu = new Regex("#{\\w+}#");
+            var list = regManu.Matches("#{s}##{b}#");
+
+            return;
             try
             {
                 respondBox.Text = $"{DateTime.Now}\r\n" + await _httpCore.Send(urlBox.Text, dataBox.Text, cookieBox.Text,
@@ -60,13 +58,11 @@ namespace HttpSender
 
         private void cookieBox_MouseClick(object sender, MouseEventArgs e)
         {
-
             cookieBox.SelectAll();
         }
 
         private void dataBox_MouseClick(object sender, MouseEventArgs e)
         {
-
             dataBox.SelectAll();
         }
 

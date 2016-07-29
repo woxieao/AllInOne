@@ -1,0 +1,92 @@
+<script src="jquery.js"></script>
+<script src="angular.js"></script>
+<script type="text/javascript">
+
+    function CallByValue(obj) {
+        if ($.isPlainObject(obj) || $.isArray(obj)) {
+            var newObj = {};
+            for (var i in obj) {
+                if ($.isPlainObject(obj[i]) || $.isArray(obj[i])) {
+                    newObj[i] = CallByValue(obj[i]);
+                } else {
+                    newObj[i] = obj[i];
+                }
+            }
+            return newObj;
+        } else {
+            return obj;
+        }
+    }
+
+    var app = angular.module('productCalcApp', []);
+    app.controller('productController', function($scope) {
+        $scope.productList = [{ Price: 1, Unit: 1, Result: 1, Desc: "" }];
+        $scope.AddProduct = function() {
+            $scope.productList.push({ Price: 1, Unit: 1, Result: 1, Desc: "" });
+        };
+        $scope.Calc = function(product) {
+            product.Result = product.Unit / product.Price;
+            if ($scope.productList.length - 1 === $scope.productList.indexOf(product)) {
+                $scope.AddProduct();
+            }
+        };
+        $scope.productA = null;
+        $scope.productB = null;
+        var flag = 0;
+        $scope.Contrast = function(value) {
+            value.isSelect = true;
+
+            function contrastResult(a, b) {
+                var cheapOne = a.Result >= b.Result ? a : b;
+                var expensiveOne = a.Result >= b.Result ? b : a;
+                a.Desc = a.Price * cheapOne.Result;
+                b.Desc = b.Price * cheapOne.Result;
+                cheapOne.Css = "Green";
+                expensiveOne.Css = "Red";
+                a.isSelect = false;
+                b.isSelect = false;
+            }
+
+            flag++;
+            if (flag % 2 === 0) {
+                $scope.productA = value;
+                contrastResult($scope.productA, $scope.productB);
+            } else {
+                for (var i in $scope.productList) {
+                    $scope.productList[i].Css = "";
+                }
+                $scope.productB = value;
+            }
+        };
+    });
+</script>
+<div ng-app="productCalcApp">
+    <div ng-controller="productController">
+        <table>
+            <thead>
+            <tr>
+                <th>价钱(元,角)</th>
+                <th>单位(g,ml)</th>
+                <th>性价比</th>
+                <th>
+                    <button ng-click="AddProduct()">添加</button>
+                </th>
+            </tr>
+            </thead>
+            <tbody ng-repeat="product in productList">
+            <tr bgcolor="{{product.Css}}">
+                <td>
+                    <input onclick="select(this)" ng-change="Calc(product)" ng-model="product.Price"/>
+                </td>
+                <td>
+                    <input onclick="select(this)" ng-change="Calc(product)" ng-model="product.Unit"/>
+                </td>
+                <td>
+                    <input readonly="readonly" onclick="select(this)" ng-change="AddProduct()" ng-model="product.Result"/>
+                </td>
+                <td><button ng-disabled="product.isSelect" ng-click="Contrast(product)">对比</button>{{product.Desc}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

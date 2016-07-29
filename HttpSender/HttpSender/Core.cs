@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -43,7 +44,6 @@ namespace HttpSender
             var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
             _httpClient = new HttpClient(handler) { BaseAddress = new Uri(uri.AbsoluteUri) };
         }
-
 
         protected virtual void RunRequest(Action allDoneAct, Action<int> runningFunc)
         {
@@ -87,8 +87,15 @@ namespace HttpSender
 
         private string Send(string pathAndQuery, string requestData)
         {
-            var result = _httpClient.PostAsync(pathAndQuery, new StringContent(requestData)).Result;
-            return result.Content.ReadAsStringAsync().Result;
+            try
+            {
+                var result = _httpClient.PostAsync(pathAndQuery, new StringContent(requestData)).Result;
+                return result.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         public Task<string> Send(string url, string requestData, string cookieStr, int times = 1, Action allDoneAct = null, Action<int> runningAct = null)
@@ -119,17 +126,21 @@ namespace HttpSender
                 return respond;
             });
         }
-        public void BotSend(string url, string cookieStr, string matchFlag, int times = 1, Action allDoneAct = null, Action<int> runningAct = null)
+
+        public virtual void BotSend(string url, string cookieStr, string matchFlag, int times = 1, Action allDoneAct = null, Action<int> runningAct = null)
         {
+            var flagStr = "";
+      
             Task.Run(() =>
             {
                 InitHttpClient(url, cookieStr);
                 _threadList = new List<Thread>();
                 var pathAndQuery = new Uri(url).PathAndQuery;
 
-                for (var i = 1000; i < 1000 + times; i++)
+                for (var i = 0; i < times; i++)
                 {
-                    var requestData = $"__RequestVerificationToken=iFkpC0XiVE7qyW4rv3QG8eOFoKPUGHK2vZmIdWW_O4L3SwLKl-1v2HWqRrmlAhUqRnfaINIVlNxzuA6oezZAZIIq5TCuMi6fSl4eBuzAbzY1&PhoneNumber=13072775183&VerCode=92n7&_mvcCaptchaGuid=784a98779ccf4b9a87b9d8a57f96561e&SmsVerifyCode={i}&Password=&ConfirmPassword=";
+                    var a = "{i}";
+                    var requestData = $"index={i}";
                     var thread =
                     new Thread(() =>
                     {
@@ -144,17 +155,15 @@ namespace HttpSender
 
         protected virtual void MatchFunc()
         {
-
+            //todo
         }
 
         protected virtual void NotMatchFunc(string index)
         {
+            //todo
             MessageBox.Show(index);
         }
 
-        public static void SendFunc()
-        {
 
-        }
     }
 }
