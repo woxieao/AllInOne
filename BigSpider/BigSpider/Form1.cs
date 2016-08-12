@@ -21,7 +21,7 @@ namespace BigSpider
 
         private const int LikeLimit = 50;
         private List<string> _picList = new List<string>();
-        private readonly int currentIndex = 34722;
+        private readonly int currentIndex = 44884;
         public void Test()
         {
 
