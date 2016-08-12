@@ -25,10 +25,6 @@ namespace HttpSender
         }
         private async void sendBtn_Click(object sender, EventArgs e)
         {
-            var regManu = new Regex("#{\\w+}#");
-            var list = regManu.Matches("#{s}##{b}#");
-
-            return;
             try
             {
                 respondBox.Text = $"{DateTime.Now}\r\n" + await _httpCore.Send(urlBox.Text, dataBox.Text, cookieBox.Text,
