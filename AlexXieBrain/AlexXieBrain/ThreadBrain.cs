@@ -10,7 +10,7 @@ namespace AlexXieBrain
     {
         public const int DefaultThreadCountLimit = 100;
         private readonly int _maxThreadCountLimit;
-        private readonly List<Thread> _threadList = new List<Thread>();
+        private List<Thread> _threadList = new List<Thread>();
         private bool _canWeGo;
 
         public void PushInThreadList(Action act)
@@ -43,6 +43,11 @@ namespace AlexXieBrain
             });
         }
 
+        public void DisposeAllThread()
+        {
+            _threadList = new List<Thread>();
+        }
+
         public ThreadBrain(int maxThread = DefaultThreadCountLimit)
         {
             _maxThreadCountLimit = maxThread;
@@ -61,7 +66,7 @@ namespace AlexXieBrain
         {
             return _threadList.All(i => i.ThreadState != ThreadState.Unstarted);
         }
-        
+
         /// <summary>
         /// pause thread and get  unstarted thread count
         /// </summary>

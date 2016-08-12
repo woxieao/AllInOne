@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheBrain.cs" />
+    <Compile Include="SpiderBrain.cs" />
+    <Compile Include="FileBrain.cs" />
     <Compile Include="ThreadBrain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
