@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheBrain.cs" />
+    <Compile Include="LogBrain.cs" />
     <Compile Include="SpiderBrain.cs" />
     <Compile Include="FileBrain.cs" />
     <Compile Include="ThreadBrain.cs" />
