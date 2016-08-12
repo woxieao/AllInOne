@@ -12,10 +12,24 @@ namespace AlexXieBrain
         private readonly int _maxThreadCountLimit;
         private List<Thread> _threadList = new List<Thread>();
         private bool _canWeGo;
+        private LogBrain _logBrain = new LogBrain();
 
-        public void PushInThreadList(Action act)
+        public void PushInThreadList(Action act, bool ignoreError = true)
         {
-            _threadList.Add(new Thread(() => { act(); }));
+            _threadList.Add(new Thread(() =>
+            {
+                try
+                {
+                    act();
+                }
+                catch (Exception ex)
+                {
+                    if (!ignoreError)
+                    {
+                        _logBrain.LogInDesktop(ex.ToString());
+                    }
+                }
+            }));
         }
         public Task<bool> StartThread()
         {

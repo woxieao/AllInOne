@@ -12,6 +12,7 @@ namespace BigSpider
     public partial class Form1 : Form
     {
         private SpiderBrain _spiderBrain = new SpiderBrain();
+        ThreadBrain threadBrain = new ThreadBrain();
         public Form1()
         {
             InitializeComponent();
@@ -20,12 +21,12 @@ namespace BigSpider
 
         private const int LikeLimit = 50;
         private List<string> _picList = new List<string>();
-        private readonly int currentIndex = 20000;
+        private readonly int currentIndex = 34722;
         public void Test()
         {
-            var threadBrain = new ThreadBrain();
+
             _spiderBrain.InitHttpClient("http://www.poocg.com/");
-            for (var id = 0; id < 10000; id++)
+            for (var id = 0; id < 470000; id++)
             {
                 var id1 = id;
                 threadBrain.PushInThreadList(() =>
@@ -57,12 +58,17 @@ namespace BigSpider
             }
 
             var xxx = threadBrain.StartThread();
-        //    threadBrain.PauseThread();
+            //    threadBrain.PauseThread();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Test();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            textBox1.Text = threadBrain.GetUnstartedThreadCount().ToString();
         }
     }
 }
