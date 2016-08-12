@@ -12,7 +12,7 @@ namespace BigSpider
     public partial class Form1 : Form
     {
         private SpiderBrain _spiderBrain = new SpiderBrain();
-        ThreadBrain threadBrain = new ThreadBrain();
+        private readonly ThreadCore _threadCore = new ThreadCore();
         public Form1()
         {
             InitializeComponent();
@@ -29,7 +29,7 @@ namespace BigSpider
             for (var id = 0; id < 470000; id++)
             {
                 var id1 = id;
-                threadBrain.PushInThreadList(() =>
+                _threadCore.PushInThreadList(() =>
                 {
                     try
                     {
@@ -57,7 +57,7 @@ namespace BigSpider
                 });
             }
 
-            var xxx = threadBrain.StartThread();
+            var xxx = _threadCore.StartThread();
             //    threadBrain.PauseThread();
         }
 
@@ -68,7 +68,7 @@ namespace BigSpider
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            textBox1.Text = threadBrain.GetUnstartedThreadCount().ToString();
+            textBox1.Text = $"{_threadCore.GetUnstartedThreadCount()}___{_threadCore.GetLiveThreadCount()}";
         }
     }
 }

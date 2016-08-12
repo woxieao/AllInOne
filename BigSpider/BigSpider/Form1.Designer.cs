@@ -36,7 +36,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(48, 60);
+            this.button1.Location = new System.Drawing.Point(64, 49);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -46,9 +46,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(23, 12);
+            this.textBox1.Location = new System.Drawing.Point(12, 12);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 21);
+            this.textBox1.Size = new System.Drawing.Size(178, 21);
             this.textBox1.TabIndex = 1;
             // 
             // timer1
