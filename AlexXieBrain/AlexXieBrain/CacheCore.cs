@@ -1,7 +1,7 @@
 ﻿namespace AlexXieBrain
 {
-    public class SpiderBrain
+    public class CacheCore
     {
-   
+       
     }
 }

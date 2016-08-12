@@ -2,7 +2,7 @@
 
 namespace AlexXieBrain
 {
-    public static class JsonBrain
+    public static class JsonCore
     {
         public static string SerializeToJsonStr<T>(this T stuff)
         {

@@ -44,13 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RegexBrain.cs" />
-    <Compile Include="CacheBrain.cs" />
-    <Compile Include="LogBrain.cs" />
-    <Compile Include="JsonBrain.cs" />
-    <Compile Include="SpiderBrain.cs" />
-    <Compile Include="FileBrain.cs" />
-    <Compile Include="ThreadBrain.cs" />
+    <Compile Include="RegexCore.cs" />
+    <Compile Include="CacheCore.cs" />
+    <Compile Include="LogCore.cs" />
+    <Compile Include="JsonCore.cs" />
+    <Compile Include="SpiderCore.cs" />
+    <Compile Include="FileCore.cs" />
+    <Compile Include="ThreadCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

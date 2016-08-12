@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace AlexXieBrain
 {
-    public class ThreadBrain
+    public class ThreadCore
     {
         public const int DefaultThreadCountLimit = 100;
         private readonly int _maxThreadCountLimit;
         private List<Thread> _threadList = new List<Thread>();
         private bool _canWeGo;
-        private LogBrain _logBrain = new LogBrain();
+        private LogCore _logCore = new LogCore();
 
         public void PushInThreadList(Action act, bool ignoreError = true)
         {
@@ -26,7 +26,7 @@ namespace AlexXieBrain
                 {
                     if (!ignoreError)
                     {
-                        _logBrain.LogInDesktop(ex.ToString());
+                        _logCore.LogInDesktop(ex.ToString());
                     }
                 }
             }));
@@ -62,7 +62,7 @@ namespace AlexXieBrain
             _threadList = new List<Thread>();
         }
 
-        public ThreadBrain(int maxThread = DefaultThreadCountLimit)
+        public ThreadCore(int maxThread = DefaultThreadCountLimit)
         {
             _maxThreadCountLimit = maxThread;
         }

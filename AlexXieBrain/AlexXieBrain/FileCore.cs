@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AlexXieBrain
 {
-    public class FileBrain
+    public class FileCore
     {
         public readonly static string DefaultSavePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
