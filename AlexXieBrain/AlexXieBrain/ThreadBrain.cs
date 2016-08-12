@@ -22,7 +22,7 @@ namespace AlexXieBrain
             return Task.Run(() =>
             {
                 _canWeGo = true;
-                while (_canWeGo && IsAllThreadDone())
+                while (_canWeGo && !IsAllThreadDone())
                 {
                     foreach (var thread in _threadList)
                     {

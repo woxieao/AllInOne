@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using AlexXieBrain;
 using Newtonsoft.Json;
 
 namespace BigSpider
@@ -19,44 +20,44 @@ namespace BigSpider
 
         private const int LikeLimit = 50;
         private List<string> _picList = new List<string>();
-        private readonly int currentIndex = 10000;
+        private readonly int currentIndex = 20000;
         public void Test()
         {
+            var threadBrain = new ThreadBrain();
             _spiderBrain.InitHttpClient("http://www.poocg.com/");
             for (var id = 0; id < 10000; id++)
             {
-                try
+                var id1 = id;
+                threadBrain.PushInThreadList(() =>
                 {
-                    var result = _spiderBrain.SpiderCore.GetStringAsync("works/view/" + (currentIndex + id)).Result;
-                    var likeCount = Convert.ToInt32(new Regex("<p><strong>(\\d+)</strong><span>喜欢</span></p>").Match(result).Groups[1].ToString());
-                    if (likeCount >= LikeLimit)
+                    try
                     {
-                        var imgReg = new Regex("\"(\\S+)\\!photo\\.middle\\.jpg");
-                        var pics = imgReg.Matches(result);
-                        for (var i = 0; i < pics.Count; i++)
+                        var result = _spiderBrain.SpiderCore.GetStringAsync("works/view/" + (currentIndex + id1)).Result;
+                        var likeCount = Convert.ToInt32(new Regex("<p><strong>(\\d+)</strong><span>喜欢</span></p>").Match(result).Groups[1].ToString());
+                        if (likeCount >= LikeLimit)
                         {
-                            var picUrl = pics[i].Groups[1].ToString();
-                            using (var sw = new StreamWriter("C:\\data\\test.txt", true))
+                            var imgReg = new Regex("\"(\\S+)\\!photo\\.middle\\.jpg");
+                            var pics = imgReg.Matches(result);
+                            for (var i = 0; i < pics.Count; i++)
                             {
-                                sw.WriteLine($"<img src='{picUrl}' height='240'/><br/>");
-                                sw.Close();
+                                var picUrl = pics[i].Groups[1].ToString();
+                                using (var sw = new StreamWriter("C:\\data\\test.txt", true))
+                                {
+                                    sw.WriteLine($"<img src='{picUrl}' height='240'/><br/>");
+                                    sw.Close();
+                                }
                             }
-                            //   _picList.Add(picUrl);
                         }
                     }
-                }
-                catch
-                {
-
-                    //
-                }
+                    catch
+                    {
+                        //
+                    }
+                });
             }
-            //var str = _picList.Aggregate(string.Empty, (current, pic) => current + ($"<img height='240' src='{pic}'/><br>\r\n"));
-            //foreach (var VARIABLE in COLLECTION)
-            //{
 
-            //}
-
+            var xxx = threadBrain.StartThread();
+        //    threadBrain.PauseThread();
         }
 
         private void button1_Click(object sender, EventArgs e)
