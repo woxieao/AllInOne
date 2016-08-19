@@ -12,7 +12,7 @@ namespace AlexXieBrain
         private readonly int _maxThreadCountLimit;
         private List<Thread> _threadList = new List<Thread>();
         private bool _canWeGo;
-        private LogCore _logCore = new LogCore();
+        private readonly LogCore _logCore = new LogCore();
 
         public void PushInThreadList(Action act, bool ignoreError = true)
         {

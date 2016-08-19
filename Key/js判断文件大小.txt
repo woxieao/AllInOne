@@ -1,0 +1,5 @@
+   if ($("#productImg")[0].files[0].size >= 5 * 1024 * 1024) {
+                    layer.alert("文件大小不得超过5M");
+                    $("#productImg").val("");
+                    return;
+                }

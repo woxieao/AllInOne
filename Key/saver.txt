@@ -1,0 +1,26 @@
+
+建站 http://www.saver.com
+以保存数据到txt
+可以通过链接获取txt的值
+可读或写
+可读密码
+
+可写密码
+用户可以添加不同的package 最多10个 
+超出 1元一个
+
+每个package最多5m 购买大小 5m一元 最多20m
+
+
+
+用户可以上传文件 html/exe/apk(禁止asp,php...)到服务器
+每个文件大小5m 最多10个(规则同上)
+
+localdb core
+
+
+
+
+private function:
+给saver服务器callback调用
+比如用户提交了支付宝订单,callback function会修改用户某个package的值
