@@ -1,0 +1,21 @@
+<script src="jquery.js"></script>
+<script src="angular.js"></script>
+<body></body>
+<div id='tempDiv' style="display:none"></div>
+<script type="text/javascript">
+  function FindSite(index) {
+  var index=199;
+        var imgStr = "";
+        for (var i = 0; i < 256; i++) {
+            var hostUrl = "http://192.168." + index + "." + i + ":1111/"
+            var imgUrl = hostUrl + "xa.ico";
+            imgStr += "<iframe  onload=\"window.location.href='" + hostUrl + "'\" src='" + imgUrl + "' styly='display:none' /><br/>" //  CreateImg(i);
+        }
+        console.log(imgStr);
+        document.body.innerHTML=imgStr;
+    //    $("#tempDiv").html(imgStr);
+  }
+</script>
+ <button onclick="FindSite(199)">Find In 192.168.199.x</button>
+<br/>
+<button onclick="FindSite(1)">Find In 192.168.1.x</button>

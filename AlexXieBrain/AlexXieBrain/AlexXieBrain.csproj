@@ -48,6 +48,7 @@
     <Compile Include="CacheCore.cs" />
     <Compile Include="LogCore.cs" />
     <Compile Include="JsonCore.cs" />
+    <Compile Include="TestCore.cs" />
     <Compile Include="SpiderCore.cs" />
     <Compile Include="FileCore.cs" />
     <Compile Include="ThreadCore.cs" />

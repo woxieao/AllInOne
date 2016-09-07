@@ -14,6 +14,7 @@ namespace AlexXieBrain
         private bool _canWeGo;
         private readonly LogCore _logCore = new LogCore();
 
+
         public void PushInThreadList(Action act, bool ignoreError = true)
         {
             _threadList.Add(new Thread(() =>
@@ -31,7 +32,7 @@ namespace AlexXieBrain
                 }
             }));
         }
-        public Task<bool> StartThread()
+        public Task<bool> StartThread(Action allDoneCallBack = null)
         {
             return Task.Run(() =>
             {
@@ -52,6 +53,10 @@ namespace AlexXieBrain
                             }
                         }
                     }
+                }
+                if (IsAllThreadDone())
+                {
+                    allDoneCallBack?.Invoke();
                 }
                 return IsAllThreadDone();
             });
@@ -90,5 +95,8 @@ namespace AlexXieBrain
             _canWeGo = false;
             return GetUnstartedThreadCount();
         }
+
+
+
     }
 }

@@ -22,10 +22,58 @@ namespace BigSpider
         private const int LikeLimit = 50;
         private List<string> _picList = new List<string>();
         private readonly int currentIndex = 44884;
+
+        public void Test2()
+        {
+            var pisList = new List<string>();
+            _spiderBrain.InitHttpClient("https://www.uktights.com/");
+            var flagStr = "https://www.uktights.com/tightsimages/";
+            for (var id = 2000; id < 3000; id++)
+            {
+                var id1 = id;
+                _threadCore.PushInThreadList(() =>
+                {
+                    try
+                    {
+                        var result = _spiderBrain.SpiderCore.GetStringAsync("product/" + id1).Result;
+                        var imgs = new Regex($"{flagStr}(\\S+)\\.jpg");
+                        var pics = imgs.Matches(result);
+                        for (var i = 0; i < pics.Count; i++)
+                        {
+                            var picUrl = pics[i].Groups[1].ToString();
+                            if (pisList.All(x => x != picUrl))
+                            { pisList.Add(picUrl); }
+                        }
+                    }
+                    catch
+                    {
+                        //
+                    }
+                });
+            }
+            _threadCore.StartThread(() =>
+                  {
+                      var str = string.Empty;
+                      foreach (var pic in pisList)
+                      {
+                          str += $"<img src='{flagStr}{pic}' height='240'/><br/>";
+                      }
+                      using (var sw = new StreamWriter("C:\\data\\socks2.htm", true))
+                      {
+                          sw.WriteLine(str);
+                          sw.Close();
+                      }
+                  });
+            //    threadBrain.PauseThread();
+        }
+
+
         public void Test()
         {
-
+            //5196
             _spiderBrain.InitHttpClient("http://www.poocg.com/");
+
+            // _spiderBrain.InitHttpClient("https://www.uktights.com/product/");
             for (var id = 0; id < 470000; id++)
             {
                 var id1 = id;
@@ -61,9 +109,11 @@ namespace BigSpider
             //    threadBrain.PauseThread();
         }
 
+
         private void button1_Click(object sender, EventArgs e)
         {
-            Test();
+
+            Test2();
         }
 
         private void timer1_Tick(object sender, EventArgs e)

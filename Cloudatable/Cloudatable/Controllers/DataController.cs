@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
 using Cloudatable.Configs;
@@ -23,6 +24,17 @@ namespace Cloudatable.Controllers
         {
             throw new ApiException("");
             return "";
+        }
+
+
+        public JsonResult Test()
+        {
+            var json = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = new string[] { "Green", "Red", "Yellow", "Orange", "Black" }
+            };
+            return json;
         }
 
 
