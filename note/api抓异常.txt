@@ -1,0 +1,61 @@
+// Decompiled with JetBrains decompiler
+// Type: Ktech.WebApi.Filters.ChapiExceptionFilter
+// Assembly: Ktech.WebApi, Version=2.2.4.0, Culture=neutral, PublicKeyToken=null
+// MVID: 71826051-5CB1-487E-B097-507D4E9E5268
+// Assembly location: C:\Data\HuiberFile\xa_chapi.customers\packages\Ktech.WebApi.2.2.4\lib\net461\Ktech.WebApi.dll
+
+using Ktech.Api;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http.Filters;
+
+namespace Ktech.WebApi.Filters
+{
+  public class ChapiExceptionFilter : ExceptionFilterAttribute
+  {
+    public override void OnException(HttpActionExecutedContext context)
+    {
+      ChapiException chapiException = context.Exception as ChapiException;
+      if (chapiException != null)
+        context.Response = HttpRequestMessageExtensions.CreateResponse<string>(context.Request, HttpStatusCode.BadRequest, chapiException.ErrorCode);
+      else
+        base.OnException(context);
+    }
+  }
+}
+
+
+
+using System.Web.Http;
+using Ktech.Api;
+using Ktech.WebApi.Filters;
+using Newtonsoft.Json;
+
+namespace Giqci.Chapi.Customers
+{
+    public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+            config.MapHttpAttributeRoutes();
+            config.Filters.Add(new ChapiExceptionFilter());
+            //if (WebConfigurationManager.AppSettings["api:AuthenticationEnabled"] == "true")
+            //{
+            //    config.Filters.Add(new BasicAuthenticationFilter(WebConfigurationManager.AppSettings["api:username"], WebConfigurationManager.AppSettings["api:password"]));
+            //}
+
+            //config.Filters.Add(new LoggerAttribute(WebConfigurationManager.AppSettings["connStr"]));
+            //config.Filters.Add(new ExceptionFilter());
+
+            //config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+            //config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd'T'HH:mm:sszz00" });
+            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+
+            //config.Services.Add(
+            //    typeof(System.Web.Http.Validation.ModelValidatorProvider),
+            //    new FluentValidationModelValidatorProvider(new ValidationFactory()));
+            //FluentValidation.ValidatorOptions.CascadeMode = FluentValidation.CascadeMode.StopOnFirstFailure;
+        }
+    }
+}
+

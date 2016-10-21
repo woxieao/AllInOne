@@ -1,0 +1,22 @@
+<script src="jquery.js"></script>
+<script src="angular.js"></script>
+<script type="text/javascript">
+
+  function ConvertToChinese(hexStr){
+hexStr=hexStr.replace(/\W/g,"");
+$('#data').val(hexStr);
+    var wordStr=""
+    for (var i=0;i<hexStr.length;i++)
+    {
+        if(i%2===1)
+      {
+        wordStr+="%"+hexStr[i-1]+""+hexStr[i];
+      }
+    }
+    console.log(wordStr);
+  $("#result").val(decodeURIComponent(wordStr));
+  }
+</script>
+<textarea id="data"></textarea>
+<input type="button" onclick="ConvertToChinese($('#data').val())" value="Convert"/>
+<textarea id="result"></textarea>

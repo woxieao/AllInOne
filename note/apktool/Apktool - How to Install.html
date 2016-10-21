@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)https://ibotpeaches.github.io/Apktool/install/ -->
+<html class="no-js" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-site-verification" content="WCgFTBRqHsidpclBDotW2MKvRt5PT8mbXscKUBOOpgc">
+        <meta name="description" content="Apktool - How to Install">
+        <title>Apktool - How to Install</title>
+        <link rel="stylesheet" type="text/css" href="./Apktool - How to Install_files/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="./Apktool - How to Install_files/bootstrap-theme.css">
+        <link rel="stylesheet" type="text/css" href="./Apktool - How to Install_files/monokai.css">
+        <link rel="stylesheet" type="text/css" href="./Apktool - How to Install_files/apktool.css">
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body data-spy="scroll" data-target="#affixNav">
+        <a href="https://github.com/iBotPeaches/Apktool"><img class="hidden-sm hidden-xs" style="position: absolute; top: 0; right: 0; border: 0;" src="./Apktool - How to Install_files/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+        <div class="container">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="https://ibotpeaches.github.io/Apktool/"><img src="./Apktool - How to Install_files/logo.png"></a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar">
+                        <ul class="nav navbar-nav">
+                            <li class="item"><a href="https://ibotpeaches.github.io/Apktool/install">Install</a></li>
+                            <li class="item"><a href="https://ibotpeaches.github.io/Apktool/build">Build</a></li>
+                            <li class="item"><a href="https://ibotpeaches.github.io/Apktool/documentation">Documentation</a></li>
+                            <li class="item"><a href="https://ibotpeaches.github.io/Apktool/changes">Changes</a></li>
+                            <li class="item"><a href="https://ibotpeaches.github.io/Apktool/contribute">Contribute</a></li>
+                            <li class="item visible-xs visible-sm"><a href="https://github.com/iBotPeaches/Apktool">Github</a></li>
+                            <li class="item" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Released on August 7, 2016">
+                                <a target="_blank" href="https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.2.0.jar">Current Version: <strong>2.2.0</strong></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="container">
+    <h1 id="install-instructions">Install Instructions</h1>
+
+<h2 id="quick-check">Quick Check</h2>
+<ol>
+  <li>Is Java 1.7 installed?</li>
+  <li>Does executing <kbd>java -version</kbd> on command line / command prompt return 1.7?</li>
+  <li>If not, please install Java 7 and make it the default.</li>
+</ol>
+
+<h2 id="installation-for-apktool">Installation for Apktool</h2>
+<ul>
+  <li><strong>Windows</strong>:
+    <ol>
+      <li>Download Windows <a href="https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/windows/apktool.bat">wrapper script</a> (Right click, Save Link As <code class="highlighter-rouge">apktool.bat</code>)</li>
+      <li>Download apktool-2 (<a href="https://bitbucket.org/iBotPeaches/apktool/downloads">find newest here</a>)</li>
+      <li>Rename downloaded jar to <code class="highlighter-rouge">apktool.jar</code></li>
+      <li>Move both files (<code class="highlighter-rouge">apktool.jar</code> &amp; <code class="highlighter-rouge">apktool.bat</code>) to your Windows directory (Usually <code class="highlighter-rouge">C://Windows</code>)</li>
+      <li>If you do not have access to <code class="highlighter-rouge">C://Windows</code>, you may place the two files anywhere then add that directory to your Environment Variables System PATH variable.</li>
+      <li>Try running <kbd>apktool</kbd> via command prompt</li>
+    </ol>
+  </li>
+  <li><strong>Linux</strong>:
+    <ol>
+      <li>Download Linux <a href="https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool">wrapper script</a> (Right click, Save Link As <code class="highlighter-rouge">apktool</code>)</li>
+      <li>Download apktool-2 (<a href="https://bitbucket.org/iBotPeaches/apktool/downloads">find newest here</a>)</li>
+      <li>Make sure you have the 32bit libraries (<code class="highlighter-rouge">ia32-libs</code>) downloaded and installed by your linux package manager, if you are on a 64bit unix system.</li>
+      <li>(This helps provide support for the 32bit native binary aapt, which is required by apktool)</li>
+      <li>Rename downloaded jar to <code class="highlighter-rouge">apktool.jar</code></li>
+      <li>Move both files (<code class="highlighter-rouge">apktool.jar</code> &amp; <code class="highlighter-rouge">apktool</code>) to <code class="highlighter-rouge">/usr/local/bin</code> (root needed)</li>
+      <li>Make sure both files are executable (<code class="highlighter-rouge">chmod +x</code>)</li>
+      <li>Try running <kbd>apktool</kbd> via cli</li>
+    </ol>
+  </li>
+  <li><strong>Mac OS X</strong>:
+    <ol>
+      <li>Download Mac <a href="https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/osx/apktool">wrapper script</a> (Right click, Save Link As <code class="highlighter-rouge">apktool</code>)</li>
+      <li>Download apktool-2 (<a href="https://bitbucket.org/iBotPeaches/apktool/downloads">find newest here</a>)</li>
+      <li>Rename downloaded jar to <code class="highlighter-rouge">apktool.jar</code></li>
+      <li>Move both files (<code class="highlighter-rouge">apktool.jar</code> &amp; <code class="highlighter-rouge">apktool</code>) to <code class="highlighter-rouge">/usr/local/bin</code> (root needed)</li>
+      <li>Make sure both files are executable (<code class="highlighter-rouge">chmod +x</code>)</li>
+      <li>Try running <kbd>apktool</kbd> via cli</li>
+    </ol>
+  </li>
+</ul>
+
+<p><strong>Note</strong> - Wrapper scripts are not needed, but helpful so you don’t have to type <kbd>java -jar apktool.jar</kbd> over and over.</p>
+
+</div>
+        <a href="https://ibotpeaches.github.io/Apktool/install/#" class="well well-sm back-to-top">
+            <i class="glyphicon glyphicon-chevron-up"></i>
+        </a>
+        <script async="" src="./Apktool - How to Install_files/analytics.js"></script><script type="application/javascript" src="./Apktool - How to Install_files/jquery-2.1.3.min.js"></script>
+        <script type="application/javascript" src="./Apktool - How to Install_files/bootstrap.min.js"></script>
+        <script type="application/javascript" src="./Apktool - How to Install_files/apktool.js"></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-3737795-11', 'auto');
+            ga('send', 'pageview');
+        </script>
+    
+
+</body></html>
