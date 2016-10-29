@@ -10,19 +10,20 @@ function GetNowTime() {
 
 function Tada() {
     $.ajax({
-        url: "https://www.zhihu.com/people/XA__/followers",
+        url: "https://www.zhihu.com/people/XAzrael/followers",
+        cache:false, 
         complete: function (result) {
             var followers = document.createElement('div');
             $(followers).html(result.responseText);
-            var followersCount = $(followers).find("a[href='/people/XA__/followers']").eq(0).find("strong").eq(0).html();
+            var followersCount = $(followers).find("a[href='/people/XAzrael/followers']").eq(0).find("strong").eq(0).html();
             var timeStr = GetNowTime();
             $.ajax({
                 url: "https://www.zhihu.com/people/edit",
                 type: "post",
                 data: 'data={"headline":"哔~【' + timeStr + '】(车上乘客:' + followersCount + '名)"}',
                 complete: function () {
-                    console.log("哔~~");
-                    setTimeout(Tada, 20000);
+                   // console.log("哔~~");
+                    setTimeout(Tada, 60000);
                 }
             });
         }

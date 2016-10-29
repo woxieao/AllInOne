@@ -16,12 +16,12 @@ namespace Cloudatable.Controllers.Apis
             return Ok();
         }
 
-        [Route("Test")]
+        [Route("Test/{username}")]
         [HttpGet]
-        public IHttpActionResult Test()
+        public IHttpActionResult Test(string username)
         {
             //throw new ApiException("");
-            return Okay("wahahahah");
+            return Okay(username);
         }
     }
 }

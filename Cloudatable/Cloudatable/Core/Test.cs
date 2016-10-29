@@ -1,9 +1,15 @@
-﻿using Cloudatable.Interface;
+﻿using System.IO;
+using System.Linq;
+using Cloudatable.Configs;
+using Cloudatable.Interface;
+using Cloudatable.Models;
+using Newtonsoft.Json;
 
 namespace Cloudatable.Core
 {
-    internal class DataCore : IDataLogic
+    internal class Test : IDataLogic
     {
+
         public void CreateFile(string username, string fileId, string writePwd, string readPwd = "")
         {
             throw new System.NotImplementedException();

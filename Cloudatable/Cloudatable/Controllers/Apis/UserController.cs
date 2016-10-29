@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using Cloudatable.Core;
 using Cloudatable.Models;
+using Cloudatable.Models.CommonModel;
 
 namespace Cloudatable.Controllers.Apis
 {
@@ -10,7 +11,7 @@ namespace Cloudatable.Controllers.Apis
     {
         public UserController()
         {
-
+         var x=   new Test();
         }
 
         public IHttpActionResult Register(AccountInfo accountInfo)

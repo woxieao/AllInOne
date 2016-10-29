@@ -155,11 +155,17 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Configs\Config.cs" />
+    <Compile Include="Core\Test.cs" />
     <Compile Include="Core\UserCore.cs" />
     <Compile Include="Core\FileCore.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interface\IDataLogic.cs" />
+    <Compile Include="Interface\IUserLogic.cs" />
+    <Compile Include="Models\CommonModel\TResult.cs" />
+    <Compile Include="Models\CommonModel\Result.cs" />
+    <Compile Include="Models\CommonModel\ApiResult.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\AccountInfo.cs" />
     <Compile Include="WebCore\BaseApiController.cs" />
