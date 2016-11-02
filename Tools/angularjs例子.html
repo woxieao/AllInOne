@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html  ng-app="app">
+<head>
+<meta charset="utf-8">
+<script src="angular.js"></script>
+<!--<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.js"></script>-->
+<script>
+var app = angular.module('app', []);
+app.controller('test1', function($scope) {
+    $scope.firstName = "John";
+    $scope.lastName = "Doe";
+});
+app.controller('test2', function($scope) {
+    $scope.firstName = "John";
+    $scope.lastName = "Doe";
+});
+</script>
+</head>
+<body>
+  <div ng-controller="test1">
+   	<p>名字 : <input type="text"  contenteditable="true"  readonly="readonly"value="11" ng-model="name"></p>
+   	<span ng-model="name" contenteditable="true">2</h1>
+ <input type="text" ng-model="name">
+  </div>
+  <div ng-controller="test2">
+   	<p>名字 : <input type="text" ng-model="name"></p>
+   	<h1>Hello {{name}}</h1>
+  </div>
+</body>
+
+</html>
