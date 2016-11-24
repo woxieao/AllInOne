@@ -1,0 +1,74 @@
+﻿
+<!--<script src="app.js/jquery-1.10.2.min.js"></script>
+<script src="app.js/jquery.signalR-2.2.1.js"></script>
+<script src="http://localhost:24610//signalr/hubs"></script>-->
+
+<script src="/Scripts/jquery-1.10.2.min.js"></script>
+<script src="/Scripts/jquery.signalR-2.2.1.js"></script>
+<script src="/signalr/hubs"></script>
+
+<script type="text/javascript">
+    var chat = $.connection.chatCore;
+   
+    chat.client.SentMsgToPages = function (name, message) {
+        // Add the message to the page.
+        $('#msgUl').append('<li><strong>' + name
+            + '</strong>: ' + message + '</li>');
+    };
+    function sendMsg() {
+        var userName = $("#userName").val();
+        if (!userName) {
+            $(".alert").show();
+            return;
+        }
+        var msg = $('#messageBox').val();
+        if (msg) {
+            chat.server.send(userName, msg);
+            $('#messageBox').val('').focus();
+        }
+
+    }
+    $.connection.hub.start().done(
+        function() {
+            //设置按钮事件
+            $("#btnSent").click(
+                    sendMsg
+            );
+            $("#userName").focus(
+                function () {
+                    $(".alert").hide();
+                }
+            );
+        }
+        );
+    $(document).ready(
+        function () {
+            //设置高度
+            var msgListH = window.innerHeight - 150;
+            $(".messageList").height(msgListH);
+            $('#messageBox').keypress(
+                function(e) {
+                    var key = e.keyCode;
+                    if (key == 13) {
+                        sendMsg();
+                    }
+                }
+                );
+        }
+    );
+</script>
+<h2>SignalR Chat Room</h2>
+<div style="width: 99%;margin: 4px" id="outBoard">
+    <div class="messageList">
+        <ul id="msgUl" class="unstyled"></ul>
+    </div>
+    <div class="form-inline">
+        <input type="text" id="userName" placeholder="昵称" class="input-mini" />
+        <input type="text" id="messageBox" class="input-xxlarge" />
+        <input type="submit" value="发送" class="btn btn-info" id="btnSent" />
+
+    </div>
+    <div class="alert" style="display: none; width: 100px">
+        必须输入昵称！
+    </div>
+</div>

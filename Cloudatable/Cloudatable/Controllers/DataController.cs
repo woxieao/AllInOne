@@ -15,7 +15,7 @@ namespace Cloudatable.Controllers
 
         public DataController()
         {
-            FileCore.SaveFile();
+          //  FileCore.SaveFile();
         }
 
         [Route("Test")]

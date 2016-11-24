@@ -1,0 +1,2 @@
+var encodedData = window.btoa("Hello, world"); // ±àÂë
+var decodedData = window.atob(encodedData); // ½âÂë
