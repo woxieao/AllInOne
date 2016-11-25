@@ -1,51 +1,58 @@
-
-function CreatElement(info) {
-    var code = info.Code === undefined ? "" : info.Code;
-    var isScript = info.IsScript === undefined ? false : info.IsScript;
-    var element;
-    var myId = Math.random();
-    if (isScript) {
-        element = document.createElement('script');
-        element.innerHTML = code;
-    } else {
-        var divCss = info.Css === undefined ? "position:fixed; bottom:0; left:0;width:30%;height:250px;background-color:#DEB887;z-index:9999999" : info.Css;
-        element = document.createElement('div');
-        var title = info.Title === undefined ? "" : info.Title;
-        element.innerHTML = "<div style=\"height:20px;width:100%\"><span style=\"float:left\">" + title + "</span><span style=\"cursor: pointer;float:right\" onclick=\"this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode)\">X&nbsp;&nbsp; </span></div><div style=\"width:100%\">" + code + "</div>";
-        element.style = divCss;
+    var CreateElement = function CreateElement(info) {
+        var code = info.Code === undefined ? "" : info.Code;
+        var isScript = info.IsScript === undefined ? false : info.IsScript;
+        var isEncode = info.IsEncode === undefined ? false : info.IsEncode;
+        code = isEncode ? unescape(window.atob(code)) : code;
+        var element;
+        var myId = parseInt(Math.random() * 10000000000);
+        var mainId = "main_" + myId;
+        var scriptId = "script_" + myId;
+        if (isScript) {
+            element = document.createElement('script');
+            element.innerHTML = code;
+        } else {
+            var divCss = info.Css === undefined ? "position:fixed; bottom:0; left:0;width:30%;height:250px;background-color:#DEB887;z-index:9999999" : info.Css;
+            element = document.createElement('div');
+            var title = info.Title === undefined ? "" : info.Title;
+            element.innerHTML = "<div style=\"height:20px;width:100%\"><span style=\"float:left\">" + title
++ "</span><span style=\"cursor: pointer;float:right\" onclick=\"document.getElementById('" + scriptId + "').remove();document.getElementById('" + mainId + "').remove()\">X&nbsp;&nbsp; </span></div><div style=\"width:100%\">" + code + "</div>";
+            element.style = divCss;
+            var scriptList = element.getElementsByTagName("script");
+            if (scriptList.length > 0) {
+                var scriptCodeList = "";
+                var tempScript = document.createElement('script');
+                tempScript.id = scriptId;
+                for (var i = 0; i < scriptList.length; i++) {
+                    scriptCodeList += scriptList[i].innerHTML + "\n";
+                }
+                for (var i = 0; i < scriptList.length; i++) {
+                    scriptList[i].remove();
+                }
+                tempScript.innerHTML = scriptCodeList;
+                document.head.appendChild(tempScript);
+            }
+        };
+        element.id = mainId;
+        document.body.appendChild(element);
+        return myId;
     }
-    element.id = myId;
-    document.body.appendChild(element);
-    return myId;
-}
 
+    function EncodeCodeFunc(isJs) {
+        var createElementStr = CreateElement.toString();
+        var userCode = document.getElementById("sourceCode").value;
+        var createElementEncodeStr = window.btoa(escape(createElementStr));
+        var createElementScript = "eval(unescape(window.atob('" + createElementEncodeStr + "')));";
+        var codResult = window.btoa(escape(userCode));
+        var info = JSON.stringify({ Code: codResult, IsScript: isJs, IsEncode: true });
+        var baseCode = "javascript:" + createElementScript + "CreateElement(" + info + ")";
+        document.getElementById("encodeResult").value = baseCode;
+    }
 
-var creatElementStr="JTBBZnVuY3Rpb24lMjBDcmVhdEVsZW1lbnQlMjhpbmZvJTI5JTIwJTdCJTBBJTIwJTIwJTIwJTIwdmFyJTIwY29kZSUyMCUzRCUyMGluZm8uQ29kZSUyMCUzRCUzRCUzRCUyMHVuZGVmaW5lZCUyMCUzRiUyMCUyMiUyMiUyMCUzQSUyMGluZm8uQ29kZSUzQiUwQSUyMCUyMCUyMCUyMHZhciUyMGlzU2NyaXB0JTIwJTNEJTIwaW5mby5Jc1NjcmlwdCUyMCUzRCUzRCUzRCUyMHVuZGVmaW5lZCUyMCUzRiUyMGZhbHNlJTIwJTNBJTIwaW5mby5Jc1NjcmlwdCUzQiUwQSUyMCUyMCUyMCUyMHZhciUyMGVsZW1lbnQlM0IlMEElMjAlMjAlMjAlMjB2YXIlMjBteUlkJTIwJTNEJTIwTWF0aC5yYW5kb20lMjglMjklM0IlMEElMjAlMjAlMjAlMjBpZiUyMCUyOGlzU2NyaXB0JTI5JTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwZWxlbWVudCUyMCUzRCUyMGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQlMjglMjdzY3JpcHQlMjclMjklM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBlbGVtZW50LmlubmVySFRNTCUyMCUzRCUyMGNvZGUlM0IlMEElMjAlMjAlMjAlMjAlN0QlMjBlbHNlJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwdmFyJTIwZGl2Q3NzJTIwJTNEJTIwaW5mby5Dc3MlMjAlM0QlM0QlM0QlMjB1bmRlZmluZWQlMjAlM0YlMjAlMjJwb3NpdGlvbiUzQWZpeGVkJTNCJTIwYm90dG9tJTNBMCUzQiUyMGxlZnQlM0EwJTNCd2lkdGglM0EzMCUyNSUzQmhlaWdodCUzQTI1MHB4JTNCYmFja2dyb3VuZC1jb2xvciUzQSUyM0RFQjg4NyUzQnotaW5kZXglM0E5OTk5OTk5JTIyJTIwJTNBJTIwaW5mby5Dc3MlM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBlbGVtZW50JTIwJTNEJTIwZG9jdW1lbnQuY3JlYXRlRWxlbWVudCUyOCUyN2RpdiUyNyUyOSUzQiUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMHZhciUyMHRpdGxlJTIwJTNEJTIwaW5mby5UaXRsZSUyMCUzRCUzRCUzRCUyMHVuZGVmaW5lZCUyMCUzRiUyMCUyMiUyMiUyMCUzQSUyMGluZm8uVGl0bGUlM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBlbGVtZW50LmlubmVySFRNTCUyMCUzRCUyMCUyMiUzQ2RpdiUyMHN0eWxlJTNEJTVDJTIyaGVpZ2h0JTNBMjBweCUzQndpZHRoJTNBMTAwJTI1JTVDJTIyJTNFJTNDc3BhbiUyMHN0eWxlJTNEJTVDJTIyZmxvYXQlM0FsZWZ0JTVDJTIyJTNFJTIyJTIwKyUyMHRpdGxlJTIwKyUyMCUyMiUzQy9zcGFuJTNFJTNDc3BhbiUyMHN0eWxlJTNEJTVDJTIyY3Vyc29yJTNBJTIwcG9pbnRlciUzQmZsb2F0JTNBcmlnaHQlNUMlMjIlMjBvbmNsaWNrJTNEJTVDJTIydGhpcy5wYXJlbnROb2RlLnBhcmVudE5vZGUucGFyZW50Tm9kZS5yZW1vdmVDaGlsZCUyOHRoaXMucGFyZW50Tm9kZS5wYXJlbnROb2RlJTI5JTVDJTIyJTNFWCUyNm5ic3AlM0IlMjZuYnNwJTNCJTIwJTNDL3NwYW4lM0UlM0MvZGl2JTNFJTNDZGl2JTIwc3R5bGUlM0QlNUMlMjJ3aWR0aCUzQTEwMCUyNSU1QyUyMiUzRSUyMiUyMCslMjBjb2RlJTIwKyUyMCUyMiUzQy9kaXYlM0UlMjIlM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBlbGVtZW50LnN0eWxlJTIwJTNEJTIwZGl2Q3NzJTNCJTBBJTIwJTIwJTIwJTIwJTdEJTBBJTIwJTIwJTIwJTIwZWxlbWVudC5pZCUyMCUzRCUyMG15SWQlM0IlMEElMjAlMjAlMjAlMjBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkJTI4ZWxlbWVudCUyOSUzQiUwQSUyMCUyMCUyMCUyMHJldHVybiUyMG15SWQlM0IlMEElN0Q";
-eval(unescape(window.atob(creatElementStr)));
-function EncodeCodeFunc(isJs) 
-{
-var info= document.getElementById("sourceCode").value.replace(/\n/g," ").replace(/\\/g,"\\\\").replace(/"/g,'\\\"').replace(/'/g,"\\\'");
-var locatlCreatElementStr=unescape(window.atob(creatElementStr));
-var baseCode = "javascript:eval(unescape(window.atob('" 
-+window.btoa(escape(locatlCreatElementStr
-+" CreatElement({Code:'"+info+"',IsScript:"+isJs+"})"))+"')));";
-document.getElementById("encodeResult").value = baseCode;
-}
-
-function EncodeCodeAsShortCut() {
-    var code= "<textarea style='width:99%;height:100px' placeholder='JS/Html(JS代码会替换回车为空格,请勿漏写\";\")' id='sourceCode'></textarea><br/>" +
-        "<button style='float:left' onclick='EncodeCodeFunc(true)'>EncodeJsShortCut</button>" +
-        "<button  style='float:right' onclick='EncodeCodeFunc(false)'>EncodeHtmlShortCut</button>" +
-        "<textarea  placeholder='把转换后的内容新建为书签即可快捷使用脚本' onfocus='this.select()' style='width:99%;height:100px' id='encodeResult'></textarea>";
-    CreatElement({ Code: code });
-}
-EncodeCodeAsShortCut();
-
-
-
-eval(unescape(window.atob('JTBBdmFyJTIwY3JlYXRFbGVtZW50U3RyJTNEJTIySlRCQlpuVnVZM1JwYjI0bE1qQkRjbVZoZEVWc1pXMWxiblFsTWpocGJtWnZKVEk1SlRJd0pUZENKVEJCSlRJd0pUSXdKVEl3SlRJd2RtRnlKVEl3WTI5a1pTVXlNQ1V6UkNVeU1HbHVabTh1UTI5a1pTVXlNQ1V6UkNVelJDVXpSQ1V5TUhWdVpHVm1hVzVsWkNVeU1DVXpSaVV5TUNVeU1pVXlNaVV5TUNVelFTVXlNR2x1Wm04dVEyOWtaU1V6UWlVd1FTVXlNQ1V5TUNVeU1DVXlNSFpoY2lVeU1HbHpVMk55YVhCMEpUSXdKVE5FSlRJd2FXNW1ieTVKYzFOamNtbHdkQ1V5TUNVelJDVXpSQ1V6UkNVeU1IVnVaR1ZtYVc1bFpDVXlNQ1V6UmlVeU1HWmhiSE5sSlRJd0pUTkJKVEl3YVc1bWJ5NUpjMU5qY21sd2RDVXpRaVV3UVNVeU1DVXlNQ1V5TUNVeU1IWmhjaVV5TUdWc1pXMWxiblFsTTBJbE1FRWxNakFsTWpBbE1qQWxNakIyWVhJbE1qQnRlVWxrSlRJd0pUTkVKVEl3VFdGMGFDNXlZVzVrYjIwbE1qZ2xNamtsTTBJbE1FRWxNakFsTWpBbE1qQWxNakJwWmlVeU1DVXlPR2x6VTJOeWFYQjBKVEk1SlRJd0pUZENKVEJCSlRJd0pUSXdKVEl3SlRJd0pUSXdKVEl3SlRJd0pUSXdaV3hsYldWdWRDVXlNQ1V6UkNVeU1HUnZZM1Z0Wlc1MExtTnlaV0YwWlVWc1pXMWxiblFsTWpnbE1qZHpZM0pwY0hRbE1qY2xNamtsTTBJbE1FRWxNakFsTWpBbE1qQWxNakFsTWpBbE1qQWxNakFsTWpCbGJHVnRaVzUwTG1sdWJtVnlTRlJOVENVeU1DVXpSQ1V5TUdOdlpHVWxNMElsTUVFbE1qQWxNakFsTWpBbE1qQWxOMFFsTWpCbGJITmxKVEl3SlRkQ0pUQkJKVEl3SlRJd0pUSXdKVEl3SlRJd0pUSXdKVEl3SlRJd2RtRnlKVEl3WkdsMlEzTnpKVEl3SlRORUpUSXdhVzVtYnk1RGMzTWxNakFsTTBRbE0wUWxNMFFsTWpCMWJtUmxabWx1WldRbE1qQWxNMFlsTWpBbE1qSndiM05wZEdsdmJpVXpRV1pwZUdWa0pUTkNKVEl3WW05MGRHOXRKVE5CTUNVelFpVXlNR3hsWm5RbE0wRXdKVE5DZDJsa2RHZ2xNMEV6TUNVeU5TVXpRbWhsYVdkb2RDVXpRVEkxTUhCNEpUTkNZbUZqYTJkeWIzVnVaQzFqYjJ4dmNpVXpRU1V5TTBSRlFqZzROeVV6UW5vdGFXNWtaWGdsTTBFNU9UazVPVGs1SlRJeUpUSXdKVE5CSlRJd2FXNW1ieTVEYzNNbE0wSWxNRUVsTWpBbE1qQWxNakFsTWpBbE1qQWxNakFsTWpBbE1qQmxiR1Z0Wlc1MEpUSXdKVE5FSlRJd1pHOWpkVzFsYm5RdVkzSmxZWFJsUld4bGJXVnVkQ1V5T0NVeU4yUnBkaVV5TnlVeU9TVXpRaVV3UVNVeU1DVXlNQ1V5TUNVeU1DVXlNQ1V5TUNVeU1DVXlNSFpoY2lVeU1IUnBkR3hsSlRJd0pUTkVKVEl3YVc1bWJ5NVVhWFJzWlNVeU1DVXpSQ1V6UkNVelJDVXlNSFZ1WkdWbWFXNWxaQ1V5TUNVelJpVXlNQ1V5TWlVeU1pVXlNQ1V6UVNVeU1HbHVabTh1VkdsMGJHVWxNMElsTUVFbE1qQWxNakFsTWpBbE1qQWxNakFsTWpBbE1qQWxNakJsYkdWdFpXNTBMbWx1Ym1WeVNGUk5UQ1V5TUNVelJDVXlNQ1V5TWlVelEyUnBkaVV5TUhOMGVXeGxKVE5FSlRWREpUSXlhR1ZwWjJoMEpUTkJNakJ3ZUNVelFuZHBaSFJvSlROQk1UQXdKVEkxSlRWREpUSXlKVE5GSlRORGMzQmhiaVV5TUhOMGVXeGxKVE5FSlRWREpUSXlabXh2WVhRbE0wRnNaV1owSlRWREpUSXlKVE5GSlRJeUpUSXdLeVV5TUhScGRHeGxKVEl3S3lVeU1DVXlNaVV6UXk5emNHRnVKVE5GSlRORGMzQmhiaVV5TUhOMGVXeGxKVE5FSlRWREpUSXlZM1Z5YzI5eUpUTkJKVEl3Y0c5cGJuUmxjaVV6UW1ac2IyRjBKVE5CY21sbmFIUWxOVU1sTWpJbE1qQnZibU5zYVdOckpUTkVKVFZESlRJeWRHaHBjeTV3WVhKbGJuUk9iMlJsTG5CaGNtVnVkRTV2WkdVdWNHRnlaVzUwVG05a1pTNXlaVzF2ZG1WRGFHbHNaQ1V5T0hSb2FYTXVjR0Z5Wlc1MFRtOWtaUzV3WVhKbGJuUk9iMlJsSlRJNUpUVkRKVEl5SlRORldDVXlObTVpYzNBbE0wSWxNalp1WW5Od0pUTkNKVEl3SlROREwzTndZVzRsTTBVbE0wTXZaR2wySlRORkpUTkRaR2wySlRJd2MzUjViR1VsTTBRbE5VTWxNakozYVdSMGFDVXpRVEV3TUNVeU5TVTFReVV5TWlVelJTVXlNaVV5TUNzbE1qQmpiMlJsSlRJd0t5VXlNQ1V5TWlVelF5OWthWFlsTTBVbE1qSWxNMElsTUVFbE1qQWxNakFsTWpBbE1qQWxNakFsTWpBbE1qQWxNakJsYkdWdFpXNTBMbk4wZVd4bEpUSXdKVE5FSlRJd1pHbDJRM056SlROQ0pUQkJKVEl3SlRJd0pUSXdKVEl3SlRkRUpUQkJKVEl3SlRJd0pUSXdKVEl3Wld4bGJXVnVkQzVwWkNVeU1DVXpSQ1V5TUcxNVNXUWxNMElsTUVFbE1qQWxNakFsTWpBbE1qQmtiMk4xYldWdWRDNWliMlI1TG1Gd2NHVnVaRU5vYVd4a0pUSTRaV3hsYldWdWRDVXlPU1V6UWlVd1FTVXlNQ1V5TUNVeU1DVXlNSEpsZEhWeWJpVXlNRzE1U1dRbE0wSWxNRUVsTjBRJTIyJTNCJTBBZXZhbCUyOHVuZXNjYXBlJTI4d2luZG93LmF0b2IlMjhjcmVhdEVsZW1lbnRTdHIlMjklMjklMjklM0IlMEFmdW5jdGlvbiUyMEVuY29kZUNvZGVGdW5jJTI4aXNKcyUyOSUyMCUwQSU3QiUwQXZhciUyMGluZm8lM0QlMjBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCUyOCUyMnNvdXJjZUNvZGUlMjIlMjkudmFsdWUucmVwbGFjZSUyOC8lNUNuL2clMkMlMjIlMjAlMjIlMjkucmVwbGFjZSUyOC8lNUMlNUMvZyUyQyUyMiU1QyU1QyU1QyU1QyUyMiUyOS5yZXBsYWNlJTI4LyUyMi9nJTJDJTI3JTVDJTVDJTVDJTIyJTI3JTI5LnJlcGxhY2UlMjgvJTI3L2clMkMlMjIlNUMlNUMlNUMlMjclMjIlMjklM0IlMEF2YXIlMjBsb2NhdGxDcmVhdEVsZW1lbnRTdHIlM0R1bmVzY2FwZSUyOHdpbmRvdy5hdG9iJTI4Y3JlYXRFbGVtZW50U3RyJTI5JTI5JTNCJTBBdmFyJTIwYmFzZUNvZGUlMjAlM0QlMjAlMjJqYXZhc2NyaXB0JTNBZXZhbCUyOHVuZXNjYXBlJTI4d2luZG93LmF0b2IlMjglMjclMjIlMjAlMEErd2luZG93LmJ0b2ElMjhlc2NhcGUlMjhsb2NhdGxDcmVhdEVsZW1lbnRTdHIlMEErJTIyJTIwQ3JlYXRFbGVtZW50JTI4JTdCQ29kZSUzQSUyNyUyMitpbmZvKyUyMiUyNyUyQ0lzU2NyaXB0JTNBJTIyK2lzSnMrJTIyJTdEJTI5JTIyJTI5JTI5KyUyMiUyNyUyOSUyOSUyOSUzQiUyMiUzQiUwQWRvY3VtZW50LmdldEVsZW1lbnRCeUlkJTI4JTIyZW5jb2RlUmVzdWx0JTIyJTI5LnZhbHVlJTIwJTNEJTIwYmFzZUNvZGUlM0IlMEElN0QlMEElMEFmdW5jdGlvbiUyMEVuY29kZUNvZGVBc1Nob3J0Q3V0JTI4JTI5JTIwJTdCJTBBJTIwJTIwJTIwJTIwdmFyJTIwY29kZSUzRCUyMCUyMiUzQ3RleHRhcmVhJTIwc3R5bGUlM0QlMjd3aWR0aCUzQTk5JTI1JTNCaGVpZ2h0JTNBMTAwcHglMjclMjBwbGFjZWhvbGRlciUzRCUyN0pTL0h0bWwlMjhKUyV1NEVFMyV1NzgwMSV1NEYxQSV1NjZGRiV1NjM2MiV1NTZERSV1OEY2NiV1NEUzQSV1N0E3QSV1NjgzQyUyQyV1OEJGNyV1NTJGRiV1NkYwRiV1NTE5OSU1QyUyMiUzQiU1QyUyMiUyOSUyNyUyMGlkJTNEJTI3c291cmNlQ29kZSUyNyUzRSUzQy90ZXh0YXJlYSUzRSUzQ2JyLyUzRSUyMiUyMCslMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjIlM0NidXR0b24lMjBzdHlsZSUzRCUyN2Zsb2F0JTNBbGVmdCUyNyUyMG9uY2xpY2slM0QlMjdFbmNvZGVDb2RlRnVuYyUyOHRydWUlMjklMjclM0VFbmNvZGVKc1Nob3J0Q3V0JTNDL2J1dHRvbiUzRSUyMiUyMCslMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjIlM0NidXR0b24lMjAlMjBzdHlsZSUzRCUyN2Zsb2F0JTNBcmlnaHQlMjclMjBvbmNsaWNrJTNEJTI3RW5jb2RlQ29kZUZ1bmMlMjhmYWxzZSUyOSUyNyUzRUVuY29kZUh0bWxTaG9ydEN1dCUzQy9idXR0b24lM0UlMjIlMjArJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIyJTNDdGV4dGFyZWElMjAlMjBwbGFjZWhvbGRlciUzRCUyNyV1NjI4QSV1OEY2QyV1NjM2MiV1NTQwRSV1NzY4NCV1NTE4NSV1NUJCOSV1NjVCMCV1NUVGQSV1NEUzQSV1NEU2NiV1N0I3RSV1NTM3MyV1NTNFRiV1NUZFQiV1NjM3NyV1NEY3RiV1NzUyOCV1ODExQSV1NjcyQyUyNyUyMG9uZm9jdXMlM0QlMjd0aGlzLnNlbGVjdCUyOCUyOSUyNyUyMHN0eWxlJTNEJTI3d2lkdGglM0E5OSUyNSUzQmhlaWdodCUzQTEwMHB4JTI3JTIwaWQlM0QlMjdlbmNvZGVSZXN1bHQlMjclM0UlM0MvdGV4dGFyZWElM0UlMjIlM0IlMEElMjAlMjAlMjAlMjBDcmVhdEVsZW1lbnQlMjglN0IlMjBDb2RlJTNBJTIwY29kZSUyMCU3RCUyOSUzQiUwQSU3RCUwQUVuY29kZUNvZGVBc1Nob3J0Q3V0JTI4JTI5JTNCJTBB')));
-
-
-
-eval(unescape(window.atob('')));
-
+    function EncodeCodeAsShortCut() {
+        var code = "<textarea style='width:99%;height:100px' placeholder='JS/Html(JS代码会替换回车为空格,请勿漏写\";\")' id='sourceCode'></textarea><br/>" +
+            "<button style='float:left' onclick='EncodeCodeFunc(true)'>EncodeJsShortCut</button>" +
+            "<button  style='float:right' onclick='EncodeCodeFunc(false)'>EncodeHtmlShortCut</button>" +
+            "<textarea  placeholder='把转换后的内容新建为书签即可快捷使用脚本' onfocus='this.select()' style='width:99%;height:100px' id='encodeResult'></textarea>";
+        CreateElement({ Code: code });
+    }
+    EncodeCodeAsShortCut();
