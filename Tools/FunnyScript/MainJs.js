@@ -7,6 +7,7 @@
         var myId = parseInt(Math.random() * 10000000000);
         var mainId = "main_" + myId;
         var scriptId = "script_" + myId;
+        var tempScript= document.createElement('script');;
         if (isScript) {
             element = document.createElement('script');
             element.innerHTML = code;
@@ -19,8 +20,7 @@
 + "</span><span style=\"cursor: pointer;float:right\" onclick=\"document.getElementById('" + scriptId + "').remove();document.getElementById('" + mainId + "').remove()\">X&nbsp;&nbsp; </span></div><div style=\"width:100%\">" + code + "</div>";
             element.style = divCss;
             var scriptList = element.getElementsByTagName("script");
-            var tempScript;
-            tempScript = document.createElement('script');
+     
             tempScript.id = scriptId;
             if (scriptList.length > 0) {
                 var scriptCodeList = "";
