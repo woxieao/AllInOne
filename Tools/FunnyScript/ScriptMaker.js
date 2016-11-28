@@ -1,4 +1,4 @@
-    var CreateElement = function CreateElement(info) {
+  var CreateElement = function CreateElement(info) {
         var code = info.Code === undefined ? "" : info.Code;
         var isScript = info.IsScript === undefined ? false : info.IsScript;
         var isEncode = info.IsEncode === undefined ? false : info.IsEncode;
@@ -7,7 +7,6 @@
         var myId = parseInt(Math.random() * 10000000000);
         var mainId = "main_" + myId;
         var scriptId = "script_" + myId;
-        var tempScript= document.createElement('script');;
         if (isScript) {
             element = document.createElement('script');
             element.innerHTML = code;
@@ -17,25 +16,26 @@
             element = document.createElement('div');
             var title = info.Title === undefined ? "" : info.Title;
             element.innerHTML = "<div style=\"height:20px;width:100%\"><span style=\"float:left\">" + title
-+ "</span><span style=\"cursor: pointer;float:right\" onclick=\"document.getElementById('" + scriptId + "').remove();document.getElementById('" + mainId + "').remove()\">X&nbsp;&nbsp; </span></div><div style=\"width:100%\">" + code + "</div>";
++ "</span><span style=\"cursor: pointer;float:right\" onclick=\"document.getElementById('" + mainId + "').remove();document.getElementById('" + scriptId + "').remove();\">X&nbsp;&nbsp; </span></div><div style=\"width:100%\">" + code + "</div>";
             element.style = divCss;
             var scriptList = element.getElementsByTagName("script");
-     
-            tempScript.id = scriptId;
+
             if (scriptList.length > 0) {
-                var scriptCodeList = "";
+                var scriptCodeList = [];
                 for (var i = 0; i < scriptList.length; i++) {
-                    scriptCodeList += scriptList[i].innerHTML + "\n";
-                }
-                for (var i = 0; i < scriptList.length; i++) {
+                    var scriptTag= document.createElement('script');
+                    if(scriptList[i].src)
+                    {
+                        scriptTag.src=scriptList[i].src;
+                    }
+                    scriptTag.innerHTML=scriptList[i].innerHTML;
+                    document.head.appendChild(scriptTag);
                     scriptList[i].remove();
                 }
-                tempScript.innerHTML = scriptCodeList;
             }
         };
         element.id = mainId;
         document.body.appendChild(element);
-        document.head.appendChild(tempScript);
         return myId;
     }
 
@@ -52,8 +52,8 @@
         document.getElementsByName("encodeResult")[document.getElementsByName("encodeResult").length-1].value=baseCode;
         if(document.getElementsByName("showResult")[document.getElementsByName("showResult").length-1].checked)
         {
-        info.Css="position:fixed; padding: 5px;bottom:0; right:0;width:35%;height:250px;background-color:yellowgreen;z-index:9999999"
-        CreateElement(info);
+            info.Css="position:fixed; padding: 5px;bottom:0; right:0;width:35%;height:250px;background-color:yellowgreen;z-index:9999999"
+            CreateElement(info);
         }
     }
 
@@ -66,3 +66,5 @@
         CreateElement({ Code: code });
     }
     EncodeCodeAsShortCut();
+
+//<script src="https://code.jquery.com/jquery-latest.js"></script>
