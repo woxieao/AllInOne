@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "XA'sToy",
+    "version": "1.0",
+    "icons": {
+        "48": "XA.png"
+    },
+    "browser_action": {
+        "default_icon": "XA.png",
+        "default_title": "Hey",
+        "default_popup": "popup.htm",
+        "permissions": [
+            "notifications"
+        ]
+    },
+    "content_scripts": [{
+        "js": ["jquery.js","helloworld.js","popup.js"],
+        "matches": ["<all_urls>"]
+    }]
+}

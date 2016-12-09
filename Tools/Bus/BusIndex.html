@@ -1,0 +1,50 @@
+﻿<script src="angular.js"></script>
+
+<html ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <script src="http://www.wbus.cn/getQueryServlet?type=LineDetail&lineNo=1&direction=0"></script>
+    
+    <script src="jquery.js"></script>
+    <script src="angular.js"></script>
+    <script src="StorageHelper.js"></script>
+    <script>
+var app = angular.module('app', []);
+
+app.controller('bugStation', function($scope) {
+   var storageHelper=new StorageHelper({KeyName:"BusCache"});
+        var goHome="GoHome";
+        var fromHome="fromHome";
+$scope.AddBus=function (busNum,toHome){
+        storageHelper.Append(toHome?goHome:fromHome,busNum);
+        }
+function getBusList(toHome){
+       var busList= [];
+        var allBusList=[];
+        for(var i in allBusList)
+        {
+        if(allBusList[i].key===toHome?goHome:fromHome)
+        {
+        busList.push(allBusList[i].data);
+        }
+        }
+        return busList.sort();
+        }
+        $scope.GetOnlineData=function (){
+        var busList=getBusList();
+        for(var i in busList)
+        {
+        $.ajax({});
+        }
+
+        }
+
+});
+    </script>
+</head>
+<body>
+    <div ng-controller="bugStation">
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+﻿
+<code>
+    <strong>
+        帮助 Help
+    </strong>
+    <table cellspacing="1" bordercolor="#990000" cellpadding="1" border="1">
+        <tr><th>参数名<br />Params Name</th><th>示例<br />Value Example</th><th>可空<br />Nullable</th><th>默认值<br />Default Value</th></tr>
+        <tr><td>RequestType</td><td>GET<br />POST</td><td>true</td><td>GET</td></tr>
+        <tr><td>Host</td><td><a>http://www.test.cn/</a></td><td>false</td><td>--</td></tr>
+        <tr><td>Url</td><td>getQuery?Type=1&Method=2</td><td>true</td><td>--</td></tr>
+        <tr><td>Body</td><td>{"Data":"1024","Msg":"Success"}</td><td>true</td><td>&nbsp;(space)</td></tr>
+        <tr><td>ContentType</td><td>application/json<br />application/x-www-form-urlencoded</td><td>true</td><td>application/x-www-form-urlencoded</td></tr>
+        <tr><td>Cookies</td><td>userId=123;</td><td>true</td><td>--</td></tr>
+        <tr>
+            <td colspan="2">
+                Example:<br />
+                <textarea style="height:250px ;width: 240px" id="testData"></textarea>
+                <button class="btn btn-success" onclick="Forward($('#testData').val())">Test</button>
+            </td>
+            <td colspan="2">
+                <span id="resultData"></span>
+            </td>
+        </tr>
+    </table>
+</code>
+
+<script>
+
+    var testData = {
+        "Host": window.location.origin,
+        "Url": "/Proxy/Test?name=Jack",
+        "RequestType": "Get",
+        "ContentType": "application/json",
+        "Cookies": "userId=777"
+    };
+    $("#testData").val(JSON.stringify(testData));
+    function Forward(data) {
+        $("#resultData").html("Sending..");
+        $.ajax(
+        {
+            url: "/Proxy/Forward",
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            type: "POST",
+            complete: (result) => {
+                $("#resultData").html("Complete!You Can View Result In Console");
+                //$("#resultData").html(result.responseText);
+                console.log(result.responseText);
+            }
+        });
+    }
+</script>

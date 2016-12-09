@@ -1,0 +1,74 @@
+<script>
+    var entityList = "";
+    var nowCount = 0;
+    //最终结果
+    var entityDataList = [];
+
+    function Go() {
+        document.getElementById('msg').innerHTML = 'Loading...';
+        setTimeout(() => {
+            ReadEntity(document.getElementById('data').value)
+        }, 10);
+    }
+
+    function ReadEntity(oriStr) {
+        var mark = "entity";
+        var index = oriStr.indexOf(mark);
+        if (index !== -1) {
+            var str = oriStr.substring(index);
+            var leftCount = 0;
+            var rightCount = 0;
+            var leftMark = "{";
+            var rightMark = "}";
+            var lastIndex = 0;
+            for (var i in str) {
+                leftCount += str[i] === leftMark ? 1 : 0;
+                rightCount += str[i] === rightMark ? 1 : 0;
+                if (rightCount === leftCount && rightCount !== 0) {
+                    lastIndex = i;
+                    break;
+                }
+            }
+            var entityData = str.substring(0, lastIndex * 1 + 1);
+            entityData = entityData
+                .replace(/\n/g, '","')
+                .replace(/{","/g, '{"')
+                .replace(/ {/g, ':{')
+                .replace(/:/g, '":"')
+                .replace(/ /g, '')
+                .replace(/"{/g, "{")
+                .replace(/,"}"/g, "}")
+                .replace(/,"}/g, "}");
+            entityData = entityData.substring(8, entityData.length);
+            entityDataList.push(JSON.parse(entityData));
+            entityList += entityData + "\n";
+            ++nowCount;
+            console.log("Current:" + nowCount);
+            //Test Method
+            //if (nowCount === 5) {
+            //    document.getElementById("result").value = entityList;
+            //    return;
+            //}
+            ReadEntity(str.substring(lastIndex));
+        } else {
+            console.log("Success");
+            console.log(entityDataList);
+            document.getElementById('msg').innerHTML = "Success!<br/>" +
+                "The Result Already Saved As \"entityDataList\"<br/>" +
+                "You Can View It In Console<br/>" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Or<br/>" +
+                "Copy Data At Second Textarea<br/>" +
+                "Total:" + nowCount;
+            document.getElementById("result").value = entityList;
+            return;
+        }
+    }
+</script>
+<textarea id="data"></textarea>
+<br/>
+<input type="button" value="Let's Go!" onclick="Go()">
+<br/>
+<textarea id="result" onfocus="this.select()"></textarea>
+<br/>
+<span id="msg"></span>
+<br/>
