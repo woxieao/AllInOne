@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 
-namespace AlexXieBrainv
+namespace AlexXieBrain
 {
     public class FileCore
     {
-        public readonly static string DefaultSavePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        public readonly string DefaultSaveFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}/AlexXieBrain";
 
         public DirectoryInfo[] GetFolderList(string dirPath)
         {
@@ -15,9 +13,12 @@ namespace AlexXieBrainv
             return a.GetDirectories();
         }
 
-        public void SaveAsJson<T>(T stuff, string savePath)
+        public void SaveAsString<T>(T stuff, string savePath, bool append = true)
         {
-
+            using (var sw = new StreamWriter(savePath, append))
+            {
+                sw.Write(stuff.SerializeToJsonStr());
+            }
         }
         public T ReadAsJson<T>(string savePath)
         {
@@ -26,8 +27,18 @@ namespace AlexXieBrainv
 
         public string ReadAsString(string savePath)
         {
-            //todo 
-            return string.Empty;
+            using (var sr = new StreamReader(savePath))
+            {
+                return sr.ReadToEnd();
+            }
+        }
+
+        public void SaveFile(byte[] buffer, string fileFullPath)
+        {
+            using (var stream = new MemoryStream(buffer))
+            {
+                File.WriteAllBytes(fileFullPath, stream.GetBuffer());
+            }
         }
     }
 }

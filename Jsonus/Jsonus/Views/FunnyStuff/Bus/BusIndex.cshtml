@@ -1,0 +1,110 @@
+﻿<!--<script src="http://www.wbus.cn/getQueryServlet?type=LineDetail&lineNo=1&direction=0"></script>-->
+<script>
+
+
+    app.controller('bugStation', function ($scope) {
+
+        var busKeyName = "Bus";
+        $scope.NowGoHome = new Date().getHours() >= 12 ? true : false;
+        var busHelper = new StorageHelper(busKeyName);
+        $scope.newBus = "";
+        $scope.AddBus = function (busNum, isGoHome, direction) {
+            if (!busNum) {
+                return;
+            }
+            var busList = busHelper.Get();
+            var flag = false;
+            for (var i in busList) {
+                if (busList[i].BusNum === busNum) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                busHelper.Append({ BusNum: busNum, IsGoHome: isGoHome, Direction: direction });
+                $scope.BusFilter($scope.NowGoHome);
+            }
+        }
+        $scope.RemoveBus = function (busNum) {
+            var busList = busHelper.Get();
+            for (var i in busList) {
+                if (busList[i].BusNum === busNum) {
+                    busList.splice(i, 1);
+                    break;
+                }
+            }
+            busHelper.Reset(busList);
+            $scope.BusFilter();
+        }
+
+        $scope.BusList = [];
+        $scope.FromHomeBusList = [];
+
+        $scope.BusFilter = function (isGoHome) {
+            $scope.BusList = [];
+            var allBus = busHelper.Get();;
+            if (isGoHome === undefined) {
+                $scope.BusList = allBus;
+                return;
+            }
+            for (var i in allBus) {
+                if (allBus[i].IsGoHome && isGoHome) {
+                    $scope.BusList.push(allBus[i]);
+                }
+                if (!allBus[i].IsGoHome && !isGoHome) {
+                    $scope.BusList.push(allBus[i]);
+                }
+            }
+        }
+
+        $scope.ViewBus = function (bus) {
+            //var url = ;
+            //$scope.url0 = url + 0;
+            //$scope.url1 = url + 1;
+            //window
+            //$("#bus0").attr('src', $scope.url0);
+            //$("#bus1").attr('src', $scope.url1);
+        }
+        $scope.GetOnlineData = function () {
+            var busList = getBusList();
+            for (var i in busList) {
+                $.ajax({});
+            }
+        }
+
+    });
+</script>
+<body>
+    <div ng-controller="bugStation">
+        <table>
+            <tr>
+                <td></td>
+                <td>
+                    <input ng-model="newBus" placeholder="bus线路" />
+                </td>
+                <td>
+                    <a target="_blank" href="http://www.wbus.cn/detail.jsp?lineNo={{newBus}}&direction=0">查看{{newBus}}上行</a>
+                    <button ng-click="AddBus(newBus,true,0)">收藏为回家线路</button>
+
+                </td>
+                <td>
+                    <a target="_blank" href="http://www.wbus.cn/detail.jsp?lineNo={{newBus}}&direction=1">查看{{newBus}}下行</a>
+                    <button ng-click="AddBus(newBus,true,1)">收藏为出门线路</button>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label> <input type="radio" name="nowGoHome" value="undefined" ng-model="NowGoHome" />全部</label></td>
+                <td><label> <input type="radio" name="nowGoHome" value="true" ng-model="NowGoHome" />回家</label></td>
+                <td><label> <input type="radio" name="nowGoHome" value="false" ng-model="NowGoHome" />出门</label></td>
+            </tr>
+            <tr ng-repeat="bus in BusList">
+                <td> {{bus.BusNum}}</td>
+                <td> <a target="_blank" href="http://www.wbus.cn/detail.jsp?lineNo={{bus.BusNum}}&direction={{bus.Direction}}">查看{{bus.IsGoHome?"回家":"出门"}}路线</a> </td>
+                <td> <a target="_blank" href="http://www.wbus.cn/detail.jsp?lineNo={{bus.BusNum}}&direction={{(bus.Direction-1)*(bus.Direction-1)}}">查看{{bus.IsGoHome?"出门":"回家"}}路线</a> </td>
+                <td><button ng-click="RemoveBus(bus.BusNum,bus.IsGoHome)">删除</button></td>
+            </tr>
+        </table>
+
+    </div>
+</body>

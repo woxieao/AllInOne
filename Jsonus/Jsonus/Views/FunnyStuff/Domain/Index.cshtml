@@ -1,0 +1,59 @@
+﻿<script>
+    var seacher = new DomainSeacher(5);
+    var canRun = false;
+    function SatrtSearch() {
+        console.log("started");
+        canRun = !canRun;
+        if (canRun) {
+            seacher.SearchDomain();
+        }
+    }
+    function SaveData(data) {
+        var result = data[0].result[0].yes;
+        if (result.length > 0) {
+            alert(result.prefix + ".com可以注册!!!");
+        }
+    }
+    function DomainSeacher(len) {
+        var self = this;
+        localStorage.setItem("autoStart", 0);
+        len = len === undefined ? 5 : len;
+        self.reloadCount = 2000;
+        self.onceQueryCount = 10;
+        self.maxCount = Math.pow(36, len);
+        self.currentIndex = localStorage.getItem("currentIndex") === null ? 30000 : localStorage.getItem("currentIndex") * 1;
+        self.oriIndex = self.currentIndex;
+        var autoStart = localStorage.getItem("autoStart") === "1";
+        self.SearchDomain = () => {
+            if (self.currentIndex % 20 === 0) {
+                localStorage.setItem("currentIndex", self.currentIndex);
+                console.log("当前正在查询第" + self.currentIndex + "个域名(" + self.currentIndex.toString(36) + ".com)");
+            }
+            if (self.currentIndex % self.reloadCount === 0 && self.currentIndex !== self.oriIndex) {
+                localStorage.setItem("currentIndex", self.currentIndex);
+                localStorage.setItem("autoStart", 1);
+                window.location.reload();
+                return;
+            }
+            for (var i = 0; i < self.onceQueryCount; i++) {
+                if (self.currentIndex++ < self.maxCount) {
+                    $.ajax({ url: "http://checkdomain.xinnet.com/domainCheck?callbackparam=SaveData&searchRandom=7&prefix=" + (self.currentIndex).toString(36) + "&suffix=.com", dataType: "jsonp", complete: self.SearchDomain });
+                }
+            }
+        }
+        if (autoStart) {
+            console.log("autoStart");
+            SatrtSearch();
+        }
+    }
+
+    app.controller('domain', function ($scope) {
+        $scope.SearchDomain = () => { };
+
+    });
+</script>
+<body>
+    <div ng-controller="domain">
+        <button onclick="SatrtSearch()">开始域名检索(可在console查看详情)</button>
+    </div>
+</body>

@@ -1,0 +1,18 @@
+    function DecimalConvertTo(decimalNumber, target) {
+        var lastNum = decimalNumber % target;
+        var temp = decimalNumber - lastNum;
+        var arr = [lastNum];
+        while (temp >= target) {
+            temp /= target;
+            arr.push(temp % target);
+        }
+        var result = [];
+        for (var i = arr.length - 1; i >= 0; i--) {
+            result.push(arr[i]);
+        }
+        return result;
+    }
+
+
+//js自带,只能2--36
+(256).toString(16)
