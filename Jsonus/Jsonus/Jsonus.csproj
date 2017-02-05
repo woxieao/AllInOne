@@ -239,6 +239,8 @@
     <None Include="Properties\PublishProfiles\Jsonline.pubxml" />
     <Content Include="Scripts\jquery.js" />
     <Content Include="Scripts\angularFactory.js" />
+    <Content Include="Scripts\Test - Copy.js" />
+    <Content Include="Scripts\Test.js" />
     <Content Include="Scripts\StorageHelper.js" />
     <Content Include="Views\FunnyStuff\Domain\Index.cshtml" />
     <None Include="Views\FunnyStuff\Bus\BusIndex.cshtml" />

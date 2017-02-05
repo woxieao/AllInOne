@@ -10,7 +10,7 @@
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
                 info.getResult(xmlhttp)
-                info.complete(xmlhttp.responseText);
+                info.success(xmlhttp.responseText);
             }
         };
     }

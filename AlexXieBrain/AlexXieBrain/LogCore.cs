@@ -17,7 +17,7 @@ namespace AlexXieBrain
         }
         public void LogInDesktop<T>(T stuff, bool append = true)
         {
-            _fileHelper.SaveAsString(stuff, DefaultLogFileName, append);
+            _fileHelper.SaveAsJson(stuff, DefaultLogFileName, append);
         }
         public void Log<T>(string logFilePath, T stuff)
         {
@@ -26,7 +26,7 @@ namespace AlexXieBrain
             {
                 filePath = $"{DefaultSaveFolder}/log-{(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds}.txt";
             }
-            _fileHelper.SaveAsString(stuff, filePath);
+            _fileHelper.SaveAsJson(stuff, filePath);
         }
     }
 }
