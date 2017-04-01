@@ -1,0 +1,287 @@
+﻿<script type="text/javascript">
+    app.controller("RoomDetailController", ['$scope', 'commonNg', 'scoreHub', function ($scope, commonNg, scoreHub) {
+        $scope.RoomInfo = {};
+        $scope.MyOpenId = "";
+        $scope.ScoreToAdd = 0;
+        $scope.IsOnSubmit = false;
+        scoreHub.InitScope($scope);
+        var roomId = $common.GetQuery("roomId");
+        commonNg.Ajax({
+            url: "/ApiRoom/GetMyOpenId", type: "get", success: function (r) {
+                $scope.MyOpenId = r;
+                console.log($scope.MyOpenId);
+            }
+        });
+        scoreHub.client.updateScore = function (result) {
+            console.log("服务器传回房间数据");
+            $scope.RoomInfo = result.RoomInfo;
+            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                var player = $scope.RoomInfo.PlayerList[i];
+                if (player.OpenId === $scope.TempPlayer.OpenId) {
+                    //   $scope.TempPlayer = $common.CallByValue(player);
+                }
+                if (player.Boom) {
+                    //    layer.alert(player.Username + ":Boom");
+                }
+            }
+            $scope.$apply();
+        };
+
+        $scope.TempPlayer = {};
+        $scope.AddScoreType = 0;
+        $scope.AddScore = function (scoreToAdd) {
+            scoreToAdd = $common.CheckInt(scoreToAdd, "分数");
+            if (scoreToAdd * 1 === 0) {
+                layer.alert("请输入非零的分数");
+                return;
+            } else {
+
+                switch ($scope.AddScoreType) {
+                    //用户自己操作
+                    case 1:
+                        {
+                            scoreHub.OnSubmit();
+                            scoreHub.server.addMyScore(roomId, scoreToAdd);
+                            break;
+                        }
+                    //房主操作
+                    case 2:
+                        {
+                            scoreHub.OnSubmit();
+                            scoreHub.server.ownerAddUserScore(roomId, $scope.TempPlayer.OpenId, scoreToAdd);
+                            break;
+                        }
+                    default: {
+                        layer.alert("未知的加分规则");
+                        return;
+                    }
+                }
+            }
+        }
+
+        function showModalBox(modalId) {
+            $('#' + modalId).modal("show");
+            setTimeout(function () {
+                if ($(window).height() > $(".modal .sh-logo1").height()) {
+                    $(".modal .sh-logo1").css({
+                        "margin-top": ($(window).height() - $(".modal .sh-logo1").css("height").replace("px", "")) / 2
+                    });
+                } else {
+                    $(".modal .sh-logo1").css({
+                        "margin-top": 0
+                    });
+                }
+            }, 150);
+        }
+
+
+
+        $scope.ShowModal = function (playerInfo, addScoreType) {
+            $scope.AddScoreType = addScoreType;
+            $scope.TempPlayer = null;
+            $scope.TempPlayer = $common.CallByValue(playerInfo);
+            showModalBox("modal-view");
+        }
+
+        $scope.ExitRoom = function () {
+            scoreHub.ExitRoom(roomId);
+        }
+
+
+        $scope.ShowModifyModal = function () {
+            $scope.TempRoom = $common.CallByValue($scope.RoomInfo, ["PlayerList"]);
+            $('#modalModifyRoom').modal("show");
+        }
+
+        $scope.ModifyRoom = function () {
+            $common.CheckEmpty($scope.TempRoom.RoomName, "房间名称");
+            $common.CheckEmpty($scope.TempRoom.RoomPwd, "房间密码");
+            $scope.TempRoom.CountingMaxValue = $common.CheckInt($scope.TempRoom.CountingMaxValue, "计分阈值");
+            $scope.TempRoom.PlayerCountLimit = $common.CheckInt($scope.TempRoom.PlayerCountLimit, "参与人数");
+            scoreHub.OnSubmit();
+            scoreHub.server.modifyRoom($scope.TempRoom);
+        }
+
+        scoreHub.client.modifyRoomSuccess = function () {
+            $('#modalModifyRoom').modal("hide");
+        }
+        scoreHub.client.modifyPlayerInfoSuccess = function () {
+            $('#modal-view').modal("hide");
+        }
+     
+        $scope.ModifyPlayerInfo = function () {
+            $scope.TempPlayer.Score = $common.CheckInt($scope.TempPlayer.Score, "用户得分");
+            $scope.TempPlayer.Stars = $common.CheckInt($scope.TempPlayer.Stars, "用户过阈值次数");
+            if ($scope.TempPlayer.Score > 99999 || $scope.TempPlayer.Stars > 99999) {
+                layer.alert("输入的值太大,请重新填写");
+            }
+            else {
+                scoreHub.OnSubmit();
+                scoreHub.server.modifyPlayerInfo(roomId, $scope.TempPlayer.OpenId, $scope.TempPlayer.Score, $scope.TempPlayer.Stars);
+            }
+        }
+
+        $scope.KickUserOut = function (userOpenId) {
+            layer.confirm("确定将该用户请出房间吗?", function (i) {
+                scoreHub.server.kickUserOut(roomId, userOpenId);
+                layer.close(i);
+            });
+        }
+    }]);
+
+</script>
+<style type="text/css">
+    body {
+        background-color: #e7746d;
+    }
+</style>
+<div ng-controller="RoomDetailController">
+    <div class="sh-bar">
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-4 sh-back">
+                <fieldset ng-click="ExitRoom()"><span class="am-icon-chevron-left" style="color:#8d8d8d;"></span></fieldset>
+            </div>
+            <div class="am-u-sm-4 am-text-center sh-pagetitle">{{RoomInfo.RoomName}}</div>
+            <div class="am-u-sm-4  sh-back"><a class="btn btn-primary" ng-show="RoomInfo.RoomId" href="/Room/MyRoom?roomId={{RoomInfo.RoomId}}">切换个人模式</a></div>
+        </div>
+    </div>
+    <div class="sh-logo" ng-repeat="player in RoomInfo.PlayerList">
+        <div ng-click="ShowModal(player,2)" class="am-g am-g-collapse am-g-fixed" style="padding-bottom:1rem">
+            <div class="am-u-sm-12 am-text-center barTop">
+                <div class="barTxt">
+                    <div class="avatar1">
+                        <img alt="" src="{{player.PicUrl}}">
+                    </div>
+                    <div class="nameTxt clearfix">
+                        <span class="name  trim">{{player.Username}}</span>
+                        <span class="num">计分：{{player.Score}}</span>
+                    </div>
+                    <div class="tackImg clearfix">
+                        <img class="tack" src="/img/tack.png">
+                        <img class="pl" src="/img/pl.png">
+                        <span class="num">{{player.Stars}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-view">
+        <div class="sh-logo1">
+            <div class="modal-content" style="padding: 5px;background-color: #e7746d">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-title">{{RoomInfo.RoomName}}</div>
+                </div>
+                <div class="modal-body" style="background-color: #e7746d">
+                    <div class="sh-nav">
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-12 am-text-center sh-logoBar">
+                                <div class="avatar">
+                                    <img alt="" src="{{TempPlayer.PicUrl}}">
+                                </div>
+                            </div>
+                            <div class="am-u-sm-12 am-text-center">
+                                <br />
+                                <div class="title">{{TempPlayer.Username}}</div>
+                            </div>
+                            <div class="am-u-sm-12 am-text-center">
+                                <div class="tackBar clearfix">
+                                    <img class="tack" src="/img/tack.png">
+                                    <img class="pl" src="/img/pl.png">
+                                    <span class="num" id="tempPlayerStars">{{TempPlayer.Stars}}</span>
+                                </div>
+                            </div>
+                            <div class="am-u-sm-12 am-text-center">
+                                <div class="score">
+                                    计分：
+                                    <span style="width: 100px" id="tempPlayerScore">{{TempPlayer.Score}}</span>&nbsp;分
+                                </div>
+                            </div>
+
+                            <div class="am-g am-g-collapse am-g-fixed top-input">
+                                <div class="am-u-sm-4">
+                                    <div class="menu_Fr3">过阈值次数</div>
+                                </div>
+                                <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input1" ng-model="TempPlayer.Stars" /></div>
+                            </div>
+                            <div class="am-g am-g-collapse am-g-fixed">
+                                <div class="am-u-sm-4">
+                                    <div class="menu_Fr2">计分</div>
+                                </div>
+                                <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input1" ng-model="TempPlayer.Score" /></div>
+                            </div>
+                            <div class="am-g am-g-collapse am-g-fixed top-input">
+                                <div class="am-u-sm-12">
+                                    <button type="button" class="am-btn am-btn-success am-btn-xs am-btn-block" ng-disabled="IsOnSubmit" ng-click="ModifyPlayerInfo()">直接修改</button>
+                                </div>
+                            </div>
+                            <div class="am-g am-g-collapse am-g-fixed top-input">
+                                <div class="am-u-sm-4">
+                                    <div class="menu_Fr1">{{ScoreToAdd>=0?"加":"减"}}分</div>
+                                </div>
+                                <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input1" maxlength="5" ng-model="ScoreToAdd" /></div>
+                            </div>
+                            <div class="am-g am-g-collapse am-g-fixed  top-input">
+                                <div class="am-u-sm-12">
+                                    <button type="button" class="am-btn am-btn-success am-btn-xs am-btn-block" ng-disabled="IsOnSubmit" ng-click="AddScore(ScoreToAdd)">{{ScoreToAdd>=0?"加":"减"}}分</button>
+                                </div>
+                            </div>
+                            <div class="am-g am-g-collapse am-g-fixed  top-input">
+                                <div class="am-u-sm-12">
+                                    <button type="button" class="am-btn am-btn-danger am-btn-xs am-btn-block" ng-show="MyOpenId!==TempPlayer.OpenId" ng-disabled="IsOnSubmit" ng-click="KickUserOut(TempPlayer.OpenId)">请出房间</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalModifyRoom">
+        <div class="sh-logo1">
+            <div class="modal-content" style="padding: 5px;background-color: #e7746d">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-title">修改房间[{{TempRoom.RoomName}}]信息</div>
+                </div>
+                <div class="modal-body" style="background-color: #e7746d">
+                    <div class="sh-content">
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-4">
+                                <div class="menuFr1"></div>
+                            </div>
+                            <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input" maxlength="50" ng-model="TempRoom.RoomName" placeholder="房间名称" /></div>
+                        </div>
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-4">
+                                <div class="menuFr2"></div>
+                            </div>
+                            <div class="am-u-sm-8"><input type="password" maxlength="50" ng-model="TempRoom.RoomPwd" class="am-form-field sh-input" placeholder="房间密码" /></div>
+                        </div>
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-4">
+                                <div class="menuFr3"></div>
+                            </div>
+                            <div class="am-u-sm-8"><input type="text" maxlength="4" class="am-form-field sh-input" ng-model="TempRoom.CountingMaxValue" placeholder="计分阈值" /></div>
+                        </div>
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-4">
+                                <div class="menuFr4"></div>
+                            </div>
+                            <div class="am-u-sm-8"><input type="text" maxlength="6" ng-model="TempRoom.PlayerCountLimit" class="am-form-field sh-input" placeholder="请设定参与人数(当前{{RoomInfo.PlayerList.length}}人)" /></div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-12 btnTop">
+                                <button type="button" ng-click="ModifyRoom()" ng-disabled="IsOnSubmit" class="am-btn am-btn-success am-btn-block sh-btn">提交修改</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12"><button ng-click="ShowModifyModal()" class="am-btn am-btn-success am-btn-xs am-btn-block  sh-btn">编辑房间参数</button></div>
+</div>

@@ -5,7 +5,7 @@
 <script src="angular.js"></script>
 <!--<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.js"></script>-->
 <script>
-
+    var app = angular.module('app', []);
 app.controller('test1', function($scope) {
     $scope.firstName = "John";
     $scope.lastName = "Doe";
@@ -16,7 +16,7 @@ app.controller('test2', function($scope) {
 });
 </script>
 </head>
-<body>
+<body ng-app="app">
   <div ng-controller="test1">
    	<p>名字 : <input type="text"  contenteditable="true"  readonly="readonly"value="11" ng-model="name"></p>
    	<span ng-model="name" contenteditable="true">2</span>

@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "~/Views/Shared/_PcLayout.cshtml";
+}
+<script type="text/javascript">
+    app.controller("RoomController", ['$scope', 'commonNg', 'scoreHub', function ($scope, commonNg, scoreHub) {
+        $scope.BoomList = [];
+        $scope.RoomInfo = {};
+        $scope.HammerClass = "charector-wrap xfast";
+        $scope.EmptyClass = "";
+        $scope.HideStyle = { display: "none" };
+        $scope.BlockStyle = {
+            display: "block",
+            position: "fixed",
+            margin: "0 auto",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            "z-index": 999
+        };
+        $scope.HammerClass = "charector-wrap xfast";
+        $scope.EmptyClass = "";
+        scoreHub.InitScope($scope);
+        var nextHammer = function (player) {
+            setTimeout(function () {
+                player.DivStyle = $scope.HideStyle;
+                $scope.$apply();
+                showHammer();
+            }, 1500);
+        }
+
+        function showHammer() {
+            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                var player = $scope.RoomInfo.PlayerList[i];
+                var indexOpenId = $scope.BoomList.indexOf(player.OpenId);
+                if (indexOpenId !== -1) {
+                    player.DivClass = $scope.EmptyClass;
+                    player.DivStyle = $scope.BlockStyle;
+                    player.DivClass = $scope.HammerClass;
+                    $scope.BoomList.splice(indexOpenId, 1);
+                    $common.PlayBoomMusic();
+                    $scope.$apply();
+                    nextHammer(player);
+                    break;
+                }
+            }
+        }
+
+        scoreHub.client.updateScore = function (result) {
+            console.log("服务器传回房间数据");
+            $scope.RoomInfo = result.RoomInfo;
+            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                var player = $scope.RoomInfo.PlayerList[i];
+                player.DivStyle = $scope.HideStyle;
+                if (player.Boom) {
+                    $scope.BoomList.push(player.OpenId);
+                }
+            }
+
+            showHammer();
+            $scope.$apply();
+        };
+
+        $scope.ExitRoom = function () {
+            location.href = "/Home/Index";
+        }
+
+    }]);
+
+</script>
+<div ng-controller="RoomController">
+    <div class="container">
+        <div class="room_header">
+            <i class="icon-room-header"></i>{{RoomInfo.RoomName}}
+            <button class="btn esc fr" ng-click="ExitRoom()">退出房间</button>
+
+        </div>
+        <div class="room_body clearfix">
+            <div class="col-xs-4" ng-repeat="player in RoomInfo.PlayerList">
+                <div ng-style="player.DivStyle" ng-class="player.DivClass">
+                    <div class="charector"></div>
+                    <div class="wrap">
+                        <div class="left">
+                            <img src="{{player.PicUrl}}" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="room_item">
+                    <div class="left">
+                        <img src="{{player.PicUrl}}" alt="">
+                    </div>
+                    <div class="right">{{player.Stars}}</div>
+                    <div class="main">
+                        <div class="name trim" title="{{player.Username}}">{{player.Username}}</div>
+                        <div class="score">计分：{{player.Score}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<table>
+            <tr><td colspan="2">活动日志</td></tr>
+            <tr ng-repeat="log in RoomInfo.LogList">
+                <td>{{log.LogTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+                <td>{{log.Description}}</td>
+            </tr>
+        </table>*@
+</div>
+<script>
+
+    $(document).ready(function () {
+        var $charector = $("#js_wrap .charector");
+        for (var i = 1; i < 5; i++) {
+            setTimeout(function (i) {
+                return function () {
+                    $charector.css({
+                        "background-position-x": -626 * i + "px"
+                    });
+                }
+            }(i), i * 70);
+        }
+    });
+
+</script>

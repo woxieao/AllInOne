@@ -1,0 +1,22 @@
+﻿<script type="text/javascript">
+    app.controller("HallController", ['$scope', 'commonFunc', function ($scope, commonFunc) {
+       $scope.PlayerJoinRoom = function () {
+            var roomName = encodeURIComponent($scope.RoomName);
+            var roomPwd = encodeURIComponent($scope.RoomPwd);
+            commonFunc.Ajax({
+                url: "/ApiRoom/PlayerJoinRoom",
+                type: "post",
+                data: { RoomName: roomName, RoomPwd: roomPwd },
+                success: function () { window.location.href = "/Room/RoomDetail?roomName=" + roomName }
+            });
+        }
+    }]);
+
+</script>
+<div ng-controller="HallController">
+    教软积分软件<br />
+    加入房间<br />
+    <input class="form-control" placeholder="房间名" ng-model="RoomName"/>
+    <input class="form-control" placeholder="房间密码" ng-model="RoomPwd" />
+    <button class="btn btn-primary" ng-click="PlayerJoinRoom()">进入</button>
+</div>

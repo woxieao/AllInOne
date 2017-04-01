@@ -1,0 +1,32 @@
+﻿<script type="text/javascript">
+    app.controller("OpenNewRoomController", ['$scope', 'commonFunc', function ($scope, commonFunc) {
+        $scope.DropDownList = [];
+        $scope.PlayerCountLimit = 2;
+        for (var i = 1; i <= 12; i++) {
+            $scope.DropDownList.push({ name: i + "人", val: i });
+        }
+        $scope.OpenNewRoom = function () {
+            commonFunc.Ajax({
+                url: "/ApiRoom/OpenNewRoom",
+                type: "post",
+                data: {
+                    RoomName: $scope.RoomName,
+                    RoomPwd: $scope.RoomPwd,
+                    CountingMaxValue: $scope.CountingMaxValue,
+                    PlayerCountLimit: $scope.PlayerCountLimit
+                },
+                success: function () { window.location.href = "/Room/RoomDetail?roomName=" + encodeURIComponent($scope.RoomName); }
+            });
+        }
+    }]);
+
+</script>
+<div ng-controller="OpenNewRoomController">
+    教软积分软件<br />
+    加入房间<br />
+    <input class="form-control" placeholder="房间名" ng-model="RoomName" />
+    <input class="form-control" placeholder="房间密码" ng-model="RoomPwd" />
+    <input class="form-control" placeholder="计分阈值" ng-model="CountingMaxValue" />
+    参与人数<select class="form-control" ng-model="PlayerCountLimit" ng-options="status.val as status.name for status in DropDownList"></select>
+    <button class="btn btn-primary" ng-click="OpenNewRoom()">创建房间</button>
+</div>

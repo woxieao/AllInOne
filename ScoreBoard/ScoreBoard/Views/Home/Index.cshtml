@@ -1,0 +1,39 @@
+﻿@{
+    Layout = "~/Views/Shared/_PcLayout.cshtml";
+}
+
+<script type="text/javascript">
+    app.controller("HomeController", ['$http', '$scope', 'commonNg', function ($http, $scope, commonNg) {
+        $scope.JoinRoom = function () {
+            var roomNameEncode = encodeURIComponent($scope.roomName);
+            commonNg.Ajax({
+                url: "/Api/IsExistRoom?roomName=" + roomNameEncode, type: "get",
+                success: function (result) {
+                    if (result.IsExist) { location.href = "/Home/Room?roomId=" + result.RoomId }
+                    else {
+                        layer.alert("房间名称不存在");
+                    }
+                }
+            });
+        }
+    }]);
+
+</script>
+<div ng-controller="HomeController">
+    <div class="container">
+        <div class="logo"></div>
+        <h1>教软计分软件</h1>
+        <div class="join">
+            <div class="item">
+                <div class="icon-room"></div>
+                <input type="text" ng-model="roomName" maxlength="50" placeholder="请输入房间名称">
+            </div>
+            @*<div class="item">
+                    <div class="icon-key"></div>
+                    <input type="password" placeholder="请输入房间密码">
+                </div>*@
+            <button class="btn login" ng-click="JoinRoom()">进入房间</button>
+        </div>
+    </div>
+
+</div>

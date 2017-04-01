@@ -1,0 +1,52 @@
+<script src="https://cdn.wilddog.com/sdk/js/2.5.2/wilddog.js">
+
+
+
+    function SaveData(data) {
+        var result = data[0].result[0].yes;
+        if (result.length > 0) {
+            alert(result.prefix + ".com可以注册!!!");
+        }
+    }
+
+
+    var onceQueryCount = 20;
+    function DomainSeacher(len) {
+        var keyName = "DomainSeacher";
+        len = len === undefined ? 5 : len;
+        var maxCount = Math.pow(36, len);
+        this.name
+        var currentIndex = localStorage.getItem(keyName) == null ?
+            18800 : localStorage.getItem(keyName) * 1;
+        var aliveCount = 0;
+        function searchDomain(r) {
+            //if (r !== undefined && r.code == 0) {
+            //    console.log("success");
+            //}
+            if (currentIndex % 50 === 0) {
+                console.log("当前正在查询第" + currentIndex + "个域名(" + currentIndex.toString(36) + ")");
+            }
+            while (aliveCount <= onceQueryCount) {
+                go();
+            }
+        }
+        function go() {
+            aliveCount++;
+            if (currentIndex++ < maxCount) {
+                localStorage.setItem(keyName, currentIndex);
+                $.ajax({
+                    url: "https://www.wilddog.com/app/create",
+                    data: "appId=" + currentIndex.toString(36) + "&appName=" + currentIndex.toString(36),
+                    type: "post",
+                    complete: function (r) {
+                        aliveCount--;
+                        searchDomain(r)
+                    }
+                });
+            }
+        }
+        searchDomain();
+    }
+    DomainSeacher(6);
+
+</script>

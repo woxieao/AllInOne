@@ -1,0 +1,16 @@
+﻿<script type="text/javascript">
+    app.controller("LoginController", ['$http', '$scope', 'commonFunc', function ($http, $scope, commonFunc) {
+        $scope.UserInfo = { OpenId: "1234567890.", PicUrl: "http://www.dwart.cn/wp-content/uploads/2014/05/baozha-1.gif", Username: "残忍的大猪" };
+        $scope.PlayerLogion = function () {
+            commonFunc.Ajax({ url: "/api/login", type: "post", data: $scope.UserInfo, success: (r) => { window.location.href = "/Room/Hall" } });
+        };
+    }]);
+
+</script>
+<div ng-controller="LoginController">
+    登录
+    <input class="form-control" placeholder="用户名" ng-model="UserInfo.Username" /><br />
+    <input class="form-control" placeholder="OpenId" ng-model="UserInfo.OpenId" /><br />
+    <input class="form-control" placeholder="头像" ng-model="UserInfo.PicUrl" /><br />
+    <button class="btn btn-primary" ng-click="PlayerLogion()">进入</button>
+</div>

@@ -1,0 +1,283 @@
+﻿@charset "UTF-8";
+body {
+  font-family: "Lantinghei SC", "Open Sans", Arial, "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", STHeiti, "WenQuanYi Micro Hei", SimSun, sans-serif;
+  background-color: #e7746d;
+}
+
+a:focus,
+a:hover {
+  text-decoration: none;
+}
+
+input:focus,
+button:focus,
+.btn:focus,
+.btn:active:focus {
+  outline: none;
+}
+
+.container {
+  width: 1200px !important;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.zj-row .container {
+  background-color: #fff;
+  position: relative;
+}
+
+.trim {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.logo {
+  width: 100%;
+  height: 360px;
+  background-image: url("../img/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.logo + h1 {
+  color: #fff;
+  font-size: 48px;
+  text-align: center;
+  margin: 0;
+}
+
+.join {
+  margin: 40px auto 0;
+  width: 350px;
+}
+
+.join .item {
+  width: 100%;
+  height: 60px;
+  font-size: 0;
+}
+
+.join .item input {
+  vertical-align: top;
+  padding: .5em;
+  height: 100%;
+  border-width: 0px;
+  font-size: 16px;
+}
+
+.join .item + .item input {
+  border-top-width: 1px;
+}
+
+.join .item .icon-room {
+  width: 120px;
+  height: 100%;
+  display: inline-block;
+  background-image: url("../img/room.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #40bcbc;
+}
+
+.join .item .icon-key {
+  width: 120px;
+  height: 100%;
+  display: inline-block;
+  background-image: url("../img/key.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #d76d93;
+}
+
+.join .login {
+  display: block;
+  margin: 40px auto;
+  padding: 0;
+  border: 0;
+  width: 250px;
+  height: 54px;
+  line-height: 54px;
+  font-size: 16px;
+  background: #6dc764;
+  color: #fff;
+}
+
+.room_header {
+  font-size: 30px;
+  color: #fff;
+  padding: 40px 40px 20px;
+  border-bottom: 1px solid #e0514c;
+}
+
+.room_header .icon-room-header {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  margin-right: .5em;
+  width: 36px;
+  height: 35px;
+  background-image: url("../img/room-header.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.room_body {
+  margin-top: 20px;
+}
+
+.room_body .room_item {
+  overflow: hidden;
+  margin-bottom: 20px;
+  padding: 5px;
+  border-radius: 100px;
+  background-color: #c25049;
+}
+
+.room_body .room_item .left {
+  float: left;
+  width: 64px;
+  height: 64px;
+}
+
+.room_body .room_item .left img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100px;
+}
+
+.room_body .room_item .right {
+  float: right;
+  padding-left: 70px;
+  width: 150px;
+  height: 64px;
+  line-height: 64px;
+  font-size: 30px;
+  color: #ffde00;
+  background-image: url("../img/tack.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+.room_body .room_item .main {
+  overflow: hidden;
+  padding: 0 5px;
+  height: 64px;
+  line-height: 32px;
+}
+
+.room_body .room_item .main .name {
+  color: #fff;
+  font-size: 20px;
+}
+
+.room_body .room_item .main .score {
+  color: #00fffc;
+  font-size: 16px;
+}
+
+.room_footer {
+  margin-top: 30px;
+}
+
+.room_footer .esc {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  width: 250px;
+  height: 54px;
+  line-height: 54px;
+  font-size: 16px;
+  background: #ffde00;
+  color: #000;
+}
+
+
+
+
+.charector-wrap{
+  position: absolute;
+  left:50%;
+  margin-left:-313px;  
+  width: 626px;
+  height: 516px;
+}
+.charector{
+  z-index: 11;
+  width: 626px;
+  height: 516px;
+  position: absolute;
+  background: url(../img/tik.png) 0 0 no-repeat;
+  animation-iteration-count: 1;/* 动画无限播放 */
+  animation-timing-function:step-start;/* 马上跳到动画每一结束桢的状态 */
+  -webkit-animation-iteration-count: 1;/* 动画无限播放 */
+  -webkit-animation-timing-function:step-start;/* 马上跳到动画每一结束桢的状态 */
+}
+/* 跑步动画名称 */
+@keyframes person-xfast{/* 超快 */
+    0% {background-position: 0 0;}
+    14.3% {background-position: -626px 0;}
+    28.6% {background-position: -1252px 0;}
+    42.9% {background-position: -1878px 0;}
+    57.2% {background-position: -2504px 0;}
+    100% {background-position: 0 0;}
+}
+@-webkit-keyframes person-xfast{/* 超快 */
+    0% {background-position: 0 0;}
+    14.3% {background-position: -626px 0;}
+    28.6% {background-position: -1252px 0;}
+    42.9% {background-position: -1878px 0;}
+    57.2% {background-position: -2504px 0;}
+    100% {background-position: 0 0;}
+}
+/* 跑步动作频率控制 */
+.xfast .charector{/* 超快 */
+  animation-name: person-xfast;
+  animation-duration: 500ms;
+  -webkit-animation-name: person-xfast;
+  -webkit-animation-duration: 500ms;
+}
+
+
+.charector-wrap .wrap {
+  overflow: hidden;
+  position: relative;
+  margin-left: 260px;
+  margin-top: 400px;
+  border-radius: 100px;
+  z-index: 10;
+}
+
+.charector-wrap .wrap .left {
+  float: left;
+  width: 200px;
+  height: 200px;
+}
+
+.charector-wrap .wrap .left img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100px;
+}
+
+.esc {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    width: 250px;
+    height: 54px;
+    line-height: 54px;
+    font-size: 16px;
+    background: #ffde00;
+    color: #000;
+}
+
+.fr {
+    position: relative;
+    float: right;
+}

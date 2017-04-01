@@ -1,0 +1,55 @@
+﻿<script type="text/javascript">
+    app.controller("RoomIndexController", ['$scope', 'commonNg', function ($scope, commonNg) {
+        $scope.PlayerJoinRoom = function () {
+            $common.CheckEmpty($scope.RoomName, "房间名称");
+            $common.CheckEmpty($scope.RoomPwd, "房间密码");
+            commonNg.Ajax({
+                url: "/ApiRoom/PlayerJoinRoom",
+                type: "post",
+                data: { RoomName: $scope.RoomName, RoomPwd: $scope.RoomPwd },
+                success: function (roomId) { window.location.href = "/Room/RoomDetail?roomId=" + roomId }
+            });
+        }
+    }]);
+
+</script>
+<div ng-controller="RoomIndexController">
+    <div class="sh-bar">
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-1 sh-back">
+                <a href="/Room/Main"><span class="am-icon-chevron-left" style="color:#8d8d8d;"></span></a>
+            </div>
+            <div class="am-u-sm-11 am-text-center sh-pagetitle">加入房间</div>
+        </div>
+    </div>
+    <div class="sh-logo">
+        <div class="sh-nav">
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-12 am-text-center sh-logoBar">
+                    <img src="/img/logo3.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sh-content">
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-4">
+                <div class="menuFr1"></div>
+            </div>
+            <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input" maxlength="50" placeholder="请输入你的房间名称" ng-model="RoomName" /></div>
+        </div>
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-4">
+                <div class="menuFr2"></div>
+            </div>
+            <div class="am-u-sm-8"><input type="password" class="am-form-field sh-input" maxlength="50" placeholder="请输入房间密码" ng-model="RoomPwd" /></div>
+        </div>
+    </div>
+    <div class="createBtn">
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-12 btnTop">
+                <button type="button" class="am-btn am-btn-success am-btn-block sh-btn" ng-click="PlayerJoinRoom()">加入房间</button>
+            </div>
+        </div>
+    </div>
+</div>

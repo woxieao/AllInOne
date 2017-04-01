@@ -1,0 +1,12 @@
+﻿<script type="text/javascript">
+    app.controller("HomeController", ['$http', '$scope', 'commonFunc', function ($http, $scope, commonFunc) {
+           //commonFunc.Ajax({ url: "/api/login", type: "post", success: (r) => { console.log(r) } });
+    }]);
+
+</script>
+<div ng-controller="HomeController">
+    教软积分软件<br />
+    加入房间<br />
+    <input class="form-control" placeholder="房间名" ng-model="roomName" />
+    <button class="btn btn-primary">进入</button>
+</div>

@@ -1,0 +1,155 @@
+﻿<script type="text/javascript">
+    app.controller("MyRoomController", ['$scope', 'commonNg', 'scoreHub', function ($scope, commonNg, scoreHub) {
+        $scope.RoomInfo = {};
+        $scope.ScoreToAdd = 0;
+        $scope.GrayStyle = { 'background': 'gray' };
+        $scope.EmptyStyle = {};
+        $scope.IsOnSubmit = false;
+        scoreHub.InitScope($scope);
+        var roomId = $common.GetQuery("roomId");
+        $scope.PlayerInfo = {};
+        commonNg.Ajax({ url: "/ApiRoom/GetPlayerInfo?roomId=" + roomId, type: "get", success: function (r) { $scope.PlayerInfo = r; } });
+
+
+        $scope.AddScore = function (scoreToAdd) {
+            scoreToAdd = $common.CheckInt(scoreToAdd, "分数");
+            if (scoreToAdd <= 0) {
+                layer.alert("分数需为正整数");
+                return;
+            } else {
+                scoreHub.OnSubmit();
+                scoreHub.server.addMyScore(roomId, scoreToAdd);
+            }
+        }
+
+        $scope.ExitRoom = function () {
+            scoreHub.ExitRoom(roomId);
+        }
+
+
+        var hammerIndex = 0;
+        function hide(index) {
+            setTimeout(function () {
+                if (hammerIndex === index) {
+                    $("#js_wrap").css("visibility", "hidden");
+                }
+            }, 1500);
+        }
+
+        scoreHub.client.updateScore = function (result) {
+            console.log("服务器传回房间数据");
+            $scope.RoomInfo = result.RoomInfo;
+            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                var player = $scope.RoomInfo.PlayerList[i];
+                if (player.OpenId === $scope.PlayerInfo.OpenId) {
+                    $scope.PlayerInfo = player;
+                    if ($scope.PlayerInfo.Boom) {
+                        $("#js_wrap").css("visibility", "hidden");
+                        $("#js_wrap").attr("class", "");
+                        setTimeout(function () {
+                            $("#js_wrap").attr("class", "charector-wrap1 xfast");
+                            $("#js_wrap").css("visibility", "visible");
+                            $(".charector-wrap1").css("left", ($(window).width() - $(".charector-wrap1").width()) / 2);
+                            $common.PlayBoomMusic();
+                            hide(++hammerIndex);
+                        }, 50);
+                    }
+                    $scope.$apply();
+                    break;
+                }
+            }
+        };
+    }]);
+</script>
+<div ng-controller="MyRoomController">
+    <div style="visibility:hidden" class="" id="js_wrap">
+        <div class="charector1"></div>
+        <div class="wrap">
+            <div class="left">
+            </div>
+        </div>
+    </div>
+    <div class="sh-bar">
+        <div class="am-g am-g-collapse am-g-fixed">
+            <div class="am-u-sm-4 sh-back">
+                <fieldset ng-click="ExitRoom()"><span class="am-icon-chevron-left" style="color: #8d8d8d;"></span></fieldset>
+            </div>
+            <div class="am-u-sm-4 am-text-center sh-pagetitle">{{RoomInfo.RoomName}}</div>
+            <div class="am-u-sm-4  sh-back" ng-show="RoomInfo.RoomOwnerOpenId===PlayerInfo.OpenId&&RoomInfo.RoomOwnerOpenId&&PlayerInfo.OpenId">
+                <a class="btn btn-primary" href="/Room/RoomDetail?roomId={{RoomInfo.RoomId}}">切换房主模式</a>
+            </div>
+        </div>
+    </div>
+    <div class="sh-logo">
+        <div class="sh-nav">
+            <div class="am-g am-g-collapse am-g-fixed">
+                <div class="am-u-sm-12 am-text-center sh-logoBar">
+                    <div class="avatar">
+                        <img alt="" src="{{PlayerInfo.PicUrl}}">
+                    </div>
+                </div>
+                <div class="am-u-sm-12 am-text-center">
+                    <div class="title">{{PlayerInfo.Username}}</div>
+                </div>
+                <div class="am-u-sm-12 am-text-center">
+                    <div class="tackBar clearfix">
+                        <img class="tack" src="/img/tack.png">
+                        <img class="pl" src="/img/pl.png">
+                        <span class="num">{{PlayerInfo.Stars}}</span>
+                    </div>
+                </div>
+                <div class="am-u-sm-12 am-text-center">
+                    <div class="score">计分：{{PlayerInfo.Score}}分</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sh-score">
+        <div class="am-g am-g-collapse am-g-fixed">
+
+            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(1)">
+                <div class="part1" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                    <div class="scoreTxt">
+                        +<span>1</span>分
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(3)">
+                <div class="part2" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                    <div class="scoreTxt">
+                        +<span>3</span>分
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(5)">
+                <div class="part3" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                    <div class="scoreTxt">
+                        +<span>5</span>分
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        @*<div class="am-g am-g-collapse am-g-fixed  top-input" style="padding: 0 10px;">
+                <div class="am-u-sm-4">
+                    <div class="menu_Fr1">加分</div>
+                </div>
+                <div class="am-u-sm-8">
+                    <input type="text" class="am-form-field sh-input1" ng-model="ScoreToAdd" />
+                </div>
+            </div>
+            <div class="am-g am-g-collapse am-g-fixed  top-input" style="padding: 0 10px;">
+                <div class="am-u-sm-12">
+                    <button type="button" ng-disabled="IsOnSubmit" class="am-btn am-btn-success am-btn-block sh-btn" ng-click="AddScore(ScoreToAdd)">加分</button>
+                </div>
+            </div>*@
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var btmWidth = $(".part1").width() / 2;
+        $(".part1").css("height", btmWidth);
+        $(".part2").css("height", btmWidth);
+        $(".part3").css("height", btmWidth);
+        $(".scoreTxt").css("padding-top", btmWidth / 2 - 20);
+    })
+</script>

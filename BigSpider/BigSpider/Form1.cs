@@ -27,7 +27,7 @@ namespace BigSpider
         }
 
         int index = 0;
-        int saveCount = 0;
+        int _saveCount = 0;
         public void InitThread()
         {
             int.TryParse(FileCore.ReadAsString(CounterPath), out _currentCounter);
@@ -51,7 +51,7 @@ namespace BigSpider
                                 var picUrl = pics[i].Groups[1].ToString();
                                 FileCore.SaveAsString($"<img src='{picUrl}' title='图片ID:{id1} 获赞数:{likeCount}' height='240'/><br/>", $"{FileCore.DefaultSaveFolder}/wallpapers.htm");
                             }
-                            saveCount++;
+                            _saveCount++;
                         }
                     }
                     catch
@@ -68,7 +68,7 @@ namespace BigSpider
                     }
                 });
             }
-            ThreadCore.StartThread(() => MessageBox.Show($"{eachTurn}条数据抓取完毕,是否开始下一轮?"));
+            ThreadCore.StartThread(() => MessageBox.Show($"{eachTurn}条数据抓取完毕"));
             _isRun = true;
             button2.Visible = true;
         }
@@ -84,7 +84,7 @@ namespace BigSpider
             label4.Text = ThreadCore.GetUnstartedThreadCount().ToString();
             label5.Text = (ThreadCore.ThreadList.Count() - ThreadCore.GetUnstartedThreadCount()).ToString();
             button2.Text = !_isRun ? "开始" : "暂停";
-            label9.Text = saveCount.ToString();
+            label9.Text = _saveCount.ToString();
         }
 
         private void Pause()

@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script type="text/javascript">
+        var app = angular.module('app', []);
+    </script>
+    <script src="~/Scripts/commonFunc.js"></script>
+</head>
+<body ng-app="app">
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 上海教育软件发展有限公司</p>
+        </footer>
+    </div>
+</body>
+</html>
