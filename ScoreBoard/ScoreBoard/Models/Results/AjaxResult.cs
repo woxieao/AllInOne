@@ -63,7 +63,7 @@ namespace ScoreBoard.Models.Results
 
         public override void ExecuteResult(ControllerContext context)
         {
-            HttpResponseBase response = context.HttpContext.Response;
+            var response = context.HttpContext.Response;
             response.TrySkipIisCustomErrors = true;
             response.StatusCode = (int)HttpStatusCode.OK;
             response.ContentType = "application/json";

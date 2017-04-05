@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using ScoreBoard.Models;
-using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Exceptions;
 using ScoreBoard.Models.Extensions;
 
@@ -56,24 +54,7 @@ namespace ScoreBoard.Controllers
 
         public ActionResult GetUserWeChatInfo(string wxInfo)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                var userInfo = JsonConvert.DeserializeObject<WeChatInfo>(wxInfo);
-                if (userInfo == null)
-                {
-                    throw new AjaxException("序列化微信登录信息失败,请重新打开页面再试");
-                }
-                if (userInfo.errcode == 40001)
-                {
-                    throw new AjaxException("微信登录Token已失效,请重新打开页面再试");
-                }
-                Singleton.UserLogic.UserLogin(new UserInfo
-                {
-                    OpenId = userInfo.openid,
-                    Username = string.IsNullOrEmpty(userInfo.nickname) ? "--" : userInfo.nickname,
-                    PicUrl = string.IsNullOrEmpty(userInfo.headimgurl) ? "http://img4.imgtn.bdimg.com/it/u=3443117432,1239143495&fm=214&gp=0.jpg" : userInfo.headimgurl,
-                });
-            }
+            Singleton.UserLogic.WeChatUserLogin(wxInfo);
             return new RedirectResult("/Room/Main");
         }
 

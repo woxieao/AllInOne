@@ -62,3 +62,7 @@ $common.PlayBoomMusic = function () {
     audio.play();
 }
 
+$common.CreateQrCodeUrl = function (str) {
+    return "/api/QRCode/" + btoa(str);
+}
+

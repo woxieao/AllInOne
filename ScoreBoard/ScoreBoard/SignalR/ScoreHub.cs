@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -77,7 +78,13 @@ namespace ScoreBoard.SignalR
         public void UpdateScore(Guid roomId)
         {
             var room = RoomLogic.GetRoomById(roomId, false);
-            Clients.Group(roomId.ToString()).UpdateScore(new { RoomInfo = room });
+            var user = HttpContext.Current.User;
+            var roomPwd = user != null && user.Identity.IsAuthenticated && room.RoomOwnerOpenId == user.Identity.Name ? room.RoomPwd : string.Empty;
+            Clients.Group(roomId.ToString()).UpdateScore(new
+            {
+                RoomInfo = room,
+                RoomPwd = Convert.ToBase64String(Encoding.UTF8.GetBytes(roomPwd))
+            });
             room.InitPlayerIsBoom();
         }
         public void ExitRoom(Guid roomId)

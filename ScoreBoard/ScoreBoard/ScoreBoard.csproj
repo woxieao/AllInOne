@@ -209,6 +209,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\CacheHolder.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\WeChat\WeChatAuthorizeAndRedirectController.cs" />
+    <Compile Include="Controllers\WeChat\NeedAuthorizeController.cs" />
     <Compile Include="Controllers\AuthorizeApi\ApiRoomController .cs" />
     <Compile Include="Controllers\Api\ApiController.cs" />
     <Compile Include="Controllers\RoomController.cs" />

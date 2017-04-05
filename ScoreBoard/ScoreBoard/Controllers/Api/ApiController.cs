@@ -12,11 +12,11 @@ namespace ScoreBoard.Controllers.Api
     [ValidateInput(false)]
     public class ApiController : AjaxController
     {
-        public AjaxResult Login(UserInfo userInfo)
-        {
-            Singleton.UserLogic.UserLogin(userInfo);
-            return new AjaxResult(new { });
-        }
+        //public AjaxResult Login(UserInfo userInfo)
+        //{
+        //    Singleton.UserLogic.UserLogin(userInfo);
+        //    return new AjaxResult(new { });
+        //}
         public AjaxResult IsExistRoom(string roomName)
         {
             var isExist = Singleton.RoomLogic.IsExistRoom(roomName, false);
@@ -58,8 +58,10 @@ namespace ScoreBoard.Controllers.Api
             }
             return new AjaxResult(new { ErrorMsg = errorMsg, Result = $"{index}个僵尸用户添加完毕" });
         }
-        public void CreateQrCode(string str = "")
+        [Route("api/QRCode/{base64Str}")]
+        public void CreateQrCode(string base64Str = "")
         {
+            var str = Encoding.UTF8.GetString(Convert.FromBase64String(base64Str));
             var qrCodeEncoder = new QRCodeEncoder
             {
                 QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
@@ -78,12 +80,6 @@ namespace ScoreBoard.Controllers.Api
                 Response.BinaryWrite(byData);
                 mem.Close();
             }
-        }
-
-        [Route("Test2")]
-        public AjaxResult Test()
-        {
-            return new AjaxResult(123);
         }
     }
 }

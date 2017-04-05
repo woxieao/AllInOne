@@ -4,6 +4,7 @@
         $scope.MyOpenId = "";
         $scope.ScoreToAdd = 0;
         $scope.IsOnSubmit = false;
+        $scope.RoomPwd = "";
         scoreHub.InitScope($scope);
         var roomId = $common.GetQuery("roomId");
         commonNg.Ajax({
@@ -16,6 +17,7 @@
             console.log("服务器传回房间数据");
             console.log(result);
             $scope.RoomInfo = result.RoomInfo;
+            $scope.RoomPwd = result.RoomPwd;
             for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
                 var player = $scope.RoomInfo.PlayerList[i];
                 if (player.OpenId === $scope.TempPlayer.OpenId) {
@@ -91,6 +93,7 @@
 
         $scope.ShowModifyModal = function () {
             $scope.TempRoom = $common.CallByValue($scope.RoomInfo, ["PlayerList"]);
+            $scope.RoomQrCode = $common.CreateQrCodeUrl("http://" + location.host + "/ScanRoom/" + $scope.TempRoom.RoomId + "/" + $scope.RoomPwd);
             $('#modalModifyRoom').modal("show");
         }
 
@@ -109,7 +112,7 @@
         scoreHub.client.modifyPlayerInfoSuccess = function () {
             $('#modal-view').modal("hide");
         }
-     
+
         $scope.ModifyPlayerInfo = function () {
             $scope.TempPlayer.Score = $common.CheckInt($scope.TempPlayer.Score, "用户得分");
             $scope.TempPlayer.Stars = $common.CheckInt($scope.TempPlayer.Stars, "用户过阈值次数");
@@ -271,6 +274,12 @@
                                 <div class="menuFr4"></div>
                             </div>
                             <div class="am-u-sm-8"><input type="text" maxlength="6" ng-model="TempRoom.PlayerCountLimit" class="am-form-field sh-input" placeholder="请设定参与人数(当前{{RoomInfo.PlayerList.length}}人)" /></div>
+                        </div>
+                        <div class="am-g am-g-collapse am-g-fixed">
+                            <div class="am-u-sm-5">
+                                <div></div>
+                            </div>
+                            <div class="am-u-sm-7"><img src="{{RoomQrCode}}" width="200" /></div>
                         </div>
                     </div>
                     <div class="">

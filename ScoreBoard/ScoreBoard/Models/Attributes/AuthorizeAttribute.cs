@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using ScoreBoard.Controllers.WeChat;
 using ScoreBoard.Models.Results;
 
 namespace ScoreBoard.Models.Attributes
@@ -43,9 +44,26 @@ namespace ScoreBoard.Models.Attributes
         }
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            var actionName = filterContext.ActionDescriptor.ActionName;
-
             filterContext.RequestContext.HttpContext.Response.Redirect("http://wx.xinstudy.cn/checkUser.htm?tarURL=jf.xinstudy.cn%2FHome%2FGetUserWeChatInfo");
+        }
+    }
+
+    public class WeChatOneStepAuthorizeAttribute : AuthorizeAttribute
+    {
+        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        {
+            if (Singleton.UserLogic.GetCurrentUserInfo(false) == null)
+            {
+                return false;
+            }
+            else
+            {
+                return base.AuthorizeCore(httpContext);
+            }
+        }
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            filterContext.RequestContext.HttpContext.Response.Redirect($"http://wx.xinstudy.cn/checkUser.htm?tarURL=jf.xinstudy.cn/{WeChatAuthorizeAndRedirectController.WeChatLogin}/{filterContext.HttpContext.Request.Url.AbsolutePath}");
         }
     }
 }

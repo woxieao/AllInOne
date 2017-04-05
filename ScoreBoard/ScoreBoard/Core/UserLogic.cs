@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Web;
 using System.Web.Security;
+using Newtonsoft.Json;
 using ScoreBoard.FluentValidations;
 using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Exceptions;
@@ -51,7 +52,28 @@ namespace ScoreBoard.Core
                 return userInfo as UserInfo;
             }
         }
-        public void UserLogin(UserInfo userInfo)
+        public void WeChatUserLogin(string wxInfo)
+        {
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                var userInfo = JsonConvert.DeserializeObject<WeChatInfo>(wxInfo);
+                if (userInfo == null)
+                {
+                    throw new AjaxException("序列化微信登录信息失败,请重新打开页面再试");
+                }
+                if (userInfo.errcode == 40001)
+                {
+                    throw new AjaxException("微信登录Token已失效,请重新打开页面再试");
+                }
+                UserLogin(new UserInfo
+                {
+                    OpenId = userInfo.openid,
+                    Username = string.IsNullOrEmpty(userInfo.nickname) ? "--" : userInfo.nickname,
+                    PicUrl = string.IsNullOrEmpty(userInfo.headimgurl) ? "http://img4.imgtn.bdimg.com/it/u=3443117432,1239143495&fm=214&gp=0.jpg" : userInfo.headimgurl,
+                });
+            }
+        }
+        private void UserLogin(UserInfo userInfo)
         {
             new UserInfoValidation().OkOrThrow(userInfo);
             FormsAuthentication.SetAuthCookie(userInfo.OpenId, false);
