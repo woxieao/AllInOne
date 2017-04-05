@@ -43,6 +43,8 @@ namespace ScoreBoard.Models.Attributes
         }
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
+            var actionName = filterContext.ActionDescriptor.ActionName;
+
             filterContext.RequestContext.HttpContext.Response.Redirect("http://wx.xinstudy.cn/checkUser.htm?tarURL=jf.xinstudy.cn%2FHome%2FGetUserWeChatInfo");
         }
     }

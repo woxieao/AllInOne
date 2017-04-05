@@ -1,48 +1,73 @@
-﻿using Antlr.Runtime.Misc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+//using Action = Antlr.Runtime.Misc.Action;
 
 namespace ScoreBoard.Models.Bll
 {
     public class PlayerInfo : UserInfo
     {
-        private int _countingMaxValue;
-        private int _lastStar;
-        private int _realScore;
-        public PlayerInfo(int countingMaxValue)
+        public PlayerInfo(Func<int> getCountingMaxValue, Func<DateTime> getLastTurnTimeStamp)
         {
-            Score = 0;
-            _realScore = 0;
-            _countingMaxValue = countingMaxValue;
+            RealScore = 0;
             Boom = false;
+            _modifyScoreLog = new List<ModifyScoreInfo>();
+            _getCountingMaxValue = getCountingMaxValue;
+            _getLastTurnTimeStamp = getLastTurnTimeStamp;
         }
+        private int _lastStar;
+        private readonly Func<int> _getCountingMaxValue;
+        private readonly Func<DateTime> _getLastTurnTimeStamp;
+        private readonly List<ModifyScoreInfo> _modifyScoreLog;
+
+        public int CurrentSpanScoreAdded
+        {
+            get
+            {
+                return _modifyScoreLog.Where(i => i.ModifyTime >= _getLastTurnTimeStamp()).Sum(i => i.ScoreAdded);
+            }
+        }
+
+        public int RealScore { get; private set; }
+        private void SetRealScore(int realScore, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
+        {
+            var lastRealScore = RealScore;
+            RealScore = realScore;
+            _modifyScoreLog.Add(new ModifyScoreInfo
+            {
+                ModifyTime = DateTime.Now,
+                CurrentRealScore = RealScore,
+                ScoreAdded = RealScore - lastRealScore
+            });
+            setLastModifyScoreTimeAndUpdateScore(updateScore, roomId);
+        }
+
         public void UpdateBoomInfo(Action act)
         {
             _lastStar = Stars;
             act?.Invoke();
             Boom = _lastStar < Stars;
         }
-        public void UpdateCountingMaxValue(int countingMaxValue)
+        public void AddScoreAndUpdateLastStar(int scoreToAdd, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
         {
-            UpdateBoomInfo(() => { _countingMaxValue = countingMaxValue; });
+            UpdateBoomInfo(() =>
+            {
+                SetRealScore(RealScore + scoreToAdd, setLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
+            });
         }
-        public void AddScoreAndUpdateLastStar(int scoreToAdd)
-        {
-            UpdateBoomInfo(() => { _realScore += scoreToAdd; });
-        }
-        
+
         public void InitBoom()
         {
             Boom = false;
         }
-        
-        public void SetScoreAndStar(int score, int star)
+
+        public void SetScoreAndStar(int score, int star, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
         {
-            UpdateBoomInfo(() => { _realScore = score + star * _countingMaxValue; });
+            UpdateBoomInfo(() => { SetRealScore(score + star * _getCountingMaxValue(), setLastModifyScoreTimeAndUpdateScore, updateScore, roomId); });
         }
 
-        public int Score { get { return _realScore % _countingMaxValue; } private set { _realScore = value; } }
-        public int Stars => _realScore / _countingMaxValue;
+        public int Score => RealScore % _getCountingMaxValue();
+        public int Stars => RealScore / _getCountingMaxValue();
         public bool Boom { get; private set; }
-
-
     }
 }

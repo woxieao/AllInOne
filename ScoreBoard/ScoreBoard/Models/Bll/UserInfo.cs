@@ -11,6 +11,6 @@ namespace ScoreBoard.Models.Bll
         public string PicUrl { get; set; }
         public string Username { get; set; }
         public string OpenId { get; set; }
-        public List<UserInRoomInfo> UserInRoomInfoList { get; set; }
+        internal List<UserInRoomInfo> UserInRoomInfoList { get; set; }
     }
 }

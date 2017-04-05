@@ -45,7 +45,6 @@ namespace ScoreBoard.Core
                     serviceRoom.CountingMaxValue = roomInfo.CountingMaxValue;
                     serviceRoom.PlayerCountLimit = roomInfo.PlayerCountLimit;
                     serviceRoom.RoomPwd = roomInfo.RoomPwd;
-                    serviceRoom.UpdatePlayerCountingMaxValue();
                 }
             }
             finally
@@ -65,7 +64,7 @@ namespace ScoreBoard.Core
             }
             else
             {
-                roomInfo.PlayerList.Add(new PlayerInfo(roomInfo.CountingMaxValue)
+                roomInfo.PlayerList.Add(new PlayerInfo(roomInfo.GetCountingMaxValue, roomInfo.GetLastTurnTimeStamp)
                 {
                     OpenId = ownerInfo.OpenId,
                     Username = ownerInfo.Username,
@@ -118,7 +117,9 @@ namespace ScoreBoard.Core
             }
             else
             {
-                return _roomList[roomId.ToString()] as RoomInfo;
+                var roomInfo = (RoomInfo)_roomList[roomId.ToString()];
+                roomInfo.PlayerList = roomInfo.PlayerList.OrderByDescending(i => i.RealScore).ToList();
+                return roomInfo;
             }
         }
 
@@ -181,7 +182,7 @@ namespace ScoreBoard.Core
                     }
                     else
                     {
-                        roomInfo.PlayerList.Add(new PlayerInfo(roomInfo.CountingMaxValue)
+                        roomInfo.PlayerList.Add(new PlayerInfo(roomInfo.GetCountingMaxValue, roomInfo.GetLastTurnTimeStamp)
                         {
                             OpenId = playerInfo.OpenId,
                             Username = playerInfo.Username,
@@ -192,7 +193,7 @@ namespace ScoreBoard.Core
                 return roomInfo.RoomId;
             }
         }
-        public void OwnerModiftPlayerScore(Guid roomId, string ownerOpenId, string playerOpenId, int score, int star)
+        public void OwnerModiftPlayerScore(Guid roomId, string ownerOpenId, string playerOpenId, int score, int star, Action<Guid> updateScore)
         {
             if (score < 0)
             {
@@ -216,11 +217,12 @@ namespace ScoreBoard.Core
                 }
                 else
                 {
-                    playerInfo.SetScoreAndStar(score, star);
+                    playerInfo.SetScoreAndStar(score, star, roomInfo.SetLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
                 }
             }
         }
-        public void OwnerAddScore(Guid roomId, string ownerOpenId, string playerOpenId, int scoreToAdd)
+
+        public void OwnerAddScore(Guid roomId, string ownerOpenId, string playerOpenId, int scoreToAdd, Action<Guid> updateScore)
         {
             var roomInfo = GetRoomById(roomId, false);
             if (roomInfo.RoomOwnerOpenId != ownerOpenId)
@@ -236,20 +238,21 @@ namespace ScoreBoard.Core
                 }
                 else
                 {
-                    playerInfo.AddScoreAndUpdateLastStar(scoreToAdd);
+                    playerInfo.AddScoreAndUpdateLastStar(scoreToAdd, roomInfo.SetLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
                 }
             }
         }
-        public void PlayerAddScore(Guid roomId, string playerOpenId, int scoreToAdd)
+        public void PlayerAddScore(Guid roomId, string playerOpenId, int scoreToAdd, Action<Guid> updateScore)
         {
-            var playerInfo = GetRoomById(roomId, false).PlayerList.SingleOrDefault(i => i.OpenId == playerOpenId);
+            var roomInfo = GetRoomById(roomId, false);
+            var playerInfo = roomInfo.PlayerList.SingleOrDefault(i => i.OpenId == playerOpenId);
             if (playerInfo == null)
             {
                 throw new AjaxException("该用户不存在或已退出房间");
             }
             else
             {
-                playerInfo.AddScoreAndUpdateLastStar(scoreToAdd);
+                playerInfo.AddScoreAndUpdateLastStar(scoreToAdd, roomInfo.SetLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
             }
         }
 
@@ -279,6 +282,15 @@ namespace ScoreBoard.Core
         public PlayerInfo GetPlayerInfo(Guid roomId, string playerOpenId)
         {
             return GetRoomById(roomId, false).PlayerList.Single(i => i.OpenId == playerOpenId);
+        }
+
+        public void CleanUpScore(Action<Guid> updateScore, Guid roomId)
+        {
+            var roomInfo = GetRoomById(roomId, false);
+            foreach (var player in roomInfo.PlayerList)
+            {
+                player.AddScoreAndUpdateLastStar(0, roomInfo.SetLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
+            }
         }
     }
 }

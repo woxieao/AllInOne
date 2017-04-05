@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Web.Mvc;
 using ScoreBoard.Models;
 using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Results;
+using ThoughtWorks.QRCode.Codec;
 
 namespace ScoreBoard.Controllers.Api
 {
@@ -54,6 +57,33 @@ namespace ScoreBoard.Controllers.Api
                 return new AjaxResult(new { ErrorMsg = errorMsg, Result = $"{index}个僵尸用户添加完毕" });
             }
             return new AjaxResult(new { ErrorMsg = errorMsg, Result = $"{index}个僵尸用户添加完毕" });
+        }
+        public void CreateQrCode(string str = "")
+        {
+            var qrCodeEncoder = new QRCodeEncoder
+            {
+                QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
+                QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M,
+                QRCodeVersion = 7,
+                QRCodeScale = 4
+            };
+            using (var mem = new MemoryStream())
+            {
+                var image = qrCodeEncoder.Encode(str, Encoding.UTF8);
+                image.Save(mem, System.Drawing.Imaging.ImageFormat.Png);
+                var byData = new byte[mem.Length];
+                mem.Position = 0;
+                mem.Read(byData, 0, byData.Length);
+                Response.ContentType = "image/png";
+                Response.BinaryWrite(byData);
+                mem.Close();
+            }
+        }
+
+        [Route("Test2")]
+        public AjaxResult Test()
+        {
+            return new AjaxResult(123);
         }
     }
 }
