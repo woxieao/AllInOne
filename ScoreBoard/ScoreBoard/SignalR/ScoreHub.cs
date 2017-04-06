@@ -8,6 +8,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using ScoreBoard.Core;
 using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Exceptions;
+using ScoreBoard.Models.Extensions;
 
 
 namespace ScoreBoard.SignalR
@@ -78,12 +79,21 @@ namespace ScoreBoard.SignalR
         public void UpdateScore(Guid roomId)
         {
             var room = RoomLogic.GetRoomById(roomId, false);
-            var user = HttpContext.Current.User;
-            var roomPwd = user != null && user.Identity.IsAuthenticated && room.RoomOwnerOpenId == user.Identity.Name ? room.RoomPwd : string.Empty;
-            Clients.Group(roomId.ToString()).UpdateScore(new
+            var connectionIdList = new List<string>();
+            var connection = UserLogic.GetUserInfo(room.RoomOwnerOpenId).UserInRoomInfoList.SingleOrDefault(i => i.RoomId == roomId);
+            if (connection != null)
             {
-                RoomInfo = room,
-                RoomPwd = Convert.ToBase64String(Encoding.UTF8.GetBytes(roomPwd))
+                connectionIdList = connection.ConnectionIdList;
+                Clients.Clients(connectionIdList).UpdateScore(new
+                {
+                    RoomInfo = room,
+                    RoomPwd = room.RoomPwd,
+                    RoomPwdMd5 = room.RoomPwd.GetMd5()
+                });
+            }
+            Clients.Group(roomId.ToString(), connectionIdList.ToArray()).UpdateScore(new
+            {
+                RoomInfo = room
             });
             room.InitPlayerIsBoom();
         }
@@ -122,10 +132,11 @@ namespace ScoreBoard.SignalR
                 Clients.Caller.ModifyPlayerInfoSuccess();
             });
         }
-        public void ModifyRoom(RoomInfo roomInfo)
+        public void ModifyRoom(RoomInfo roomInfo, string roomPwd)
         {
             RunCall(() =>
             {
+                roomInfo.RoomPwd = roomPwd;
                 RoomLogic.ModifyRoom(roomInfo, () => { UpdateScore(roomInfo.RoomId); });
                 Clients.Caller.ModifyRoomSuccess();
             });

@@ -164,10 +164,10 @@ namespace ScoreBoard.Core
             }
         }
 
-        public Guid PlayerJoinRoom(string roomName, string roomPwd, UserInfo playerInfo)
+        public Guid PlayerJoinRoom(string roomName, string clientRoomPwd, UserInfo playerInfo, Func<string, string, bool> isPwdRight)
         {
             var roomInfo = GetRoomByName(roomName);
-            if (roomInfo.RoomPwd != roomPwd)
+            if (!isPwdRight(roomInfo.RoomPwd, clientRoomPwd))
             {
                 throw new AjaxException("房间密码错误");
             }

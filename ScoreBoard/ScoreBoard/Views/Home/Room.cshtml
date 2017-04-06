@@ -49,6 +49,7 @@
         scoreHub.client.updateScore = function (result) {
             console.log("服务器传回房间数据");
             $scope.RoomInfo = result.RoomInfo;
+            console.log(result);
             for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
                 var player = $scope.RoomInfo.PlayerList[i];
                 player.DivStyle = $scope.HideStyle;

@@ -9,8 +9,8 @@ namespace ScoreBoard.Controllers.WeChat
     public class WeChatAuthorizeAndRedirectController : BaseController
     {
         public const string WeChatLogin = nameof(WeChatLogin);
-        [Route("ScanRoom/{roomId}/{base64Pwd}")]
-        public ActionResult ScanRoom(Guid roomId, string base64Pwd, string wxInfo)
+        [Route("ScanRoom/{roomId}/{md5Pwd}")]
+        public ActionResult ScanRoom(Guid roomId, string md5Pwd, string wxInfo)
         {
             Singleton.UserLogic.WeChatUserLogin(wxInfo);
             return Redirect(Request.Url.AbsolutePath.Substring(WeChatLogin.Length + 1));

@@ -47,7 +47,7 @@ namespace ScoreBoard.Controllers.Api
                         Username = "僵尸用户" + guid.Substring(30),
                         PicUrl = imgList[ran.Next(imgList.Length)]
                     };
-                    Singleton.RoomLogic.PlayerJoinRoom(roomName, roomPwd, fakeWeChatInfo);
+                    Singleton.RoomLogic.PlayerJoinRoom(roomName, roomPwd, fakeWeChatInfo, (roomPwdStr, clientPwdStr) => roomPwdStr == clientPwdStr);
                     index = i + 1;
                 }
             }

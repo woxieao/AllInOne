@@ -11,7 +11,7 @@
             $scope.CountingMaxValue = $common.CheckInt($scope.CountingMaxValue, "计分阈值");
             $scope.PlayerCountLimit = $common.CheckInt($scope.PlayerCountLimit, "参与人数");
             commonNg.Ajax({
-                url: "/ApiRoom/OpenNewRoom",
+                url: "/ApiRoom/OpenNewRoom?roomPwd=" + encodeURIComponent($scope.RoomPwd),
                 type: "post",
                 data: {
                     RoomName: $scope.RoomName,

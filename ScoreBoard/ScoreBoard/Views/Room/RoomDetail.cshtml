@@ -5,6 +5,7 @@
         $scope.ScoreToAdd = 0;
         $scope.IsOnSubmit = false;
         $scope.RoomPwd = "";
+
         scoreHub.InitScope($scope);
         var roomId = $common.GetQuery("roomId");
         commonNg.Ajax({
@@ -18,6 +19,7 @@
             console.log(result);
             $scope.RoomInfo = result.RoomInfo;
             $scope.RoomPwd = result.RoomPwd;
+            $scope.RoomQrCodeUrl = $common.CreateQrCodeUrl("http://" + location.host + "/ScanRoom/" + result.RoomInfo.RoomId + "/" + result.RoomPwdMd5);
             for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
                 var player = $scope.RoomInfo.PlayerList[i];
                 if (player.OpenId === $scope.TempPlayer.OpenId) {
@@ -93,8 +95,9 @@
 
         $scope.ShowModifyModal = function () {
             $scope.TempRoom = $common.CallByValue($scope.RoomInfo, ["PlayerList"]);
-            $scope.RoomQrCode = $common.CreateQrCodeUrl("http://" + location.host + "/ScanRoom/" + $scope.TempRoom.RoomId + "/" + $scope.RoomPwd);
+            $scope.TempRoom.RoomPwd = $scope.RoomPwd;
             $('#modalModifyRoom').modal("show");
+
         }
 
         $scope.ModifyRoom = function () {
@@ -103,7 +106,7 @@
             $scope.TempRoom.CountingMaxValue = $common.CheckInt($scope.TempRoom.CountingMaxValue, "计分阈值");
             $scope.TempRoom.PlayerCountLimit = $common.CheckInt($scope.TempRoom.PlayerCountLimit, "参与人数");
             scoreHub.OnSubmit();
-            scoreHub.server.modifyRoom($scope.TempRoom);
+            scoreHub.server.modifyRoom($scope.TempRoom, $scope.TempRoom.RoomPwd);
         }
 
         scoreHub.client.modifyRoomSuccess = function () {
@@ -279,7 +282,7 @@
                             <div class="am-u-sm-5">
                                 <div></div>
                             </div>
-                            <div class="am-u-sm-7"><img src="{{RoomQrCode}}" width="200" /></div>
+                            <div class="am-u-sm-7"><img src="{{RoomQrCodeUrl}}" width="200" /></div>
                         </div>
                     </div>
                     <div class="">

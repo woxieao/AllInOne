@@ -35,8 +35,8 @@ namespace ScoreBoard.Models.Bll
 
         public Guid RoomId { get; set; }
         public string RoomName { get; set; }
-        public string RoomPwd {  get; set; }
-        //public string RoomPwdJust4Set { set { RoomPwd = value; } }
+        internal string RoomPwd { get; set; }
+        
         public int CountingMaxValue { get; set; }
         public int PlayerCountLimit { get; set; }
         public string RoomOwnerOpenId { get; set; }
