@@ -12,7 +12,7 @@ namespace ScoreBoard.Core
     {
         private readonly CacheItemPolicy _cacheItemPolicy = new CacheItemPolicy
         {
-            SlidingExpiration = new TimeSpan(1, 0, 0)
+            SlidingExpiration = TimeSpan.FromHours(2)
         };
         private readonly MemoryCache _roomList;
         public RoomLogic(MemoryCache roomList)

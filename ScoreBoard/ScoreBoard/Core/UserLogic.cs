@@ -16,7 +16,7 @@ namespace ScoreBoard.Core
         private readonly MemoryCache _userList;
         private readonly CacheItemPolicy _cacheItemPolicy = new CacheItemPolicy
         {
-            SlidingExpiration = new TimeSpan(2, 0, 0, 0)
+            SlidingExpiration = TimeSpan.FromDays(2)
         };
 
         public UserLogic(MemoryCache userList)
