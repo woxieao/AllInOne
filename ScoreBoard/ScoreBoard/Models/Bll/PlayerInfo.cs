@@ -11,59 +11,57 @@ namespace ScoreBoard.Models.Bll
         {
             RealScore = 0;
             Boom = false;
-            _modifyScoreLog = new List<ModifyScoreInfo>();
+            ModifyScoreLog = new List<ModifyScoreInfo>();
             _getCountingMaxValue = getCountingMaxValue;
             _getLastTurnTimeStamp = getLastTurnTimeStamp;
         }
         private int _lastStar;
         private readonly Func<int> _getCountingMaxValue;
         private readonly Func<DateTime> _getLastTurnTimeStamp;
-        private readonly List<ModifyScoreInfo> _modifyScoreLog;
+        internal readonly List<ModifyScoreInfo> ModifyScoreLog;
 
-        public int CurrentSpanScoreAdded
+        public int CurrentTurnScoreAdded
         {
             get
             {
-                return _modifyScoreLog.Where(i => i.ModifyTime >= _getLastTurnTimeStamp()).Sum(i => i.ScoreAdded);
+                return ModifyScoreLog.Where(i => i.ModifyTime >= _getLastTurnTimeStamp()).Sum(i => i.ScoreAdded);
             }
         }
 
         public int RealScore { get; private set; }
-        private void SetRealScore(int realScore, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
-        {
-            var lastRealScore = RealScore;
-            RealScore = realScore;
-            _modifyScoreLog.Add(new ModifyScoreInfo
-            {
-                ModifyTime = DateTime.Now,
-                CurrentRealScore = RealScore,
-                ScoreAdded = RealScore - lastRealScore
-            });
-            setLastModifyScoreTimeAndUpdateScore(updateScore, roomId);
-        }
-
-        public void UpdateBoomInfo(Action act)
+        private void SetRealScore(int realScore, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId, bool addLog = true)
         {
             _lastStar = Stars;
-            act?.Invoke();
+            var lastRealScore = RealScore;
+            RealScore = realScore;
             Boom = _lastStar < Stars;
-        }
-        public void AddScoreAndUpdateLastStar(int scoreToAdd, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
-        {
-            UpdateBoomInfo(() =>
+            if (addLog)
             {
-                SetRealScore(RealScore + scoreToAdd, setLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
-            });
+                ModifyScoreLog.Add(new ModifyScoreInfo
+                {
+                    ModifyTime = DateTime.Now,
+                    CurrentRealScore = RealScore,
+                    ScoreAdded = RealScore - lastRealScore
+                });
+            }
+            setLastModifyScoreTimeAndUpdateScore(updateScore, roomId);
+            Boom = false;
+        }
+        public void CleanUpScore(Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
+        {
+            ModifyScoreLog.Clear();
+            SetRealScore(0, setLastModifyScoreTimeAndUpdateScore, updateScore, roomId, false);
         }
 
-        public void InitBoom()
+
+        public void AddScoreAndUpdateLastStar(int scoreToAdd, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
         {
-            Boom = false;
+            SetRealScore(RealScore + scoreToAdd, setLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
         }
 
         public void SetScoreAndStar(int score, int star, Action<Action<Guid>, Guid> setLastModifyScoreTimeAndUpdateScore, Action<Guid> updateScore, Guid roomId)
         {
-            UpdateBoomInfo(() => { SetRealScore(score + star * _getCountingMaxValue(), setLastModifyScoreTimeAndUpdateScore, updateScore, roomId); });
+            SetRealScore(score + star * _getCountingMaxValue(), setLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
         }
 
         public int Score => RealScore % _getCountingMaxValue();

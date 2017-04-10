@@ -108,6 +108,10 @@
             scoreHub.server.modifyRoom($scope.TempRoom, $scope.TempRoom.RoomPwd);
         }
 
+        $scope.ShowQrCode = function () {
+            $('#qrModal').modal('show');
+        }
+
         scoreHub.client.modifyRoomSuccess = function () {
             $('#modalModifyRoom').modal("hide");
         }
@@ -133,22 +137,36 @@
                 layer.close(i);
             });
         }
+
+        $scope.CleanUpScore = function () {
+            layer.confirm("确定将所有成员分数归零?", function (i) {
+                scoreHub.server.cleanUpScore(roomId);
+                layer.close(i);
+            });
+        }
+        $scope.SwitchStatus = function () {
+            if ($scope.RoomInfo.RoomId) {
+                location.href = "/Room/MyRoom?roomId=" + $scope.RoomInfo.RoomId;
+            }
+        }
     }]);
 
 </script>
 <style type="text/css">
     body {
-        background-color: #e7746d;
+        background-color: #66b238;
     }
 </style>
 <div ng-controller="RoomDetailController">
     <div class="sh-bar">
         <div class="am-g am-g-collapse am-g-fixed">
-            <div class="am-u-sm-4 sh-back">
+            <div class="am-u-sm-3 sh-back">
                 <fieldset ng-click="ExitRoom()"><span class="am-icon-chevron-left" style="color:#8d8d8d;"></span></fieldset>
             </div>
-            <div class="am-u-sm-4 am-text-center sh-pagetitle">{{RoomInfo.RoomName}}</div>
-            <div class="am-u-sm-4  sh-back"><a class="btn btn-primary" ng-show="RoomInfo.RoomId" href="/Room/MyRoom?roomId={{RoomInfo.RoomId}}">切换个人模式</a></div>
+            <div class="am-u-sm-6 am-text-center sh-pagetitle">&nbsp;{{RoomInfo.RoomName}}</div>
+            <div class="am-u-sm-1  sh-back"> <img ng-click="ShowQrCode()" class="imgI" src="/img/mg.jpg"></div>
+            <div class="am-u-sm-1  sh-back"> <img ng-click="SwitchStatus()" class="imgI" src="/img/ig.jpg"></div>
+            <div class="am-u-sm-1  sh-back"> <img src="/img/sg.jpg" class="imgI" ng-click="ShowModifyModal()" /></div>
         </div>
     </div>
     <div class="sh-logo" ng-repeat="player in RoomInfo.PlayerList">
@@ -157,10 +175,11 @@
                 <div class="barTxt">
                     <div class="avatar1">
                         <img alt="" ng-src="{{player.PicUrl}}">
+                        <span class="name">{{player.Username}}</span>
                     </div>
-                    <div class="nameTxt clearfix">
-                        <span class="name  trim">{{player.Username}}</span>
-                        <span class="num">计分：{{player.Score}}</span>
+                    <div class="scoreBar clearfix">
+                        <span class="txt">分</span>
+                        <span class="score">{{player.Score}}</span>
                     </div>
                     <div class="tackImg clearfix">
                         <img class="tack" src="/img/tack.png">
@@ -173,12 +192,12 @@
     </div>
     <div class="modal fade" id="modal-view">
         <div class="sh-logo1">
-            <div class="modal-content" style="padding: 5px;background-color: #e7746d">
+            <div class="modal-content" style="padding: 5px;background-color: #66b238">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <div class="modal-title">{{RoomInfo.RoomName}}</div>
                 </div>
-                <div class="modal-body" style="background-color: #e7746d">
+                <div class="modal-body" style="background-color: #66b238">
                     <div class="sh-nav">
                         <div class="am-g am-g-collapse am-g-fixed">
                             <div class="am-u-sm-12 am-text-center sh-logoBar">
@@ -246,12 +265,12 @@
 
     <div class="modal fade" id="modalModifyRoom">
         <div class="sh-logo1">
-            <div class="modal-content" style="padding: 5px;background-color: #e7746d">
+            <div class="modal-content" style="padding: 5px;background-color: #66b238">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <div class="modal-title">修改房间[{{TempRoom.RoomName}}]信息</div>
                 </div>
-                <div class="modal-body" style="background-color: #e7746d">
+                <div class="modal-body" style="background-color: #66b238">
                     <div class="sh-content">
                         <div class="am-g am-g-collapse am-g-fixed">
                             <div class="am-u-sm-4">
@@ -277,17 +296,18 @@
                             </div>
                             <div class="am-u-sm-8"><input type="text" maxlength="6" ng-model="TempRoom.PlayerCountLimit" class="am-form-field sh-input" placeholder="请设定参与人数(当前{{RoomInfo.PlayerList.length}}人)" /></div>
                         </div>
+                    </div>
+                    <div class="">
                         <div class="am-g am-g-collapse am-g-fixed">
-                            <div class="am-u-sm-5">
-                                <div></div>
+                            <div class="am-u-sm-12 btnTop">
+                                <button type="button" ng-click="ModifyRoom()" ng-disabled="IsOnSubmit" class="am-btn am-btn-warning am-btn-block sh-btn">提交修改</button>
                             </div>
-                            <div class="am-u-sm-7"><img ng-src="{{RoomQrCodeUrl}}" width="200" /></div>
                         </div>
                     </div>
                     <div class="">
                         <div class="am-g am-g-collapse am-g-fixed">
                             <div class="am-u-sm-12 btnTop">
-                                <button type="button" ng-click="ModifyRoom()" ng-disabled="IsOnSubmit" class="am-btn am-btn-success am-btn-block sh-btn">提交修改</button>
+                                <button type="button" ng-click="CleanUpScore()" ng-disabled="IsOnSubmit" class="am-btn am-btn-danger am-btn-block sh-btn">所有成员分数归零</button>
                             </div>
                         </div>
                     </div>
@@ -295,5 +315,7 @@
             </div>
         </div>
     </div>
-    <div class="am-u-sm-12"><button ng-click="ShowModifyModal()" class="am-btn am-btn-success am-btn-xs am-btn-block  sh-btn">编辑房间参数</button></div>
+    <div class="modal" id="qrModal">
+        <div style="width: 320px;height: 320px;background-color: white;padding: 10px; margin:200px auto 0;display: block;"> <img ng-src="{{RoomQrCodeUrl}}" width="300" /></div>
+    </div>
 </div>

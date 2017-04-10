@@ -22,6 +22,7 @@
             }
         }
 
+
         $scope.ExitRoom = function () {
             scoreHub.ExitRoom(roomId);
         }
@@ -36,6 +37,22 @@
             }, 1500);
         }
 
+        $scope.ScoreToAddStr = "";
+        $scope.AddScoreStr = function (num) {
+            num += "";
+            var maxNum = 9999;
+            var score = $scope.ScoreToAddStr + num;
+            if (score * 1 > maxNum) {
+                layer.msg("加分最大值为" + maxNum);
+                return;
+            } else {
+                $scope.ScoreToAddStr = score;
+            }
+        }
+
+        $scope.CleanScoreStr = function () {
+            $scope.ScoreToAddStr = "";
+        }
         scoreHub.client.updateScore = function (result) {
             console.log("服务器传回房间数据");
             console.log(result);
@@ -62,6 +79,28 @@
         };
     }]);
 </script>
+<style type="text/css">
+    body {
+        background-color: #66b238;
+    }
+
+    .am-form select, .am-form textarea, .am-form input[type="text"], .am-form input[type="password"], .am-form input[type="datetime"], .am-form input[type="datetime-local"], .am-form input[type="date"], .am-form input[type="month"], .am-form input[type="time"], .am-form input[type="week"], .am-form input[type="number"], .am-form input[type="email"], .am-form input[type="url"], .am-form input[type="search"], .am-form input[type="tel"], .am-form input[type="color"], .am-form-field {
+        display: block;
+        width: 100%;
+        padding: 0.625em;
+        font-size: 1.6rem;
+        line-height: 1.2;
+        color: #000;
+        vertical-align: middle;
+        background-color: #cecece;
+        background-image: none;
+        border: 1px solid #5c5c5c;
+        border-radius: 0;
+        -webkit-appearance: none;
+        -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+</style>
 <div ng-controller="MyRoomController">
     <div style="visibility:hidden" class="" id="js_wrap">
         <div class="charector1"></div>
@@ -72,12 +111,12 @@
     </div>
     <div class="sh-bar">
         <div class="am-g am-g-collapse am-g-fixed">
-            <div class="am-u-sm-4 sh-back">
+            <div class="am-u-sm-1 sh-back">
                 <fieldset ng-click="ExitRoom()"><span class="am-icon-chevron-left" style="color: #8d8d8d;"></span></fieldset>
             </div>
-            <div class="am-u-sm-4 am-text-center sh-pagetitle">{{RoomInfo.RoomName}}</div>
-            <div class="am-u-sm-4  sh-back" ng-show="RoomInfo.RoomOwnerOpenId===PlayerInfo.OpenId&&RoomInfo.RoomOwnerOpenId&&PlayerInfo.OpenId">
-                <a class="btn btn-primary" href="/Room/RoomDetail?roomId={{RoomInfo.RoomId}}">切换房主模式</a>
+            <div class="am-u-sm-10 am-text-center sh-pagetitle">{{RoomInfo.RoomName}}</div>
+            <div class="am-u-sm-1  sh-back" ng-show="RoomInfo.RoomOwnerOpenId===PlayerInfo.OpenId&&RoomInfo.RoomOwnerOpenId&&PlayerInfo.OpenId">
+                <a href="/Room/RoomDetail?roomId={{RoomInfo.RoomId}}"><img class="imgI" src="~/img/houseOwner.png" /></a>
             </div>
         </div>
     </div>
@@ -86,7 +125,7 @@
             <div class="am-g am-g-collapse am-g-fixed">
                 <div class="am-u-sm-12 am-text-center sh-logoBar">
                     <div class="avatar">
-                        <img alt="" src="{{PlayerInfo.PicUrl}}">
+                        <img alt="" ng-src="{{PlayerInfo.PicUrl}}">
                     </div>
                 </div>
                 <div class="am-u-sm-12 am-text-center">
@@ -105,45 +144,68 @@
             </div>
         </div>
     </div>
-    <div class="sh-score">
-        <div class="am-g am-g-collapse am-g-fixed">
-
-            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(1)">
-                <div class="part1" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
-                    <div class="scoreTxt">
-                        +<span>1</span>分
+    <div class="am-g am-g-collapse am-g-fixed top-input">
+        <div class="am-u-sm-12">
+            <div class="inputBar">
+                <div class="am-form">
+                    <div class="am-form-group">
+                        <input type="text" maxlength="4" id="doc-ipt-success" ng-model="ScoreToAddStr" class="am-form-field">
                     </div>
                 </div>
-            </fieldset>
-            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(3)">
-                <div class="part2" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
-                    <div class="scoreTxt">
-                        +<span>3</span>分
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(5)">
-                <div class="part3" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
-                    <div class="scoreTxt">
-                        +<span>5</span>分
-                    </div>
-                </div>
-            </fieldset>
+                <div ng-click="AddScoreStr(1)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/1.jpg"></div>
+                <div ng-click="AddScoreStr(2)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/2.jpg"></div>
+                <div ng-click="AddScoreStr(3)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/3.jpg"></div>
+                <div ng-click="AddScoreStr(4)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/4.jpg"></div>
+                <div ng-click="AddScoreStr(5)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/5.jpg"></div>
+                <div ng-click="AddScoreStr(6)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/6.jpg"></div>
+                <div ng-click="AddScoreStr(7)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/7.jpg"></div>
+                <div ng-click="AddScoreStr(8)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/8.jpg"></div>
+                <div ng-click="AddScoreStr(9)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/9.jpg"></div>
+                <div ng-click="AddScoreStr(0)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/0.jpg"></div>
+                <div class="am-u-sm-4 am-g-collapse am-text-center btnC" ng-click="CleanScoreStr()">清除</div>
+                <fieldset  ng-style="IsOnSubmit?GrayStyle:EmptyStyle"class="am-u-sm-4 am-g-collapse am-text-center btnA" ng-disabled="IsOnSubmit"  ng-click="AddScore(ScoreToAddStr)">确认</fieldset>
+            </div>
         </div>
-        @*<div class="am-g am-g-collapse am-g-fixed  top-input" style="padding: 0 10px;">
-                <div class="am-u-sm-4">
-                    <div class="menu_Fr1">加分</div>
-                </div>
-                <div class="am-u-sm-8">
-                    <input type="text" class="am-form-field sh-input1" ng-model="ScoreToAdd" />
-                </div>
+    </div>
+    @*<div class="sh-score">
+            <div class="am-g am-g-collapse am-g-fixed">
+
+                <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(1)">
+                    <div class="part1" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                        <div class="scoreTxt">
+                            +<span>1</span>分
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(3)">
+                    <div class="part2" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                        <div class="scoreTxt">
+                            +<span>3</span>分
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="am-u-sm-4" ng-disabled="IsOnSubmit" ng-click="AddScore(5)">
+                    <div class="part3" ng-style="IsOnSubmit?GrayStyle:EmptyStyle">
+                        <div class="scoreTxt">
+                            +<span>5</span>分
+                        </div>
+                    </div>
+                </fieldset>
             </div>
             <div class="am-g am-g-collapse am-g-fixed  top-input" style="padding: 0 10px;">
-                <div class="am-u-sm-12">
-                    <button type="button" ng-disabled="IsOnSubmit" class="am-btn am-btn-success am-btn-block sh-btn" ng-click="AddScore(ScoreToAdd)">加分</button>
+                    <div class="am-u-sm-4">
+                        <div class="menu_Fr1">加分</div>
+                    </div>
+                    <div class="am-u-sm-8">
+                        <input type="text" class="am-form-field sh-input1" ng-model="ScoreToAdd" />
+                    </div>
                 </div>
-            </div>*@
-    </div>
+                <div class="am-g am-g-collapse am-g-fixed  top-input" style="padding: 0 10px;">
+                    <div class="am-u-sm-12">
+                        <button type="button" ng-disabled="IsOnSubmit" class="am-btn am-btn-success am-btn-block sh-btn" ng-click="AddScore(ScoreToAdd)">加分</button>
+                    </div>
+                </div>
+        </div>*@
 </div>
 <script type="text/javascript">
     $(function () {

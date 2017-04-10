@@ -63,7 +63,7 @@ namespace ScoreBoard.Models.Attributes
         }
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            filterContext.RequestContext.HttpContext.Response.Redirect($"http://wx.xinstudy.cn/checkUser.htm?tarURL=jf.xinstudy.cn/{WeChatAuthorizeAndRedirectController.WeChatLogin}/{filterContext.HttpContext.Request.Url.AbsolutePath}");
+            filterContext.RequestContext.HttpContext.Response.Redirect($"http://wx.xinstudy.cn/checkUser.htm?tarURL={HttpUtility.UrlEncode($"jf.xinstudy.cn/{WeChatAuthorizeAndRedirectController.WeChatLogin}{filterContext.HttpContext.Request.Url.AbsolutePath}")}");
         }
     }
 }

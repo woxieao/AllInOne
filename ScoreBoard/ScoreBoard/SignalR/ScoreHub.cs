@@ -95,7 +95,7 @@ namespace ScoreBoard.SignalR
             {
                 RoomInfo = room
             });
-            room.InitPlayerIsBoom();
+
         }
         public void ExitRoom(Guid roomId)
         {
@@ -149,7 +149,6 @@ namespace ScoreBoard.SignalR
                 Clients.Caller.ModifyPlayerInfoSuccess();
             });
         }
-        //todo add to web
         public void KickUserOut(Guid roomId, string userOpenId)
         {
             var currentRoomConnectionIdList = UserLogic.GetUserConnectionIdList(roomId, userOpenId);
@@ -169,10 +168,10 @@ namespace ScoreBoard.SignalR
             }
             Clients.Caller.ModifyPlayerInfoSuccess();
         }
-        //todo add to web
         public void CleanUpScore(Guid roomId)
         {
             RoomLogic.CleanUpScore(UpdateScore, roomId);
+            Clients.Caller.ModifyRoomSuccess();
         }
 
         #endregion

@@ -130,10 +130,10 @@ a {color:#01b9ef;}
 .sh-logo{
     position:relative;
     padding:0rem 1rem 0rem 1rem;
-    background-color:#e7746d;
+    background-color:#66b238;
 }
 .sh-nav{
-    padding: 4rem 0;
+    padding: 2rem 0;
 }
 .sh-logoBar{
     padding: 20 0px;
@@ -143,7 +143,9 @@ a {color:#01b9ef;}
     margin: 0 auto;
     width: 50%;
 }
-
+.sh-v{
+  margin-bottom: 20px;
+}
 .sh-v:after {
   content: "";
   display: block;
@@ -151,7 +153,7 @@ a {color:#01b9ef;}
   left: 50%;
   margin-left: -20px;
   border: 20px solid;
-  border-color: #e7746d transparent transparent transparent;
+  border-color: #66b238 transparent transparent transparent;
   z-index: 10;
 }
 
@@ -159,19 +161,19 @@ a {color:#01b9ef;}
     position:relative;
     padding:1rem 1rem 1rem 1rem;
     background-color:#fff;
-    height: 30rem;
+    /*height: 30rem;*/
 }
 .sh-padTop{
-    margin-top: 5rem;
+    margin-top: 4rem;
 
 }
 .sh-padTop button{
     margin: 0 auto;
-    width: 70%;
+    width: 80%;
 }
-.sh-btn {
-    line-height: 3rem;
-    font-size: 1.8rem;
+.sh-btn{
+    height: 4rem;
+    font-size: 1.6rem
 }
 .sh-content{
     position:relative;
@@ -256,21 +258,160 @@ a {color:#01b9ef;}
     width: 70%;
 }
 
+
+
+
+
 .barTop{
     margin-top: 1rem;
 }
 .barTxt{
     width: 100%;
-    height: 6rem;
+    height: 9rem;
      margin: 0 auto;
-    background-color:#c25049;
-    border-radius: 4rem;
+    background-color:#33591c;
     position:relative;
     float: left;
 }
+.barTxt .name{
+  color: #fff;
+  display: inline-block;
+}
 
-.avatar1 { width:5.4rem; height: 5.4rem;  position: relative;float: left; margin-left:.4rem;}
-.avatar1 img { width:5.4rem; height:5.4rem; border: 3px solid #fff; border-radius: 3rem; margin-top:.3rem;}
+.scoreBar{
+  position: relative;
+  float: left; 
+  margin-top: 2.4rem;
+  margin-left: 1rem;
+}
+.scoreBar .txt{
+  width:3.6rem; 
+  height:3.6rem; 
+  border: 3px solid #00fffc; 
+  border-radius: 3rem;
+  display: inline-block; 
+  color: #00fffc; 
+  font-size: 2.2rem;
+  line-height: 3.2rem;
+  
+}
+.scoreBar .score{
+    
+    display: inline-block; 
+    font-size: 2.8rem;
+    line-height: 3.4rem;
+    vertical-align: bottom;
+}
+.avatar1 { width:5.4rem; height: 5.4rem;  position: relative;float: left; margin-left:1rem;}
+.avatar1 img { width:5.4rem; height:5.4rem;  margin-top:1rem;}
+
+
+
+.tackImg{
+    position: relative;
+    float: left;
+    margin-left: 2rem;
+    margin-top: 2.4rem;
+    text-align: left;
+}
+.tackImg .tack{
+    width: 3.6rem;
+    height:3.6rem;
+    border: 3px solid #ffde00; 
+    border-radius: 3rem;
+    vertical-align:top;
+    display: inline-block;
+    background-image: url('../../img/tack.png');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center center;
+    background-size: cover;
+    line-height: 3.4rem;
+
+}
+.tackImg .pl{
+    width: 1.2rem;
+    vertical-align:top;
+    padding-top: 1.4rem;
+    margin-left: .5rem;
+}
+.tackImg .num{
+    color: #ffde00;
+    display: inline-block;
+    font-size: 2.8rem;
+    padding-left: 0.5rem;
+    line-height: 3.2rem;
+    vertical-align: bottom;
+}
+
+.sh-back .imgI{
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+
+
+@media screen and (min-width: 320px) and (max-width: 480px) { 
+  .scoreBar{
+      margin-left: .5rem;
+    } 
+  .scoreBar .score{
+    font-size: 1.8rem;
+    margin-left: .5rem;
+  }
+  .tackImg{
+      margin-left: .5rem;
+  }
+  .tackImg .num{
+      font-size: 1.8rem;
+    }
+  .sh-back .imgI{
+      width: 1.5rem;
+      height: 1.5rem;
+  }
+}
+/*6*/
+@media screen and ( min-width: 375px){
+    .scoreBar{
+      margin-left: 1rem;
+    }
+    .scoreBar .score{
+      font-size: 2.4rem;
+      margin-left: 1rem;
+    }
+    .tackImg{
+        margin-left: 1.5rem;
+    }
+    .tackImg .num{
+      font-size: 2.4rem;
+    }
+    .sh-back .imgI{
+      width: 2rem;
+      height: 2rem;
+    }
+}
+/*6+*/
+
+@media screen and ( min-width: 414px){
+    .scoreBar{
+      margin-left: 2rem;
+    }
+    .scoreBar .score{
+      font-size: 2.4rem;
+      margin-left: 1rem;
+    }
+    .tackImg{
+        margin-left: 2rem;
+    }
+    .tackImg .num{
+      font-size: 2.4rem;
+    }
+    .sh-back .imgI{
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+}
+
 
 .nameTxt{
     position: relative;
@@ -279,50 +420,34 @@ a {color:#01b9ef;}
     margin-left: 10px;
     text-align: left;
 }
-    .nameTxt .name {
-        color: #fff;
-        display: block;
-        position: relative;
-        float: left;
-        /*height: 2rem;*/
-        line-height: 2rem;
-        padding-top: 1rem;
-        width: 100%;
-    }
-    .nameTxt .num {
-        color: #00fffc;
-        display: block;
-        /*position: relative;*/
-        float: left;
-        /*height: 2rem;*/
-        line-height: 2rem;
-        /*padding-top: 1rem;*/
-        width: 100%;
-    }
-
-.tackImg{
+.nameTxt .name{
+    color: #fff;
+    display: block;
     position: relative;
-    float: right;
-    padding-right: 1rem;
-    text-align: left;
-    min-width: 110px;
+    float: left;
+    /*height: 2rem;*/
+    line-height: 2rem;
+    padding-top: 1rem;
+    width: 100%;
 }
-.tackImg .tack{
-    width: 3rem;
-    margin-top: -0.5rem;
+
+.nameTxt .num{
+    color: #00fffc;
+    display: block;
+    /*position: relative;*/
+    float: left;
+    /*height: 2rem;*/
+    line-height: 2rem;
+    /*padding-top: 1rem;*/
+    width: 100%;
 }
-.tackImg .pl{
-    width: 1.5rem;
-    margin-top: -0.5rem;
+.trim {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.tackImg .num{
-    color: #ffde00;
-    display: inline-block;
-    height: 6rem;
-    line-height: 6rem;
-    font-size: 1.6rem;
-    padding-left: 0.5rem;
-}
+
+
 .clearfix:after {
   content: ".";
   display: block;
@@ -510,8 +635,8 @@ a {color:#01b9ef;}
 -webkit-animation-duration: 500ms;
 }
 .xfast .charector1{/* 超快 */
--webkit-animation-name: person-xfast;
--webkit-animation-duration: 500ms;
+animation-name: person-xfast;
+animation-duration: 500ms;
 }
 
 
@@ -557,22 +682,74 @@ a {color:#01b9ef;}
   height: 100%;
   border-radius: 100px;
 }
-.trim {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
 
-.sh-score button {
-    border: none;
-    width: 100%;
+
+
+.sh-score button{
+  border: none;
+  width: 100%;
 }
 
 
+.inputBar{
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 1rem;
+  position: relative;
+  float: left;
+  width: 100%
+}
 
 
 
+.txtLine{
+  border-bottom: 1px solid #fff;
+  border-right: 1px solid #fff; 
+  background-color: #5c5c5c;
+  height: 4rem;
+  line-height: 4rem;
 
+}
+.txtLine a{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.txtLine img{
+  width: 1.6rem;
+  height: 2.2rem;
+  vertical-align:center;
+}
+
+.btnC{
+  border-bottom: 1px solid #fff;
+  border-right: 1px solid #fff; 
+  background-color: #0089e9;
+  color: #fff;
+  height: 4rem;
+  line-height: 4rem;
+  display: block;
+
+}
+.btnA{
+  border-bottom: 1px solid #fff;
+  border-right: 1px solid #fff; 
+  background-color: #fd8f00;
+  color: #fff;
+  height: 4rem;
+  line-height: 4rem;
+  display: block;
+}
+.btnC a,.btnA a{
+  color: #fff;
+}
+
+.btnC a,.btnA a{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
 
 

@@ -287,9 +287,13 @@ namespace ScoreBoard.Core
         public void CleanUpScore(Action<Guid> updateScore, Guid roomId)
         {
             var roomInfo = GetRoomById(roomId, false);
-            foreach (var player in roomInfo.PlayerList)
+            if (HttpContext.Current.User.Identity.Name != roomInfo.RoomOwnerOpenId)
             {
-                player.AddScoreAndUpdateLastStar(0, roomInfo.SetLastModifyScoreTimeAndUpdateScore, updateScore, roomId);
+                throw new AjaxException("只有房主可以将所有成员分数归零");
+            }
+            else
+            {
+                roomInfo.CleanUpAllPlayerScore(updateScore);
             }
         }
     }

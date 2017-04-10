@@ -2,112 +2,155 @@
     Layout = "~/Views/Shared/_PcLayout.cshtml";
 }
 <script type="text/javascript">
-    app.controller("RoomController", ['$scope', 'commonNg', 'scoreHub', function ($scope, commonNg, scoreHub) {
-        $scope.BoomList = [];
-        $scope.RoomInfo = {};
-        $scope.HammerClass = "charector-wrap xfast";
-        $scope.EmptyClass = "";
-        $scope.HideStyle = { display: "none" };
-        $scope.BlockStyle = {
-            display: "block",
-            position: "fixed",
-            margin: "0 auto",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            "z-index": 999
-        };
-        $scope.HammerClass = "charector-wrap xfast";
-        $scope.EmptyClass = "";
-        scoreHub.InitScope($scope);
-        var nextHammer = function (player) {
-            setTimeout(function () {
-                player.DivStyle = $scope.HideStyle;
-                $scope.$apply();
-                showHammer();
-            }, 1500);
-        }
+    app.controller("RoomController",
+        [
+            '$scope', 'commonNg', 'scoreHub', function ($scope, commonNg, scoreHub) {
+                $scope.BoomList = [];
+                $scope.RoomInfo = {};
+                $scope.HammerClass = "charector-wrap xfast";
+                $scope.EmptyClass = "";
+                $scope.HideStyle = { display: "none" };
+                $scope.BlockStyle = {
+                    display: "block",
+                    position: "fixed",
+                    margin: "0 auto",
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    "z-index": 999
+                };
+                scoreHub.InitScope($scope);
+                var nextHammer = function (player) {
+                    setTimeout(function () {
+                        player.DivStyle = $scope.HideStyle;
+                        $scope.$apply();
+                        showHammer();
+                    },
+                        1500);
+                }
 
-        function showHammer() {
-            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
-                var player = $scope.RoomInfo.PlayerList[i];
-                var indexOpenId = $scope.BoomList.indexOf(player.OpenId);
-                if (indexOpenId !== -1) {
-                    player.DivClass = $scope.EmptyClass;
-                    player.DivStyle = $scope.BlockStyle;
-                    player.DivClass = $scope.HammerClass;
-                    $scope.BoomList.splice(indexOpenId, 1);
-                    $common.PlayBoomMusic();
+                function showHammer() {
+                    for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                        var player = $scope.RoomInfo.PlayerList[i];
+                        var indexOpenId = $scope.BoomList.indexOf(player.OpenId);
+                        if (indexOpenId !== -1) {
+                            player.DivClass = $scope.EmptyClass;
+                            player.DivStyle = $scope.BlockStyle;
+                            player.DivClass = $scope.HammerClass;
+                            $scope.BoomList.splice(indexOpenId, 1);
+                            $common.PlayBoomMusic();
+                            $scope.$apply();
+                            nextHammer(player);
+                            break;
+                        }
+                    }
+                }
+
+                var currentProcessIndex = 0;
+
+                function reloadProcess(processIndex) {
+                    if ($scope.RoomInfo.CurrentTurnTimeLeft > 0) {
+                        setTimeout(function () {
+                            if (processIndex === currentProcessIndex) {
+                                $scope.NgProcessStyle = {
+                                    width: ((--$scope.RoomInfo.CurrentTurnTimeLeft) / $scope.RoomInfo.OneTurnSecond) *
+                                    100 +
+                                    "%"
+                                };
+                                $scope.$apply();
+                                reloadProcess(processIndex);
+                            }
+                        },
+                            1000);
+                    }
+                }
+
+
+                scoreHub.client.updateScore = function (result) {
+                    console.log("服务器传回房间数据");
+                    $scope.RoomInfo = result.RoomInfo;
+                    reloadProcess(++currentProcessIndex);
+                    console.log(result);
+                    for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
+                        var player = $scope.RoomInfo.PlayerList[i];
+                        player.DivStyle = $scope.HideStyle;
+                        if (player.Boom) {
+                            $scope.BoomList.push(player.OpenId);
+                        }
+                    }
+
+                    showHammer();
                     $scope.$apply();
-                    nextHammer(player);
-                    break;
+                };
+
+                $scope.ExitRoom = function () {
+                    location.href = "/Home/Index";
                 }
+                $scope.RoomQrCodeUrl = $common.CreateQrCodeUrl(location.href);
+
+
             }
-        }
-
-        scoreHub.client.updateScore = function (result) {
-            console.log("服务器传回房间数据");
-            $scope.RoomInfo = result.RoomInfo;
-            console.log(result);
-            for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
-                var player = $scope.RoomInfo.PlayerList[i];
-                player.DivStyle = $scope.HideStyle;
-                if (player.Boom) {
-                    $scope.BoomList.push(player.OpenId);
-                }
-            }
-
-            showHammer();
-            $scope.$apply();
-        };
-
-        $scope.ExitRoom = function () {
-            location.href = "/Home/Index";
-        }
-
-    }]);
+        ]);
 
 </script>
-<div ng-controller="RoomController">
-    <div class="container">
-        <div class="room_header">
-            <i class="icon-room-header"></i>{{RoomInfo.RoomName}}
-            <button class="btn esc fr" ng-click="ExitRoom()">退出房间</button>
-
+<title>{{RoomInfo.RoomName}}</title>
+<div ng-controller="RoomController" class="container mainblock">
+    <div class="room_header">
+        <i class="icon-room-header"></i>{{RoomInfo.RoomName}}
+        <button class="btn esc " ng-click="ExitRoom()">退出房间</button>
+        <button class="btn qr" onclick=" $('#qrModal').modal('show')">显示二维码</button>
+    </div>
+    @*<div class="col-xs-2">
+        <b style="color: darkorange;"> 本轮剩余时间:{{RoomInfo.CurrentTurnTimeLeft}}s</b>
+    </div>
+    <div class="col-xs-10">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{RoomInfo.CurrentTurnTimeLeft}}"
+                 aria-valuemin="0" aria-valuemax="{{RoomInfo.OneTurnSecond}}" ng-style="NgProcessStyle">
+            </div>
         </div>
-        <div class="room_body clearfix">
-            <div class="col-xs-4" ng-repeat="player in RoomInfo.PlayerList">
-                <div ng-style="player.DivStyle" ng-class="player.DivClass">
-                    <div class="charector"></div>
-                    <div class="wrap">
-                        <div class="left">
-                            <img ng-src="{{player.PicUrl}}" alt="">
-                        </div>
-                    </div>
-                </div>
-                <div class="room_item">
+    </div>*@
+
+
+    <div class="room_body clearfix">
+
+        <div class="col-xs-6" ng-repeat="player in RoomInfo.PlayerList">
+            <div ng-style="player.DivStyle" ng-class="player.DivClass">
+                <div class="charector"></div>
+                <div class="wrap">
                     <div class="left">
                         <img ng-src="{{player.PicUrl}}" alt="">
                     </div>
-                    <div class="right">{{player.Stars}}</div>
-                    <div class="main">
-                        <div class="name trim" title="{{player.Username}}">{{player.Username}}</div>
-                        <div class="score">计分：{{player.Score}}</div>
+                </div>
+            </div>
+            <div class="room_item">
+                <div class="left">
+                    <div class="img">
+                        <img ng-src="{{player.PicUrl}}" alt="">
+                    </div>
+                    <div class="name">{{player.Username}}</div>
+                </div>
+                <div class="right" ng-show="RoomInfo.CurrentTurnTimeLeft>0">
+                    本轮计分<span>{{player.CurrentTurnScoreAdded}}</span>
+                </div>
+                <div class="main">
+                    <div class="tack">
+                        <i class="icon-tack"></i>{{player.Stars}}
+                    </div>
+
+                    <div class="score">
+                        <i class="icon-score"></i>{{player.Score}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    @*<table>
-            <tr><td colspan="2">活动日志</td></tr>
-            <tr ng-repeat="log in RoomInfo.LogList">
-                <td>{{log.LogTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
-                <td>{{log.Description}}</td>
-            </tr>
-        </table>*@
+    <div class="modal" id="qrModal">
+        <div style="width: 320px;height: 320px;background-color: white;padding: 10px;" class="qrImg"> <img ng-src="{{RoomQrCodeUrl}}" width="300" /></div>
+    </div>
 </div>
+
 <script>
 
     $(document).ready(function () {
@@ -119,7 +162,8 @@
                         "background-position-x": -626 * i + "px"
                     });
                 }
-            }(i), i * 70);
+            }(i),
+                i * 70);
         }
     });
 

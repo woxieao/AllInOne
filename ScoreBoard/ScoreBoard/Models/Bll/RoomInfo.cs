@@ -9,6 +9,7 @@ namespace ScoreBoard.Models.Bll
         private DateTime _lastModifyScoreTime = DateTime.MinValue;
 
         private DateTime _lastTurnTimeStamp = DateTime.MinValue;
+        public int OneTurnSecond => Singleton.OneTurnSecond;
 
         public DateTime GetLastTurnTimeStamp()
         {
@@ -20,8 +21,8 @@ namespace ScoreBoard.Models.Bll
             get
             {
                 var lastModifyScoreTimeToNow = DateTime.Now - _lastModifyScoreTime;
-                var currentTurnTimeLeft = Singleton.OneTurnSecond - (int)lastModifyScoreTimeToNow.TotalSeconds;
-                return lastModifyScoreTimeToNow > TimeSpan.FromSeconds(Singleton.OneTurnSecond) ?
+                var currentTurnTimeLeft = OneTurnSecond - (int)lastModifyScoreTimeToNow.TotalSeconds;
+                return lastModifyScoreTimeToNow > TimeSpan.FromSeconds(OneTurnSecond) ?
                     0 : (currentTurnTimeLeft > 0 ? currentTurnTimeLeft : 0);
             }
         }
@@ -36,7 +37,7 @@ namespace ScoreBoard.Models.Bll
         public Guid RoomId { get; set; }
         public string RoomName { get; set; }
         internal string RoomPwd { get; set; }
-        
+
         public int CountingMaxValue { get; set; }
         public int PlayerCountLimit { get; set; }
         public string RoomOwnerOpenId { get; set; }
@@ -47,17 +48,17 @@ namespace ScoreBoard.Models.Bll
         {
             return CountingMaxValue;
         }
-        public void InitPlayerIsBoom()
+        public void CleanUpAllPlayerScore(Action<Guid> updateScore)
         {
             foreach (var player in PlayerList)
             {
-                player.InitBoom();
+                player.CleanUpScore(SetLastModifyScoreTimeAndUpdateScore, updateScore, RoomId);
             }
         }
         public void SetLastModifyScoreTimeAndUpdateScore(Action<Guid> updateScore, Guid roomId)
         {
             var nowTime = DateTime.Now;
-            if (nowTime - _lastModifyScoreTime - TimeSpan.FromSeconds(Singleton.OneTurnSecond) > TimeSpan.Zero)
+            if (nowTime - _lastModifyScoreTime - TimeSpan.FromSeconds(OneTurnSecond) > TimeSpan.Zero)
             {
                 //已过一轮的时间限制则刷新上一轮的时间戳,未过则不刷新
                 _lastTurnTimeStamp = nowTime; ;

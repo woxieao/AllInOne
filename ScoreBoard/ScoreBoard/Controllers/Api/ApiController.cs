@@ -58,7 +58,7 @@ namespace ScoreBoard.Controllers.Api
             }
             return new AjaxResult(new { ErrorMsg = errorMsg, Result = $"{index}个僵尸用户添加完毕" });
         }
-        [Route("api/QRCode/{base64Str}")]
+        [Route("api/QRCode")]
         public void CreateQrCode(string base64Str = "")
         {
             var str = Encoding.UTF8.GetString(Convert.FromBase64String(base64Str));
@@ -67,7 +67,7 @@ namespace ScoreBoard.Controllers.Api
                 QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
                 QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M,
                 QRCodeVersion = 7,
-                QRCodeScale = 4
+                QRCodeScale = 4,
             };
             using (var mem = new MemoryStream())
             {
