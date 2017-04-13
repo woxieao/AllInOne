@@ -54,7 +54,7 @@ namespace ScoreBoard.Controllers
 
         public ActionResult GetUserWeChatInfo(string wxInfo)
         {
-            Singleton.UserLogic.WeChatUserLogin(wxInfo);
+            Singleton.UserLogic.WeChatUserLogin(wxInfo,User);
             return new RedirectResult("/Room/Main");
         }
 

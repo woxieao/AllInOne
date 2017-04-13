@@ -60,6 +60,7 @@
                                 };
                                 $scope.$apply();
                                 reloadProcess(processIndex);
+                                console.log($scope.RoomInfo.CurrentTurnTimeLeft);
                             }
                         },
                             1000);
@@ -70,6 +71,7 @@
                 scoreHub.client.updateScore = function (result) {
                     console.log("服务器传回房间数据");
                     $scope.RoomInfo = result.RoomInfo;
+                    $scope.RoomQrCodeUrl = $common.CreateQrCodeUrl("http://" + location.host + "/ScanRoom/" + result.RoomInfo.RoomId + "/" + result.RoomPwdMd5);
                     reloadProcess(++currentProcessIndex);
                     console.log(result);
                     for (var i = 0; i < $scope.RoomInfo.PlayerList.length; i++) {
@@ -87,14 +89,11 @@
                 $scope.ExitRoom = function () {
                     location.href = "/Home/Index";
                 }
-                $scope.RoomQrCodeUrl = $common.CreateQrCodeUrl(location.href);
-
-
+                // $scope.RoomQrCodeUrl = $common.CreateQrCodeUrl(location.href);
             }
         ]);
 
 </script>
-<title>{{RoomInfo.RoomName}}</title>
 <div ng-controller="RoomController" class="container mainblock">
     <div class="room_header">
         <i class="icon-room-header"></i>{{RoomInfo.RoomName}}
@@ -102,15 +101,15 @@
         <button class="btn qr" onclick=" $('#qrModal').modal('show')">显示二维码</button>
     </div>
     @*<div class="col-xs-2">
-        <b style="color: darkorange;"> 本轮剩余时间:{{RoomInfo.CurrentTurnTimeLeft}}s</b>
-    </div>
-    <div class="col-xs-10">
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="{{RoomInfo.CurrentTurnTimeLeft}}"
-                 aria-valuemin="0" aria-valuemax="{{RoomInfo.OneTurnSecond}}" ng-style="NgProcessStyle">
-            </div>
+            <b style="color: darkorange;"> 本轮剩余时间:{{RoomInfo.CurrentTurnTimeLeft}}s</b>
         </div>
-    </div>*@
+        <div class="col-xs-10">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{RoomInfo.CurrentTurnTimeLeft}}"
+                     aria-valuemin="0" aria-valuemax="{{RoomInfo.OneTurnSecond}}" ng-style="NgProcessStyle">
+                </div>
+            </div>
+        </div>*@
 
 
     <div class="room_body clearfix">
@@ -129,18 +128,19 @@
                     <div class="img">
                         <img ng-src="{{player.PicUrl}}" alt="">
                     </div>
-                    <div class="name">{{player.Username}}</div>
+                    <div class="name trim">{{player.Username}}</div>
                 </div>
                 <div class="right" ng-show="RoomInfo.CurrentTurnTimeLeft>0">
-                    本轮计分<span>{{player.CurrentTurnScoreAdded}}</span>
+                    本轮计分<span>
+                        {{player.CurrentTurnScoreAdded >= 0 ? (player.CurrentTurnScoreAdded > 9999 ? "9999+" : player.CurrentTurnScoreAdded) : (player.CurrentTurnScoreAdded < -999 ? "-999+" : player.CurrentTurnScoreAdded)}}
+                    </span>
                 </div>
                 <div class="main">
-                    <div class="tack">
-                        <i class="icon-tack"></i>{{player.Stars}}
-                    </div>
-
                     <div class="score">
-                        <i class="icon-score"></i>{{player.Score}}
+                        <i class="icon-score"></i>{{player.Score >= 0 ? (player.Score > 9999 ? "9999+" : player.Score) : (player.Score < -999 ? "-999+" : player.Score)}}
+                    </div>
+                    <div class="tack">
+                        <i class="icon-tack"></i>{{player.Stars >= 0 ? (player.Stars > 9999 ? "9999+" : player.Stars) : (player.Stars < -999 ? "-999+" : player.Stars)}}
                     </div>
                 </div>
             </div>

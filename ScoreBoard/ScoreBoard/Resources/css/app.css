@@ -194,7 +194,7 @@ body {
 
         .room_body .room_item .tack {
             display: inline-block;
-            width: 165px;
+            width: 170px;
             color: #ffde00;
         }
 
@@ -204,7 +204,7 @@ body {
 
         .room_body .room_item .score {
             margin-left: 10px;
-            width: 150px;
+            width: 170px;
             display: inline-block;
             color: #00fffc;
         }
@@ -234,8 +234,8 @@ body {
         .room_body .room_item .right {
             float: right;
             box-sizing: content-box;
-            padding: 0 1em;
-            width: 4em;
+            width: 100px;
+            padding-right: 5px;
             height: 79px;
             line-height: 40px;
             font-size: 24px;
@@ -294,7 +294,6 @@ body {
             height: 100%;
             border-radius: 100px;
         }
-
 
 
 /*动画*/

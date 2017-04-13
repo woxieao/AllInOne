@@ -17,13 +17,13 @@ namespace ScoreBoard.Controllers.AuthorizeApi
         public AjaxResult OpenNewRoom(RoomInfo roomInfo, string roomPwd)
         {
             roomInfo.RoomPwd = roomPwd;
-            RoomLogic.OpenNewRoom(roomInfo, Singleton.UserLogic.GetCurrentUserInfo());
+            RoomLogic.OpenNewRoom(roomInfo, Singleton.UserLogic.GetCurrentUserInfo(User));
             return new AjaxResult(roomInfo.RoomId);
         }
 
         public AjaxResult PlayerJoinRoom(string roomName, string roomPwd)
         {
-            return new AjaxResult(RoomLogic.PlayerJoinRoom(roomName, roomPwd, UserLogic.GetCurrentUserInfo(), (roomPwdStr, clientPwdStr) => roomPwdStr == clientPwdStr));
+            return new AjaxResult(RoomLogic.PlayerJoinRoom(roomName, roomPwd, UserLogic.GetCurrentUserInfo(User), (roomPwdStr, clientPwdStr) => roomPwdStr == clientPwdStr));
         }
 
         public AjaxResult GetMyOpenId()

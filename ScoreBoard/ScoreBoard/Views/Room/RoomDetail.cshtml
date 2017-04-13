@@ -175,7 +175,7 @@
                 <div class="barTxt">
                     <div class="avatar1">
                         <img alt="" ng-src="{{player.PicUrl}}">
-                        <span class="name">{{player.Username}}</span>
+                        <span class="name trim">{{player.Username}}</span>
                     </div>
                     <div class="scoreBar clearfix">
                         <span class="txt">分</span>
@@ -227,13 +227,13 @@
                                 <div class="am-u-sm-4">
                                     <div class="menu_Fr3">过阈值次数</div>
                                 </div>
-                                <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input1" ng-model="TempPlayer.Stars" /></div>
+                                <div class="am-u-sm-8"><input type="text" maxlength="5" class="am-form-field sh-input1" ng-model="TempPlayer.Stars" /></div>
                             </div>
                             <div class="am-g am-g-collapse am-g-fixed">
                                 <div class="am-u-sm-4">
                                     <div class="menu_Fr2">计分</div>
                                 </div>
-                                <div class="am-u-sm-8"><input type="text" class="am-form-field sh-input1" ng-model="TempPlayer.Score" /></div>
+                                <div class="am-u-sm-8"><input type="text" maxlength="5"class="am-form-field sh-input1" ng-model="TempPlayer.Score" /></div>
                             </div>
                             <div class="am-g am-g-collapse am-g-fixed top-input">
                                 <div class="am-u-sm-12">

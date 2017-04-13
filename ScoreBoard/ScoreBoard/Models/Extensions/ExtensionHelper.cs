@@ -28,6 +28,10 @@ namespace ScoreBoard.Models.Extensions
         {
             return str.GetMd5(salt) == md5Str;
         }
+        public static string GetInnerEx(this Exception ex)
+        {
+            return ex.InnerException != null ? ex.InnerException.GetInnerEx() : ex.Message;
+        }
     }
 
 }

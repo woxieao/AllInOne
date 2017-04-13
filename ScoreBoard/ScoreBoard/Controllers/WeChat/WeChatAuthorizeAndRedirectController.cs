@@ -12,7 +12,7 @@ namespace ScoreBoard.Controllers.WeChat
         [Route("ScanRoom/{roomId}/{md5Pwd}")]
         public ActionResult ScanRoom(Guid roomId, string md5Pwd, string wxInfo)
         {
-            Singleton.UserLogic.WeChatUserLogin(wxInfo);
+            Singleton.UserLogic.WeChatUserLogin(wxInfo, User);
             return Redirect(Request.Url.AbsolutePath.Substring(WeChatLogin.Length + 1));
         }
     }

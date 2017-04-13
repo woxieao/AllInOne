@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AlexXieBrain
 {
@@ -15,9 +17,9 @@ namespace AlexXieBrain
             DefaultSaveFolder = _fileHelper.DefaultSaveFolder;
             DefaultLogFileName = $"{DefaultSaveFolder}/log.txt";
         }
-        public void LogInDesktop<T>(T stuff, bool append = true)
+        public virtual void LogInDesktop<T>(T stuff, bool append = true)
         {
-            _fileHelper.SaveAsJson(stuff, DefaultLogFileName, append);
+            _fileHelper.SaveAsString($"LOG:\r\n[{DateTime.Now}]\r\n[{JsonConvert.SerializeObject(stuff)}]\r\n", DefaultLogFileName, append);
         }
         public void Log<T>(string logFilePath, T stuff)
         {

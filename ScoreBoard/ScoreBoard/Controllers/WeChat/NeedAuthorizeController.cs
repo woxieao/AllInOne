@@ -19,7 +19,7 @@ namespace ScoreBoard.Controllers.WeChat
         public ActionResult ScanRoom(Guid roomId, string md5Pwd)
         {
             var room = RoomLogic.GetRoomById(roomId, false);
-            RoomLogic.PlayerJoinRoom(room.RoomName, md5Pwd, UserLogic.GetCurrentUserInfo(), (roomPwdStr, md5PwdStr) => md5PwdStr.IsMd5Equal(roomPwdStr));
+            RoomLogic.PlayerJoinRoom(room.RoomName, md5Pwd, UserLogic.GetCurrentUserInfo(User), (roomPwdStr, md5PwdStr) => md5PwdStr.IsMd5Equal(roomPwdStr));
             return Redirect($"/Room/RoomDetail?roomId={roomId}");
         }
     }

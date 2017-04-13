@@ -751,6 +751,25 @@ animation-duration: 500ms;
   display: block;
 }
 
+.false {
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+}
+
+    .false .txt {
+        color: #fff;
+        font-size: 24px;
+        padding: 0 20px;
+    }
+
+    .false img {
+        width: 150px;
+        height: 160px;
+    }
+
+
+
 
 
 

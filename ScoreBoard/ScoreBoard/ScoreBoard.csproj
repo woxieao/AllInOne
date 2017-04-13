@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AlexXieBrain">
+      <HintPath>..\..\AlexXieBrain\AlexXieBrain\bin\Debug\AlexXieBrain.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation, Version=6.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.6.4.1\lib\Net45\FluentValidation.dll</HintPath>
     </Reference>
@@ -294,6 +297,8 @@
     <Content Include="img\7.jpg" />
     <Content Include="img\8.jpg" />
     <Content Include="img\9.jpg" />
+    <Content Include="img\bad-luck.gif" />
+    <Content Include="img\false.png" />
     <Content Include="img\houseOwner.png" />
     <Content Include="img\ig.jpg" />
     <Content Include="img\img.jpg" />
@@ -312,6 +317,7 @@
     <Content Include="img\tik.png" />
     <Content Include="img\tik1.png" />
     <Content Include="Resources\boom.mp3" />
+    <Content Include="Resources\img\anonymous.jpg" />
     <Content Include="Resources\img\bg.png" />
     <Content Include="Resources\img\fen.png" />
     <Content Include="Resources\img\m.jpg" />

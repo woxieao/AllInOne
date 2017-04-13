@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Web.Mvc;
+using System.Web.Razor.Generator;
+using System.Web.UI.WebControls;
+using AlexXieBrain;
 using ScoreBoard.Models;
 using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Results;
 using ThoughtWorks.QRCode.Codec;
+using Image = System.Drawing.Image;
 
 namespace ScoreBoard.Controllers.Api
 {
@@ -80,6 +86,23 @@ namespace ScoreBoard.Controllers.Api
                 Response.BinaryWrite(byData);
                 mem.Close();
             }
+        }
+
+        [Route("api/XA")]
+        public void CreateXa(int w = 3600, string f = "black", string b = "white", bool r = false)
+        {
+            Response.ContentType = "image/png";
+            Response.BinaryWrite(new DrawXa().GetXaPicBytes(w, Color.FromName(f), Color.FromName(b), r));
+        }
+      
+        [Route("api/XA2")]
+        public void CreateXa2(string p, string f = "black", bool r = false)
+        {
+            var httpClient = new HttpClient { BaseAddress = new Uri(p) };
+            var stream = httpClient.GetAsync(new Uri(p)).Result.Content.ReadAsStreamAsync().Result;
+            var img = Image.FromStream(stream);
+            Response.ContentType = "image/png";
+            Response.BinaryWrite(new DrawXa().GetXaPicBytes(Color.FromName(f), img, r));
         }
     }
 }

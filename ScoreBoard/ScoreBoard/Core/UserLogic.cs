@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Web;
+using System.Security.Principal;
 using System.Web.Security;
 using Newtonsoft.Json;
 using ScoreBoard.FluentValidations;
@@ -52,9 +52,9 @@ namespace ScoreBoard.Core
                 return userInfo as UserInfo;
             }
         }
-        public void WeChatUserLogin(string wxInfo)
+        public void WeChatUserLogin(string wxInfo, IPrincipal user)
         {
-            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            if (!user.Identity.IsAuthenticated)
             {
                 var userInfo = JsonConvert.DeserializeObject<WeChatInfo>(wxInfo);
                 if (userInfo == null)
@@ -69,7 +69,7 @@ namespace ScoreBoard.Core
                 {
                     OpenId = userInfo.openid,
                     Username = string.IsNullOrEmpty(userInfo.nickname) ? "--" : userInfo.nickname,
-                    PicUrl = string.IsNullOrEmpty(userInfo.headimgurl) ? "http://img4.imgtn.bdimg.com/it/u=3443117432,1239143495&fm=214&gp=0.jpg" : userInfo.headimgurl,
+                    PicUrl = string.IsNullOrEmpty(userInfo.headimgurl) ? "/Resources/img/anonymous.jpg" : userInfo.headimgurl,
                 });
             }
         }
@@ -80,9 +80,9 @@ namespace ScoreBoard.Core
             _userList.Remove(userInfo.OpenId);
             _userList.Add(userInfo.OpenId, userInfo, _cacheItemPolicy);
         }
-        public void CurrentPlayerJoinRoom(Guid roomId, string connectId)
+        public void CurrentPlayerJoinRoom(Guid roomId, string connectId, IPrincipal user)
         {
-            var userInfo = GetCurrentUserInfo();
+            var userInfo = GetCurrentUserInfo(user);
             var inRoomInfo = userInfo.UserInRoomInfoList.SingleOrDefault(i => i.RoomId == roomId);
             if (inRoomInfo == null)
             {
@@ -96,20 +96,19 @@ namespace ScoreBoard.Core
             {
                 inRoomInfo.ConnectionIdList.Add(connectId);
             }
-
         }
-        public UserInfo GetCurrentUserInfo(bool throwEx = true)
+        public UserInfo GetCurrentUserInfo(IPrincipal user, bool throwEx = true)
         {
             try
             {
-                if (!HttpContext.Current.User.Identity.IsAuthenticated)
+                if (!user.Identity.IsAuthenticated)
                 {
                     FormsAuthentication.SignOut();
                     throw new UnAuthorizeException("用户未登录");
                 }
                 else
                 {
-                    var userInfo = _userList[HttpContext.Current.User.Identity.Name];
+                    var userInfo = _userList[user.Identity.Name];
                     if (userInfo == null)
                     {
                         FormsAuthentication.SignOut();
@@ -132,7 +131,6 @@ namespace ScoreBoard.Core
                     return null;
                 }
             }
-
         }
     }
 }

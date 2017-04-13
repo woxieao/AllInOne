@@ -31,6 +31,7 @@ namespace AlexXieBrain
         }
         public void SaveAsJson<T>(T stuff, string savePath, bool append = true)
         {
+            CreateIfNotExist(savePath);
             using (var sw = new StreamWriter(savePath, append))
             {
                 sw.Write(stuff.SerializeToJsonStr());

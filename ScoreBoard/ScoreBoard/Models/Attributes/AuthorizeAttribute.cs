@@ -10,7 +10,7 @@ namespace ScoreBoard.Models.Attributes
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (Singleton.UserLogic.GetCurrentUserInfo(false) == null)
+            if (Singleton.UserLogic.GetCurrentUserInfo(httpContext.User, false) == null)
             {
                 return false;
             }
@@ -33,7 +33,7 @@ namespace ScoreBoard.Models.Attributes
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (Singleton.UserLogic.GetCurrentUserInfo(false) == null)
+            if (Singleton.UserLogic.GetCurrentUserInfo(httpContext.User, false) == null)
             {
                 return false;
             }
@@ -52,7 +52,7 @@ namespace ScoreBoard.Models.Attributes
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (Singleton.UserLogic.GetCurrentUserInfo(false) == null)
+            if (Singleton.UserLogic.GetCurrentUserInfo(httpContext.User, false) == null)
             {
                 return false;
             }

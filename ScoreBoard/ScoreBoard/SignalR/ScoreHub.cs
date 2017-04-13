@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Web;
+using System.Security.Principal;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using ScoreBoard.Core;
@@ -24,7 +23,7 @@ namespace ScoreBoard.SignalR
             }
             else
             {
-                invokerContext.Hub.Clients.Caller.ExceptionHandler(exceptionContext.Error.StackTrace);
+                invokerContext.Hub.Clients.Caller.ExceptionHandler(exceptionContext.Error.GetInnerEx());
             }
         }
     }
@@ -32,12 +31,9 @@ namespace ScoreBoard.SignalR
     [HubName("ScoreBoard")]
     public class ScoreHub : Hub
     {
-
-
         #region Private
         private static readonly RoomLogic RoomLogic = Singleton.RoomLogic;
         private static readonly UserLogic UserLogic = Singleton.UserLogic;
-
         private void RunCall(Action act, string msg = "", Action finallyAct = null)
         {
             try
@@ -54,55 +50,66 @@ namespace ScoreBoard.SignalR
         {
             Clients.Group(roomId.ToString(), expectConnectionIdList.ToArray()).Close("所有人员均已退出,房间已关闭");
         }
-        public void Ping()
+
+        private IPrincipal GetCurrentUser()
         {
-            RunCall(() => { });
+            return Context.User;
         }
         #endregion
 
         #region Common
+        public void Ping()
+        {
+            RunCall(() => { });
+        }
         public void JoinRoom(Guid roomId, bool isWeChat)
         {
             if (isWeChat)
             {
-                UserLogic.CurrentPlayerJoinRoom(roomId, Context.ConnectionId);
+                UserLogic.CurrentPlayerJoinRoom(roomId, Context.ConnectionId, GetCurrentUser());
             }
             Groups.Add(Context.ConnectionId, roomId.ToString());
         }
         public void AddMyScore(Guid roomId, int addCount)
         {
             RunCall(() =>
-            {
-                RoomLogic.PlayerAddScore(roomId, HttpContext.Current.User.Identity.Name, addCount, UpdateScore);
-            });
+           {
+               RoomLogic.PlayerAddScore(roomId, GetCurrentUser().Identity.Name, addCount, UpdateScore);
+               Clients.Caller.AddMyScoreSuccess();
+           });
         }
         public void UpdateScore(Guid roomId)
         {
             var room = RoomLogic.GetRoomById(roomId, false);
-            var connectionIdList = new List<string>();
-            var connection = UserLogic.GetUserInfo(room.RoomOwnerOpenId).UserInRoomInfoList.SingleOrDefault(i => i.RoomId == roomId);
-            if (connection != null)
+            Clients.Group(roomId.ToString()).UpdateScore(new
             {
-                connectionIdList = connection.ConnectionIdList;
-                Clients.Clients(connectionIdList).UpdateScore(new
-                {
-                    RoomInfo = room,
-                    RoomPwd = room.RoomPwd,
-                    RoomPwdMd5 = room.RoomPwd.GetMd5()
-                });
-            }
-            Clients.Group(roomId.ToString(), connectionIdList.ToArray()).UpdateScore(new
-            {
-                RoomInfo = room
+                RoomInfo = room,
+                RoomPwd = room.RoomPwd,
+                RoomPwdMd5 = room.RoomPwd.GetMd5()
             });
-
+            //var connectionIdList = new List<string>();
+            //var connection = UserLogic.GetUserInfo(room.RoomOwnerOpenId).UserInRoomInfoList.SingleOrDefault(i => i.RoomId == roomId);
+            //if (connection != null)
+            //{
+            //    connectionIdList = connection.ConnectionIdList;
+            //    Clients.Clients(connectionIdList).UpdateScore(new
+            //    {
+            //        RoomInfo = room,
+            //        RoomPwd = room.RoomPwd,
+            //        RoomPwdMd5 = room.RoomPwd.GetMd5()
+            //    });
+            //}
+            //Clients.Group(roomId.ToString(), connectionIdList.ToArray()).UpdateScore(new
+            //{
+            //    RoomInfo = room
+            //});
         }
         public void ExitRoom(Guid roomId)
         {
             var currentRoomConnectionIdList = new List<string>();
             RunCall(() =>
             {
-                var openId = HttpContext.Current.User.Identity.Name;
+                var openId = GetCurrentUser().Identity.Name;
                 currentRoomConnectionIdList = UserLogic.GetUserConnectionIdList(roomId, openId).ToList();
                 foreach (var currentRoomConnectionId in currentRoomConnectionIdList)
                 {
@@ -128,7 +135,7 @@ namespace ScoreBoard.SignalR
         {
             RunCall(() =>
             {
-                RoomLogic.OwnerAddScore(roomId, HttpContext.Current.User.Identity.Name, playerOpenId, addCount, UpdateScore);
+                RoomLogic.OwnerAddScore(roomId, GetCurrentUser().Identity.Name, playerOpenId, addCount, UpdateScore);
                 Clients.Caller.ModifyPlayerInfoSuccess();
             });
         }
@@ -137,22 +144,22 @@ namespace ScoreBoard.SignalR
             RunCall(() =>
             {
                 roomInfo.RoomPwd = roomPwd;
-                RoomLogic.ModifyRoom(roomInfo, () => { UpdateScore(roomInfo.RoomId); });
+                RoomLogic.ModifyRoom(roomInfo, () => { UpdateScore(roomInfo.RoomId); }, GetCurrentUser());
                 Clients.Caller.ModifyRoomSuccess();
             });
         }
         public void ModifyPlayerInfo(Guid roomId, string playerOpenId, int score, int star)
         {
             RunCall(() =>
-            {
-                RoomLogic.OwnerModiftPlayerScore(roomId, HttpContext.Current.User.Identity.Name, playerOpenId, score, star, UpdateScore);
-                Clients.Caller.ModifyPlayerInfoSuccess();
-            });
+           {
+               RoomLogic.OwnerModiftPlayerScore(roomId, GetCurrentUser().Identity.Name, playerOpenId, score, star, UpdateScore);
+               Clients.Caller.ModifyPlayerInfoSuccess();
+           });
         }
         public void KickUserOut(Guid roomId, string userOpenId)
         {
             var currentRoomConnectionIdList = UserLogic.GetUserConnectionIdList(roomId, userOpenId);
-            var isRoomExist = RoomLogic.KickUserOut(roomId, userOpenId);
+            var isRoomExist = RoomLogic.KickUserOut(roomId, userOpenId, GetCurrentUser());
             foreach (var userConnectId in currentRoomConnectionIdList)
             {
                 Groups.Remove(userConnectId, roomId.ToString());
@@ -170,7 +177,7 @@ namespace ScoreBoard.SignalR
         }
         public void CleanUpScore(Guid roomId)
         {
-            RoomLogic.CleanUpScore(UpdateScore, roomId);
+            RoomLogic.CleanUpScore(UpdateScore, roomId, GetCurrentUser());
             Clients.Caller.ModifyRoomSuccess();
         }
 

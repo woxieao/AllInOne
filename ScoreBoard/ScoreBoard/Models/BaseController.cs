@@ -2,16 +2,13 @@
 using System.Web;
 using System.Web.Mvc;
 using ScoreBoard.Models.Exceptions;
+using ScoreBoard.Models.Extensions;
 using ScoreBoard.Models.Results;
 
 namespace ScoreBoard.Models
 {
     public class BaseController : Controller
     {
-        private static string GetInnerEx(Exception ex)
-        {
-            return ex.InnerException != null ? GetInnerEx(ex.InnerException) : ex.Message;
-        }
         protected override void OnException(ExceptionContext filterContext)
         {
             var ex = filterContext.Exception;
@@ -22,7 +19,7 @@ namespace ScoreBoard.Models
             }
             else
             {
-                errorMsg = (ex is AjaxException || ex is UnAuthorizeException) ? GetInnerEx(ex) : AjaxException.DefaultMsg;
+                errorMsg = (ex is AjaxException || ex is UnAuthorizeException) ? ex.GetInnerEx() : AjaxException.DefaultMsg;
             }
             filterContext.HttpContext.Response.Clear();
             filterContext.Result = new RedirectResult($"/Home/Error?msg={HttpUtility.UrlEncode(errorMsg)}");

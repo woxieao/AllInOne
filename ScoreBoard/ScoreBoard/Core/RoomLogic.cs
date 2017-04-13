@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Security.Principal;
 using ScoreBoard.FluentValidations;
 using ScoreBoard.Models.Bll;
 using ScoreBoard.Models.Exceptions;
@@ -20,12 +21,12 @@ namespace ScoreBoard.Core
             _roomList = roomList;
         }
 
-        public void ModifyRoom(RoomInfo roomInfo, Action callBackAction)
+        public void ModifyRoom(RoomInfo roomInfo, Action callBackAction, IPrincipal user)
         {
             try
             {
                 var serviceRoom = GetRoomById(roomInfo.RoomId, false);
-                if (HttpContext.Current.User.Identity.Name != serviceRoom.RoomOwnerOpenId)
+                if (user.Identity.Name != serviceRoom.RoomOwnerOpenId)
                 {
                     throw new AjaxException("只有房主可以编辑房间信息");
                 }
@@ -141,10 +142,10 @@ namespace ScoreBoard.Core
                 return true;
             }
         }
-        public bool KickUserOut(Guid roomId, string openId)
+        public bool KickUserOut(Guid roomId, string openId, IPrincipal user)
         {
             var roomInfo = GetRoomById(roomId, false);
-            if (HttpContext.Current.User.Identity.Name != roomInfo.RoomOwnerOpenId)
+            if (user.Identity.Name != roomInfo.RoomOwnerOpenId)
             {
                 throw new AjaxException("只有房主可以踢人");
             }
@@ -284,10 +285,10 @@ namespace ScoreBoard.Core
             return GetRoomById(roomId, false).PlayerList.Single(i => i.OpenId == playerOpenId);
         }
 
-        public void CleanUpScore(Action<Guid> updateScore, Guid roomId)
+        public void CleanUpScore(Action<Guid> updateScore, Guid roomId, IPrincipal user)
         {
             var roomInfo = GetRoomById(roomId, false);
-            if (HttpContext.Current.User.Identity.Name != roomInfo.RoomOwnerOpenId)
+            if (user.Identity.Name != roomInfo.RoomOwnerOpenId)
             {
                 throw new AjaxException("只有房主可以将所有成员分数归零");
             }

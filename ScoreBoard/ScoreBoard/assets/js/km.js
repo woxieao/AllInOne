@@ -179,7 +179,7 @@ function km_cl(idx){
                 
             }
         }catch(e){
-            console.log('km_cl error ('+this.idx+') >>> '+e.message+', func: '+_n);
+            //console.log('km_cl error ('+this.idx+') >>> '+e.message+', func: '+_n);
             if(typeof this.errorhandle=='function'){
                 this.errorhandle(e.message);
             }

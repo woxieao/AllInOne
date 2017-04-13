@@ -1,6 +1,40 @@
 ﻿@{
     ViewBag.Msg = Request.QueryString["msg"];
 }
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">@ViewBag.Msg</h2>
-<a href="@ViewBag.CallBackUrl">@ViewBag.HrefContent</a>
+<title>提示页</title>
+<style type="text/css">
+    body {
+        background-color: #66b238;
+    }
+</style>
+<script type="text/javascript">
+    function Go() {
+        if (history.length === 1) {
+            window.close();
+        }
+        else
+        {
+            history.go(-1);
+        }
+    }
+</script>
+<div class="sh-bar">
+    <div class="am-g am-g-collapse am-g-fixed">
+        <div class="am-u-sm-1 sh-back">
+            <a href="javascript:Go()"><span class="am-icon-chevron-left" style="color:#8d8d8d;"></span></a>
+        </div>
+        <div class="am-u-sm-10 am-text-center sh-pagetitle">提示</div>
+
+        <div class="am-u-sm-1 am-text-center sh-pagetitle"></div>
+    </div>
+</div>
+<div class="sh-logo">
+    <div class="am-g am-g-collapse am-g-fixed" style="padding-bottom:1rem">
+        <div class="false">
+            <img src="/img/false.png">
+            @*<img src="/img/bad-luck.gif">*@
+            <a href="@ViewBag.CallBackUrl">@ViewBag.HrefContent</a>
+            <div class="txt">@ViewBag.Msg</div>
+        </div>
+    </div>
+</div>

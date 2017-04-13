@@ -21,7 +21,9 @@
                 scoreHub.server.addMyScore(roomId, scoreToAdd);
             }
         }
-
+        scoreHub.client.addMyScoreSuccess = function () {
+            $scope.CleanScoreStr();
+        }
 
         $scope.ExitRoom = function () {
             scoreHub.ExitRoom(roomId);
@@ -129,7 +131,7 @@
                     </div>
                 </div>
                 <div class="am-u-sm-12 am-text-center">
-                    <div class="title">{{PlayerInfo.Username}}</div>
+                    <div class="title trim">{{PlayerInfo.Username}}</div>
                 </div>
                 <div class="am-u-sm-12 am-text-center">
                     <div class="tackBar clearfix">
@@ -149,7 +151,7 @@
             <div class="inputBar">
                 <div class="am-form">
                     <div class="am-form-group">
-                        <input type="text" maxlength="4" id="doc-ipt-success" ng-model="ScoreToAddStr" class="am-form-field">
+                        <input type="text" maxlength="4" id="doc-ipt-success" readonly="readonly" ng-model="ScoreToAddStr" class="am-form-field">
                     </div>
                 </div>
                 <div ng-click="AddScoreStr(1)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/1.jpg"></div>
@@ -163,7 +165,7 @@
                 <div ng-click="AddScoreStr(9)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/9.jpg"></div>
                 <div ng-click="AddScoreStr(0)" class="am-u-sm-4 am-g-collapse am-text-center txtLine"><img src="/img/0.jpg"></div>
                 <div class="am-u-sm-4 am-g-collapse am-text-center btnC" ng-click="CleanScoreStr()">清除</div>
-                <fieldset  ng-style="IsOnSubmit?GrayStyle:EmptyStyle"class="am-u-sm-4 am-g-collapse am-text-center btnA" ng-disabled="IsOnSubmit"  ng-click="AddScore(ScoreToAddStr)">确认</fieldset>
+                <fieldset ng-style="IsOnSubmit?GrayStyle:EmptyStyle" class="am-u-sm-4 am-g-collapse am-text-center btnA" ng-disabled="IsOnSubmit" ng-click="AddScore(ScoreToAddStr)">确认</fieldset>
             </div>
         </div>
     </div>

@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +51,7 @@
     <Compile Include="CacheCore.cs" />
     <Compile Include="LogCore.cs" />
     <Compile Include="JsonCore.cs" />
+    <Compile Include="FunnyStuff.cs" />
     <Compile Include="TestCore.cs" />
     <Compile Include="SpiderCore.cs" />
     <Compile Include="FileCore.cs" />

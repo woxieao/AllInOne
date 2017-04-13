@@ -23,7 +23,7 @@
     });
     scoreHub.client.exceptionHandler = function (error) {
         //        alert(error);
-        //console.log(error);
+        console.log(error);
         //        location.reload();
     };
     scoreHub.client.msg = function (msg) {
