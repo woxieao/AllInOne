@@ -59,13 +59,10 @@ namespace AlexXieBrain
             }
         }
 
-
         public void SaveFile(byte[] buffer, string fileFullPath)
         {
-            using (var stream = new MemoryStream(buffer))
-            {
-                File.WriteAllBytes(fileFullPath, stream.GetBuffer());
-            }
+            CreateIfNotExist(fileFullPath);
+            File.WriteAllBytes(fileFullPath, buffer);
         }
     }
 }

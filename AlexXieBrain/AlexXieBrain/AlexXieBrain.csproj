@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,9 +53,12 @@
     <Compile Include="LogCore.cs" />
     <Compile Include="JsonCore.cs" />
     <Compile Include="FunnyStuff.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="ExtensionCore.cs" />
     <Compile Include="TestCore.cs" />
     <Compile Include="SpiderCore.cs" />
     <Compile Include="FileCore.cs" />
+    <Compile Include="TaskCore.cs" />
     <Compile Include="ThreadCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

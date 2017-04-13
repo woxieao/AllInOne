@@ -4,7 +4,8 @@ using System.IO;
 
 namespace AlexXieBrain
 {
-    public class DrawXa
+    public class DrawCore
+
     {
         private static double GetK(Point pointA, Point pointB)
         {
@@ -123,6 +124,19 @@ namespace AlexXieBrain
                 mem.Read(byData, 0, byData.Length);
                 return mem.GetBuffer();
             }
+        }
+
+        public void Draw(string picUrl, bool inverseColor = true)
+        {
+            //if (fontColor.ToArgb() == default(Color).ToArgb())
+            //{
+            //    fontColor = Color.White;
+            //}
+            TaskCore.AsyncRun(() => Core.Spider.Get(picUrl), result =>
+            {
+                var img = new Bitmap(new MemoryStream(result));
+                Core.File.SaveFile(GetXaPicBytes(Color.White, img, inverseColor), $"{ExtensionCore.GetTimeStamp()}.xa.png");
+            });
         }
     }
 }

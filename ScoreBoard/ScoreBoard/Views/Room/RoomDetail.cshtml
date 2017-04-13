@@ -163,10 +163,13 @@
             <div class="am-u-sm-3 sh-back">
                 <fieldset ng-click="ExitRoom()"><span class="am-icon-chevron-left" style="color:#8d8d8d;"></span></fieldset>
             </div>
-            <div class="am-u-sm-6 am-text-center sh-pagetitle">&nbsp;{{RoomInfo.RoomName}}</div>
-            <div class="am-u-sm-1  sh-back"> <img ng-click="ShowQrCode()" class="imgI" src="/img/mg.jpg"></div>
-            <div class="am-u-sm-1  sh-back"> <img ng-click="SwitchStatus()" class="imgI" src="/img/ig.jpg"></div>
-            <div class="am-u-sm-1  sh-back"> <img src="/img/sg.jpg" class="imgI" ng-click="ShowModifyModal()" /></div>
+            <div class="am-u-sm-5 am-text-center sh-pagetitle">&nbsp;{{RoomInfo.RoomName}}</div>
+            <div class="am-u-sm-4  sh-back">
+                <div class="fr"></div>
+                <img ng-click="ShowQrCode()" class="imgI" src="/img/mg.jpg">
+                <img ng-click="SwitchStatus()" class="imgI" src="/img/ig.jpg">
+                <img src="/img/sg.jpg" class="imgI" ng-click="ShowModifyModal()" />
+            </div>
         </div>
     </div>
     <div class="sh-logo" ng-repeat="player in RoomInfo.PlayerList">
