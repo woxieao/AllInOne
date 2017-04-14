@@ -1,0 +1,135 @@
+﻿
+<script>
+    var app = angular.module('app', []);
+    app.controller('GambleController', function ($scope, $location, $anchorScroll) {
+        $scope.winRateList = [];
+        function init() {
+            for (var i = 1; i < 100; i++) {
+                $scope.winRateList.push(i);
+            }
+            $scope.winRate = 50;
+            $scope.gameType = true;
+            $scope.firstTimeWager = 100;
+            $scope.fuckingName = 10000;
+        }
+        init();
+        function isWin(winRate) {
+            return winRate >= Math.floor(Math.random() * 100);
+        }
+
+        function gamble(winRate, firstTimeWager) {
+            var currentWager = firstTimeWager * 1;
+            var palyTimes = 1;
+            while (!isWin(winRate)) {
+                currentWager += currentWager;
+                palyTimes++;
+            }
+            return { PlayTimes: palyTimes, TotalWager: currentWager, WinAmount: firstTimeWager }
+        }
+        $scope.MsgList = [];
+        function showMsg(msg) {
+            $scope.MsgList.push({ MsgId: $scope.MsgList.length, Msg: msg });
+        }
+
+        function showError(msg) {
+            alert(msg);
+        }
+
+
+        function endlessMode(winRate, firstTimeWager, corpus) {
+            var lastResult;
+            var winAmount = 0;
+            var playTimes = 10000;
+            if (firstTimeWager > corpus) {
+                showError("下注不可大于本金");
+                return;
+            }
+            for (var i = 1; i <= playTimes; i++) {
+                lastResult = gamble(winRate, firstTimeWager);
+                if (lastResult.TotalWager > corpus) {
+                    showMsg("你在第【" + i + "】次作死的时候破产");
+                    showMsg("最后一次玩火获胜所需局数:【" + lastResult.PlayTimes + "】");
+                    showMsg("所需本金【" + lastResult.TotalWager + "】");
+                    showMsg("破产之前总共赚到了:【" + winAmount + "】");
+                    return;
+                }
+                else {
+                    corpus += lastResult.WinAmount * 1;
+                    winAmount += lastResult.WinAmount * 1;
+                    showMsg("Round:【" + i + "】剩余本金:【" + corpus + "】赚回本钱所用局数:【" + lastResult.PlayTimes + "】");
+                }
+            }
+            showMsg("你长得非常好看," + playTimes + "次赌局还未破产");
+            showMsg("盈利:【" + winAmount + "】(可以调低胜率/增高赌注/减少本金再试试)");
+        }
+        function timesMode(winRate, firstTimeWager, runTimes) {
+            var result = { MaxPlayTimes: 0, MaxWager: 0, GameResultList: [] };
+            for (var i = 0; i < runTimes; i++) {
+                var gameResult = gamble(winRate, firstTimeWager);
+                result.MaxPlayTimes = gameResult.PlayTimes >= result.MaxPlayTimes ? gameResult.PlayTimes : result.MaxPlayTimes;
+                result.MaxWager = gameResult.TotalWager >= result.MaxWager ? gameResult.TotalWager : result.MaxWager;
+                showMsg(JSON.stringify(gameResult));
+            }
+            showMsg("最高获胜所需局数:【" + result.MaxPlayTimes + "】获胜所需最高本金:【" + result.MaxWager + "】")
+            return result;
+        }
+
+        $scope.Fly = function () {
+            if (isNaN($scope.firstTimeWager) || $scope.firstTimeWager <= 0) {
+                alert("EXO Me???假币报警");
+                return;
+            }
+            if ($scope.fuckingName % 1 !== 0 || $scope.fuckingName <= 0) {
+                alert(($scope.gameType ? "本金" : "开车次数") + "需为正整数!");
+                return;
+            }
+            $scope.MsgList = [];
+            var act = $scope.gameType ? endlessMode : timesMode;
+            act($scope.winRate, $scope.firstTimeWager, $scope.fuckingName);
+            $scope.WhereWeGo("bottom");
+        }
+        $scope.WhereWeGo = function (elementId) {
+            $location.hash(elementId);
+            $anchorScroll();
+        }
+    });
+    console.log("对啊我就是不会调样式");
+</script>
+<div ng-controller="GambleController">
+    <table>
+        <tr id="top"></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td>胜率</td>
+            <td><select ng-model="winRate" ng-options="i for i in winRateList"></select>%</td>
+        </tr>
+        <tr>
+            <td>下注金额</td>
+            <td><input class="form-control" ng-model="firstTimeWager" /></td>
+        </tr>
+        <tr>
+            <td style="color: red">
+                堵到破产模式<input type="radio" name="gameType" ng-model="gameType" ng-value="true" />
+            </td>
+            <td style="color: blue">
+                指定次数模式<input type="radio" name="gameType" ng-model="gameType" ng-value="false" />
+            </td>
+        </tr>
+        <tr>
+            <td>{{gameType?"本金":"开车次数"}}</td>
+            <td><input class="form-control" ng-model="fuckingName" /></td>
+        </tr>
+        <tr>
+            <td><strong ng-click="WhereWeGo('bottom')"><code>↓↓↓↓Go To Bottom↓↓↓↓</code></strong></td>
+            <td><button class="btn btn-success" ng-click="Fly()">起飞</button></td>
+        </tr>
+        <tr ng-repeat="msg in MsgList">
+            <td>{{msg.Msg}}</td>
+        </tr>
+        <tr id="bottom">
+            <td><strong ng-click="WhereWeGo('top')"> <code>↑↑↑↑Back To Top↑↑↑↑</code></strong></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
