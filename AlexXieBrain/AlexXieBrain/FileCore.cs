@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace AlexXieBrain
 {
@@ -15,26 +16,18 @@ namespace AlexXieBrain
 
         public void SaveAsString(string stuff, string savePath, bool append = true)
         {
-            var directoryInfo = new FileInfo(savePath).Directory;
-            if (directoryInfo != null)
-            {
-                var dir = directoryInfo.FullName;
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-            }
-            using (var sw = new StreamWriter(savePath, append))
+            CreateIfNotExist(savePath);
+            using (var sw = new StreamWriter(savePath, append, Encoding.UTF8))
             {
                 sw.Write(stuff);
             }
         }
-        public void SaveAsJson<T>(T stuff, string savePath, bool append = true)
+        public void SaveAsJson<T>(string savePath, T stuff, bool append = true)
         {
             CreateIfNotExist(savePath);
-            using (var sw = new StreamWriter(savePath, append))
+            using (var sw = new StreamWriter(savePath, append, Encoding.UTF8))
             {
-                sw.Write(stuff.SerializeToJsonStr());
+                sw.Write(stuff.SerializeToJsonStr() + "\r\n");
             }
         }
 
@@ -45,17 +38,22 @@ namespace AlexXieBrain
 
         public string ReadAsString(string savePath)
         {
-            using (var sr = new StreamReader(savePath))
+            using (var sr = new StreamReader(savePath, Encoding.UTF8))
             {
                 return sr.ReadToEnd();
             }
         }
 
-        public void CreateIfNotExist(string filePath, string defaultValue = "")
+        public void CreateIfNotExist(string filePath)
         {
-            if (!File.Exists(filePath))
+            var directoryInfo = new FileInfo(filePath).Directory;
+            if (directoryInfo != null)
             {
-                SaveAsString(defaultValue, filePath, false);
+                var dir = directoryInfo.FullName;
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
             }
         }
 

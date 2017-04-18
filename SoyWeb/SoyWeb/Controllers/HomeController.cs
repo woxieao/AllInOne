@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.Mvc;
 using AlexXieBrain;
-using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
 using NPOI.XWPF.Extractor;
 using NPOI.XWPF.UserModel;
-using Action = System.Action;
-using Point = System.Drawing.Point;
 
 namespace SoyWeb.Controllers
 {
@@ -35,59 +34,99 @@ namespace SoyWeb.Controllers
             dynamic a;
 
         }
+        public void WriteExcelWorkbook(List<DataTable> dataTables, List<string> worksheetNames, string workbookName = "file", bool includeHeaders = true)
+        {
+            NPOI.HSSF.UserModel.HSSFWorkbook wb = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            //create bold font for headers
+            var font = wb.CreateFont();
+            font.Boldweight = (short)NPOI.SS.UserModel.FontBoldWeight.Bold;
 
-        [Serializable]
-        public class MyClass
-        {
-            private int _a = DateTime.Now.Millisecond;
-            public int A { get; set; }
-            public MyClass2 ClassA { get; set; }
+            List<string> usedNames = new List<string>();
+            for (var xTable = 0; xTable < dataTables.Count; xTable++)
+            {
+                var nameMatches = usedNames.Count(a => a == worksheetNames[xTable]);
+
+                string rawWorksheetName = worksheetNames[xTable];
+
+                string worksheetName = rawWorksheetName;
+
+                if (worksheetName.Length > 26)
+                {
+                    worksheetName = worksheetName.Substring(0, 25);
+                }
+
+                if (nameMatches > 0)
+                {
+                    worksheetName = worksheetName + "(" + (nameMatches + 1) + ")";
+                }
+
+                var sheet = (NPOI.HSSF.UserModel.HSSFSheet)wb.CreateSheet(worksheetName);
+                //sheet.DefaultColumnWidth = 30;
+                usedNames.Add(rawWorksheetName);
+                if (includeHeaders)
+                {
+                    var xRow = sheet.CreateRow(0);
+                    for (var iCol = 0; iCol < dataTables[xTable].Columns.Count; iCol++)
+                    {
+                        var cell = xRow.CreateCell(iCol);
+                        cell.SetCellValue((string)dataTables[xTable].Columns[iCol].ColumnName.ToString());
+                        cell.CellStyle = wb.CreateCellStyle();
+                        cell.CellStyle.SetFont(font);
+
+                    }
+                }
+
+                for (var iRow = 0; iRow < dataTables[xTable].Rows.Count; iRow++)
+                {
+                    var currRow = iRow;
+                    if (includeHeaders == true)
+                    {
+                        currRow = currRow + 1;
+                    }
+                    var xRow = sheet.CreateRow(currRow);
+                    for (var iCol = 0; iCol < dataTables[xTable].Columns.Count; iCol++)
+                    {
+                        var cell = xRow.CreateCell(iCol);
+                        cell.SetCellValue((string)dataTables[xTable].Rows[iRow][iCol].ToString());
+                    }
+                }
+
+                for (var iCol = 0; iCol < dataTables[xTable].Columns.Count; iCol++)
+                {
+                    sheet.AutoSizeColumn(iCol);
+                    sheet.SetColumnWidth(iCol, sheet.GetColumnWidth(iCol) + 2);
+                }
+            }
+
+            var response = Response;
+
+            response.ContentType = "application/octet-stream";
+
+            response.AppendHeader("Content-Disposition", "attachment; filename=" + workbookName + ".xls");
+
+            System.IO.MemoryStream fs = new System.IO.MemoryStream();
+
+            wb.Write(Response.OutputStream);
+
         }
 
-        [Serializable]
-        public class MyClass2
-        {
-            public int A { get; set; }
-        }
-        public class DyClass : DynamicObject
-        {
-        }
-        public dynamic Test2(dynamic t)
-        {
-
-            return t;
-        }
         public ActionResult Index()
         {
 
-            var a = new MyClass
-            {
-                A = 1,
-                ClassA = new MyClass2
-                {
-                    A = 2
-                }
 
-            };
-            //var ccccc = a.SimpleClone();
-            //var ccccc2 = a.DeepClone();
-            int aaasasas = 1 | 2;
-            var x = (aaasasas == 222 == true);
-
-            var b = a.ToDynamic(new { a = 1, c = 3 }, new { a = 2, ccc = 3 });
-            a.A = 11;
-            a.ClassA.A = 22;
-
-            Test2(new ExpandoObject());
-
-            return View();
-            ViewBag.aa = 2;
             var file = new StreamReader(@"C:\Data\Qfile\计分牌修改.docx");
             var doc = new XWPFDocument(file.BaseStream);
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+            var extractor = new XWPFWordExtractor(doc);
+            var xxxx = extractor.Document.GetAllEmbedds();
+            foreach (var x in xxxx)
+            {
+            
+            }
+         
+            return null;
 
             String text = extractor.Text;
-            Response.Write(text);
+
             return View();
         }
 

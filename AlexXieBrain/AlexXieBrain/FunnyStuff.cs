@@ -126,17 +126,17 @@ namespace AlexXieBrain
             }
         }
 
-        public void Draw(string picUrl, bool inverseColor = true)
+        public async void Draw(string picUrl, bool inverseColor = true)
         {
             //if (fontColor.ToArgb() == default(Color).ToArgb())
             //{
             //    fontColor = Color.White;
             //}
-            TaskCore.AsyncRun(() => Core.Spider.Get(picUrl), result =>
-            {
-                var img = new Bitmap(new MemoryStream(result));
-                Core.File.SaveFile(GetXaPicBytes(Color.White, img, inverseColor), $"{ExtensionCore.GetTimeStamp()}.xa.png");
-            });
+            await TaskCore.AsyncRun(() => Core.Spider.Get(picUrl), result =>
+             {
+                 var img = new Bitmap(new MemoryStream(result));
+                 Core.File.SaveFile(GetXaPicBytes(Color.White, img, inverseColor), $"XA_Icon/{ExtensionCore.GetTimeStamp()}.xa.png");
+             });
         }
     }
 }

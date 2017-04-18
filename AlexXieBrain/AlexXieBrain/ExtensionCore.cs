@@ -15,6 +15,7 @@ namespace AlexXieBrain
         {
             return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
         }
+
         private static void SetVal<T>(T sourceDataRef, IDictionary<string, object> resultRef) where T : class
         {
             var localData = sourceDataRef.SimpleClone();
@@ -24,6 +25,7 @@ namespace AlexXieBrain
                 resultRef[pi.Name] = val;
             }
         }
+
         /// <summary>
         /// create a new dynamic object not reference sourceData
         /// </summary>
@@ -36,6 +38,7 @@ namespace AlexXieBrain
             SetVal(sourceData, result);
             return result;
         }
+
         /// <summary>
         /// create a new dynamic object not reference sourceData
         /// </summary>
@@ -54,6 +57,16 @@ namespace AlexXieBrain
             return result;
         }
 
+        public static dynamic ToDynamic<T0, T1>(this T0 sourceData, Func<T0, T1> combineValFunc)
+            where T0 : class
+            where T1 : class
+        {
+            IDictionary<string, object> result = new ExpandoObject();
+            SetVal(sourceData, result);
+            SetVal(combineValFunc(sourceData), result);
+            return result;
+        }
+
         public static dynamic ToDynamic<T0, T1, T2>(this T0 sourceData, T1 combineVal0, T2 combineVal1)
             where T0 : class
             where T1 : class
@@ -65,6 +78,7 @@ namespace AlexXieBrain
             SetVal(combineVal1, result);
             return result;
         }
+
         public static IEnumerable<dynamic> ToDynamicList<T>(this IEnumerable<T> sourceDataList) where T : class
         {
             var resultList = new List<IDictionary<string, object>>();
@@ -74,6 +88,7 @@ namespace AlexXieBrain
             }
             return resultList;
         }
+
         public static IEnumerable<dynamic> ToDynamicList<T0, T1>(this IEnumerable<T0> sourceDataList, Func<T0, T1> func)
             where T0 : class
             where T1 : class
@@ -107,7 +122,7 @@ namespace AlexXieBrain
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, source);
                 stream.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(stream);
+                return (T) formatter.Deserialize(stream);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace AlexXieBrain
+﻿using AlexXieBrain.MvcCore.BackEnd;
+
+namespace AlexXieBrain
 {
     public class TestCore
     {
@@ -7,13 +9,12 @@
         protected string Test3 { get; set; }
         protected internal string Test4 { get; set; }
 
-        public int Test()
+        public string Test()
         {
-            //Action act = ;
-            //(Action)(() => { throw new Exception("aaaa!!"); })
-            int a = 1;
-          
-            return a;
+            new AutoHandleExceptionController().SetGlobalErrorPage("222");
+            new AutoHandleExceptionController();
+            var xxx = AutoHandleExceptionController.ErrorPage;
+            return xxx;
         }
     }
 }

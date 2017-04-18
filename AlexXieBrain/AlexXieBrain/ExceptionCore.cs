@@ -2,9 +2,33 @@
 
 namespace AlexXieBrain
 {
-    public class ExceptionCore
+    public class MsgException : Exception
     {
+        public const string DefaultMsg = "服务器异常";
 
+        public MsgException() : base(DefaultMsg)
+        {
+
+        }
+
+        public MsgException(string errMsg) : base(errMsg)
+        {
+
+        }
+    }
+    public class ServiceException : Exception
+    {
+        public const string DefaultMsg = "服务器异常";
+
+        public ServiceException() : base(DefaultMsg)
+        {
+
+        }
+
+        public ServiceException(string errMsg) : base(errMsg)
+        {
+
+        }
     }
     public static class ExceptionHelper
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-//using Action = Antlr.Runtime.Misc.Action;
 
 namespace ScoreBoard.Models.Bll
 {
