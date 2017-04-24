@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />  
+    <meta name="keywords"           content="手机电视 视频 联通 包月 免费" />  
+    <meta name="description"        content="为手机终端提供流畅稳定、丰富多彩的在线视频播放业务。" />  
+  
+    <meta name="viewport"           content="width=320,user-scalable=0,initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0" />  
+    <title>悦TV</title>  
+	<script type="text/javascript" src="jquery.js">
+	</script>
+    <script type="text/javascript">
+			window.onload = function (){
+				var doc = document.getElementById("aa");
+				console.info(doc);
+				console.info(typeof doc);
+				var gettype=Object.prototype.toString
+				console.info(gettype.call(doc));
+				$("#s2").attr("disabled",true);
+				$("#s3").attr("disabled",true);
+				$("#bu").attr("disabled",true);	
+				$("#s1").change(function(){
+					$("#bu").attr("disabled",true);	
+					var s1value = $("#s1").val();
+					
+					//$("#s2").val("cx0");
+					//$("#s3").val("cx0");
+					//$("#s2 option[text='请选择年款']").attr("selected",true);					
+					//$("#s3 option[text='请选择车名']").attr("selected",true);
+					var s = $("#s2").find("option[text='请选择年款']").attr("selected","selected");//.attr("selected","selected");	
+						console.info($("#s2 option[text='请选择年款']").val());						
+					$("#s3").find("option[text='请选择车名']").attr("selected","selected");							
+					if(s1value!="cx0"){
+						$("#s2").attr("disabled",false);
+						$("#s3").attr("disabled",false);
+					}else{
+						$("#s2").attr("disabled",true);
+						$("#s3").attr("disabled",true);
+					}
+				});
+				$("#s2").change(function(){
+					if($("#s2").val()!="cx0"&&$("#s3").val()!="cx0"){
+						$("#bu").attr("disabled",false);	
+					}else{
+						$("#bu").attr("disabled",true);	
+					}
+				});
+				$("#s3").change(function(){
+					if($("#s2").val()!="cx0"&&$("#s3").val()!="cx0"){
+						$("#bu").attr("disabled",false);	
+					}else{
+						$("#bu").attr("disabled",true);	
+					}
+				
+				})
+				
+			}
+			function aaa(){
+				alert("选中的值："+" \n "+$("#s1 option:selected").text()+" \n "+
+				$("#s2 option:selected").text()+" \n "+
+				$("#s3 option:selected").text());
+			}
+			
+	</script>  
+      
+   
+</head>  
+<body>  
+   <input type="text" id="aa" value="123"/>
+    </br>
+	</br>
+   车系:
+   <select id = "s1">
+		<option value ="cx0">请选择车系</option>
+		<option value ="cx1">车系一</option>
+		<option value ="cx2">车系二</option>
+		<option value="cx3">车系三</option>
+   </select>
+   </br>
+   </br>
+   年款:
+   <select id = "s2">
+		<option value ="cx0">请选择年款</option>
+		<option value ="cx1">2007</option>
+		<option value ="cx2">2008</option>
+		<option value="cx3">2009</option>
+   </select>
+    </br>
+	</br>
+   车名:
+    <select id = "s3">
+		<option value ="cx0">请选择车名</option>
+		<option value ="cx1">奔驰001</option>
+		<option value ="cx2">宝马002</option>
+		<option value="cx3">东风003</option>
+   </select>
+   
+    <input type="button" id="bu" value="确实" onclick="aaa()"/>
+</body>  
+</html>  

@@ -97,5 +97,11 @@ namespace ScoreBoard.Controllers.Api
             Response.ContentType = "image/png";
             Response.BinaryWrite(new DrawCore().GetXaPicBytes(Color.FromName(f), img, r));
         }
+        [Route("api/XA2")]
+        public void CreateXa(int w = 3600, string f = "black", string b = "white", bool r = false)
+        {
+            Response.ContentType = "image/png";
+            Response.BinaryWrite(new DrawCore().GetXaPicBytes(w, Color.FromName(f), Color.FromName(b), r));
+        }
     }
 }
