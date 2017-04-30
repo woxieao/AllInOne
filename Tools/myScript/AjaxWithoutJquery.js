@@ -9,7 +9,6 @@
         xmlhttp.send(info.data);
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4) {
-console.log(xmlhttp);
                 info.getResult(xmlhttp)
                 info.complete(xmlhttp.responseText);
             }

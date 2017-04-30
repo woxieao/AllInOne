@@ -1,17 +1,27 @@
 ﻿{
-  "name": "知乎机器人β版",
-  "description": "假装一直在线..",
-  "version": "1.4",
+  "name": "FuncLooper",
+  "description": "可以自定义每隔一段时间就执行的函数,内置知乎每10秒更新个性签名函数,\nThis extension could let you DIY your own loop functions",
+  "version": "2.0",
   "manifest_version": 2,
   "icons": { "48": "XA.png" },
   "background": {
-    "scripts": [ "jquery.js", "background.js" ],
+    "scripts": [
+      "js/jquery.js",
+      "js/angular.js",
+      "js/core.163.js",
+      "js/xam.js",
+      "js/background.js",
+      "js/setting.js"
+    ],
     "persistent": false
   },
   "permissions": [
     "cookies",
     "*://*/*",
     "storage",
-    "notifications"
-  ]
+    "notifications",
+    "tabs",
+    "webNavigation"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self' "
 }

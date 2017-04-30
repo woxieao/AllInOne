@@ -248,7 +248,9 @@
     <Content Include="Files\test.docx" />
     <Content Include="Files\test.mht" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <None Include="Scripts\Mess\darft - 复制.js_" />
     <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min - 复制.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -260,7 +262,14 @@
     <Content Include="Scripts\72.js" />
     <Content Include="Scripts\decodeStr.js" />
     <Content Include="Scripts\ofo.js" />
-    <Content Include="Scripts\soy - 复制.js" />
+    <None Include="Scripts\Mess\m1632.js_" />
+    <None Include="Scripts\Mess\soy - 复制 - 复制.js_" />
+    <Content Include="Scripts\darft.js" />
+    <None Include="Scripts\Mess\soy - 复制.js_" />
+    <Content Include="Scripts\Soy\core.js" />
+    <Content Include="Scripts\Soy\zhihu.js" />
+    <Content Include="Scripts\Soy\soy - 复制.js" />
+    <Content Include="Scripts\Soy\soy.js" />
     <Content Include="Scripts\xwz.js" />
     <Content Include="Scripts\soy.js" />
     <Content Include="Scripts\respond.min.js" />

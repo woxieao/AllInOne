@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body ng-app="app">
+    <div ng-controller="GetFuncListCtrl">
+        <ul id="tabs" class="nav nav-tabs">
+            <li ng-click="SysFunc()"><a href="#sysFunc" data-toggle="tab">系统函数</a></li>
+            <li ng-click="MyFunc()"><a href="#myFunc" data-toggle="tab">自定义函数</a></li>
+            <li ng-click="AddTempFunc()"><a href="#newFunc" data-toggle="tab">新增函数</a></li>
+
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="sysFunc"></div>
+            <div class="tab-pane fade" id="myFunc"></div>
+            <div class="tab-pane fade" id="newFunc"></div>
+        </div>
+
+        <div class="row well well-large" ng-repeat="func in FuncList">
+            <div class="col-xs-2">函数名</div>
+            <div class="col-xs-10">
+                <div class="col-xs-12">
+                    <input class="form-control" ng-readonly="!func.IsNew" ng-model="func.FuncName" />
+                </div>
+            </div>
+            <div class="col-xs-2">说明文字</div>
+            <div class="col-xs-10">
+                <div class="col-xs-12">
+                    <input class="form-control" ng-readonly="!func.IsNew" ng-model="func.Desc" />
+                </div>
+            </div>
+            <div class="col-xs-2">函数代码</div>
+            <div class="col-xs-10">
+                <div class="col-xs-12">
+                    <textarea style="height: 300px" class="form-control" ng-readonly="!func.IsNew" ng-model="func.FuncCode"></textarea>
+                </div>
+            </div>
+            <div class="col-xs-2">执行间隔</div>
+
+            <div class="col-xs-10">
+                <div class="col-xs-7">
+                    <input class="form-control" ng-readonly="!func.IsNew" ng-model="func.TimeSpan" />
+                </div>
+                <div class="col-xs-5">
+                    <span>({{func.TimeSpan==-1?'仅在启动时执行一次':(func.TimeSpan/1000)+"秒"}})</span>
+                </div>
+
+            </div>
+
+            <div class="col-xs-2">操作</div>
+            <div class="col-xs-10">
+                <div class="col-xs-12">
+                    <button ng-show="func.IsNew" ng-click="AddFunc(func)" class="btn btn-success">保存</button>
+                    <button ng-click="TestRun(func.FuncCode)" class="btn btn-warning">测试执行</button>
+                    <button ng-click="RemoveFunc($index)" class="btn btn-danger">删除</button>
+                </div>
+            </div>
+        </div>
+        <div class="row well well-large" ng-show="FuncList.length===0">
+            <h1>
+                <kbd>暂无函数,点击<code style="cursor: pointer" ng-click="AddTempFunc()">新增函数</code>即可创建</kbd>
+            </h1>
+        </div>
+
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/setting.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+
+</html>
