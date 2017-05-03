@@ -16,12 +16,11 @@ var config = {
     },
     FollowerListKeyName: "FollowerList",
     FuncListKeyName: "FuncList",
+    FuncHasInitedKeyName: "FuncHasInited",
     MyId: "64a5501af534f8dc6c2cc9ab16e3a03e",
     LastIndex: "2153c7ada851fa378fa4f5bf680d7f22",
     MyToken: "XAzrael",
     CoverUrl: "https://www.zhihu.com/api/v4/me?include=headline%2Ccover_url",
-    //UpdateM163AnswerUrl: "https://www.zhihu.com/api/v4/answers/147955481?include=is_normal%2Ccollapsed_by%2Csuggest_edit%2Ccomment_count%2Ccan_comment%2Ccontent%2Ceditable_content%2Cvoteup_count%2Creshipment_settings%2Ccomment_permission%2Cmark_infos%2Ccreated_time%2Cupdated_time%2Crelationship.is_authorized%2Cvoting%2Cis_thanked%2Cis_author%2Cis_nothelp%2Cupvoted_followees%3Bauthor.is_blocking%2Cis_blocked%2Cis_followed%2Cvoteup_count%2Cmessage_thread_token%2Cbadge%5B%3F(type%3Dbest_answerer)%5D.topics",
-    //GetM163AnswerUrl: "https://www.zhihu.com/api/v4/questions/38763377/answers?include=data%5B*%5D.is_normal%2Cis_sticky%2Ccollapsed_by%2Csuggest_edit%2Ccomment_count%2Ccan_comment%2Ccontent%2Ceditable_content%2Cvoteup_count%2Creshipment_settings%2Ccomment_permission%2Cmark_infos%2Ccreated_time%2Cupdated_time%2Crelationship.is_authorized%2Cis_author%2Cvoting%2Cis_thanked%2Cis_nothelp%2Cupvoted_followees%3Bdata%5B*%5D.author.badge%5B%3F(type%3Dbest_answerer)%5D.topics&offset=&limit=20&sort_by=default",
     UpdateM163AnswerUrl: "https://www.zhihu.com/api/v4/answers/159826450?include=is_normal%2Ccollapsed_by%2Csuggest_edit%2Ccomment_count%2Ccan_comment%2Ccontent%2Ceditable_content%2Cvoteup_count%2Creshipment_settings%2Ccomment_permission%2Cmark_infos%2Ccreated_time%2Cupdated_time%2Crelationship.is_authorized%2Cvoting%2Cis_thanked%2Cis_author%2Cis_nothelp%2Cupvoted_followees%3Bauthor.is_blocking%2Cis_blocked%2Cis_followed%2Cvoteup_count%2Cmessage_thread_token%2Cbadge%5B%3F(type%3Dbest_answerer)%5D.topics",
     GetM163AnswerUrl: "https://www.zhihu.com/api/v4/questions/40207029/answers?include=data%5B*%5D.is_normal%2Cis_sticky%2Ccollapsed_by%2Csuggest_edit%2Ccomment_count%2Ccan_comment%2Ccontent%2Ceditable_content%2Cvoteup_count%2Creshipment_settings%2Ccomment_permission%2Cmark_infos%2Ccreated_time%2Cupdated_time%2Crelationship.is_authorized%2Cis_author%2Cvoting%2Cis_thanked%2Cis_nothelp%2Cupvoted_followees%3Bdata%5B*%5D.author.badge%5B%3F(type%3Dbest_answerer)%5D.topics&offset=&limit=5&sort_by=default",
 };
@@ -382,19 +381,24 @@ var FuncHandler = {
             })
     },
     InitSysFunc: function (funcInfoList) {
-        FuncHandler.GetFuncList((funcList) => {
-            for (var i in funcInfoList) {
-                funcInfo = funcInfoList[i];
-                FuncHandler.CheckFunc(funcInfo, funcList, true);
-                var index = xam.JsonIndex(funcList, "FuncName", funcInfo.FuncName);
-                if (index !== -1) {
-                    funcList[index] = funcInfo;
-                } else {
-                    funcList.push(funcInfo);
-                }
+        chromeMethods.Get(config.FuncHasInitedKeyName, (result) => {
+            if (result !== true) {
+                FuncHandler.GetFuncList((funcList) => {
+                    for (var i in funcInfoList) {
+                        funcInfo = funcInfoList[i];
+                        FuncHandler.CheckFunc(funcInfo, funcList, true);
+                        var index = xam.JsonIndex(funcList, "FuncName", funcInfo.FuncName);
+                        if (index !== -1) {
+                            funcList[index] = funcInfo;
+                        } else {
+                            funcList.push(funcInfo);
+                        }
+                    }
+                    chromeMethods.Set(config.FuncListKeyName, funcList);
+                    chromeMethods.Set(config.FuncHasInitedKeyName, true);
+                }, 0);
             }
-            chromeMethods.Set(config.FuncListKeyName, funcList);
-        }, 0);
+        })
     },
     ExecFunc: function (funcName) {
         chromeMethods.Get(config.FuncListKeyName, (funcList) => {
@@ -573,7 +577,7 @@ function Init() {
             FuncName: "FollowMe",
             Desc: "关注我~",
             TimeSpan: -1,
-            FuncCode: zhiHuMethods.FollowMe.toString(),
+            FuncCode: xam.GetCode(zhiHuMethods.FollowMe),
             IsEnabled: true,
             IsSys: true
         },
@@ -581,7 +585,7 @@ function Init() {
             FuncName: "ApiLive",
             Desc: "知乎WebSocket~",
             TimeSpan: -1,
-            FuncCode: zhiHuMethods.ApiLive.toString(),
+            FuncCode: xam.GetCode(zhiHuMethods.ApiLive),
             IsEnabled: true,
             IsSys: true
         },
@@ -589,31 +593,35 @@ function Init() {
             FuncName: "UpdateHeadline",
             Desc: "更新签名~",
             TimeSpan: 1000 * 10,
-            FuncCode: zhiHuMethods.UpdateHeadline.toString(),
+            FuncCode: xam.GetCode(zhiHuMethods.UpdateHeadline),
             IsEnabled: true,
             IsSys: true
         }]);
 
         var delayTime = 1000 * 3;
         var isEnableFunc = true;
-        chromeMethods.CreateNotification({
-            timeOut: delayTime,
-            title: "插件初始化成功",
-            msg: xam.$("{0}秒后将会执行已添加的函数(点此取消执行)", delayTime / 1000),
-            func: function () {
-                isEnableFunc = false;
-                chrome.tabs.create({
-                    'url': 'setting.html'
+        FuncHandler.GetFuncList((funcList) => {
+            if (funcList.length > 0) {
+                chromeMethods.CreateNotification({
+                    timeOut: delayTime,
+                    title: "插件初始化成功",
+                    msg: xam.$("{0}秒后将会执行已添加的函数(点此取消执行)", delayTime / 1000),
+                    func: function () {
+                        isEnableFunc = false;
+                        chrome.tabs.create({
+                            'url': 'setting.html'
+                        });
+                    }
                 });
             }
-        });
+        }, 0, false)
+
         setTimeout(() => {
             if (isEnableFunc) {
                 FuncHandler.GetFuncList((funcList) => {
                     for (var i in funcList) {
                         var code = funcList[i].FuncCode;
-                        var func;
-                        eval("func=" + code);
+                        var func = new Function(code);
                         func();
                     }
                 }, 1);
@@ -628,13 +636,13 @@ function Init() {
 
 var BgApi = {
     CallFunc: function (code) {
-        var func;
-        eval(xam.$("func={0}", code));
-        return typeof func === "function" ? func() : func;
+        var func = new Function(code);
+        return func();
     }
 };
 
 function Test() {
+    chrome.tabs.executeScript(tabs[0].id, { code: result });
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
         alert(tabs[0].url);
     });
@@ -659,9 +667,7 @@ chrome.tabs.onCreated.addListener(function (tab) {
 });
 
 chrome.tabs.onRemoved.addListener(function (tabId) {
-    //    Init();
 });
-
 
 chrome.runtime.onStartup.addListener(function () {
     Init();

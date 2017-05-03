@@ -4,6 +4,7 @@ addeventlisten/remove
 备份歌单
 研究解密
 
+data:text/html,<body></body><script src="http://libs.baidu.com/jquery/1.9.1/jquery.js"></script> <script> $.ajax({url:'http://music.163.com/',success:function(r){document.body.innerHTML=r;}})</script>
 						加油搬砖
 
 

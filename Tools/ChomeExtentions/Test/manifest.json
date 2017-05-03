@@ -16,13 +16,15 @@
     ],
     "persistent": false
   },
- "permissions": [
+  "permissions": [
     "cookies",
     "*://*/*",
     "storage",
     "notifications",
     "tabs",
-    "webNavigation"
-  ],
+    "webNavigation",
+    "activeTab"
+  ]
+  ,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
