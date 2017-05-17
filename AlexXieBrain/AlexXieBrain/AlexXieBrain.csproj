@@ -42,6 +42,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
@@ -72,6 +73,7 @@
     <Compile Include="ExceptionCore.cs" />
     <Content Include="MvcCore\FrontEnd\js\angular-1.2.js" />
     <Content Include="MvcCore\FrontEnd\js\commonFunc.js" />
+    <Compile Include="EncryptCore.cs" />
     <Compile Include="MvcCore\BackEnd\AjaxResult.cs" />
     <Compile Include="MvcCore\BackEnd\AjaxResultPackage.cs" />
     <Compile Include="MvcCore\BackEnd\XAuthorizeAttribute.cs" />

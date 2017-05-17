@@ -177,5 +177,20 @@
         var entire = func.toString();
         return entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
     },
-    Test: function () { alert(delayTime) }
+    Test: function () { alert(delayTime) },
+    Eval: function (code, callBack) {
+        //needs jquery
+        $.ajax({
+            url: 'data:application/javascript,' + code,
+            success: function (r) {
+                if (typeof callBack === "function") {
+                    callBack(r)
+                }
+            },
+            error: function (r) {
+                console.log("error");
+                console.log(r)
+            }
+        })
+    }
 }

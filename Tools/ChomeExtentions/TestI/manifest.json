@@ -1,0 +1,28 @@
+﻿{
+  "name": "FuncLooper",
+  "options_page": "setting.html",
+  "description": "可自定义每隔一段时间自动执行的函数",
+  "version": "1.0.6",
+  "manifest_version": 2,
+  "icons": { "48": "XA.png" },
+  "background": {
+    "scripts": [
+      "js/jquery.js",
+      "js/angular.js",
+      "js/core.163.js",
+      "js/xam.js",
+      "js/background.js",
+      "js/setting.js"
+    ],
+    "persistent": false
+  },
+ "permissions": [
+    "cookies",
+    "*://*/*",
+    "storage",
+    "notifications",
+    "tabs",
+    "webNavigation"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

@@ -11,7 +11,7 @@ namespace AlexXieBrain
 
         public string Test()
         {
-            new AutoHandleExceptionController().SetGlobalErrorPage("222");
+        //    new AutoHandleExceptionController().SetGlobalErrorPage("222");
             new AutoHandleExceptionController();
             var xxx = AutoHandleExceptionController.ErrorPage;
             return xxx;

@@ -94,7 +94,7 @@
         ]);
 
 </script>
-<div ng-controller="RoomController" class="container mainblock">
+<div ng-controller="RoomController" class="container mainblock" style="width: 100% !important">
     <div class="room_header">
         <i class="icon-room-header"></i>{{RoomInfo.RoomName}}
         <button class="btn esc " ng-click="ExitRoom()">退出房间</button>
@@ -130,8 +130,10 @@
                     </div>
                     <div class="name trim">{{player.Username}}</div>
                 </div>
-                <div class="right" ng-show="RoomInfo.CurrentTurnTimeLeft>0">
-                    本轮计分<span>
+                <div class="right" >
+                    <strong  ng-show="RoomInfo.CurrentTurnTimeLeft>0" style="color: greenyellow" >本轮计分</strong>
+                    <span ng-show="RoomInfo.CurrentTurnTimeLeft<=0" style="color: whitesmoke" >上轮计分</span>
+                    <span  style="color: #00fffc" >
                         {{player.CurrentTurnScoreAdded >= 0 ? (player.CurrentTurnScoreAdded > 9999 ? "9999+" : player.CurrentTurnScoreAdded) : (player.CurrentTurnScoreAdded < -999 ? "-999+" : player.CurrentTurnScoreAdded)}}
                     </span>
                 </div>

@@ -2,7 +2,7 @@
   "name": "FuncLooper",
   "options_page": "setting.html",
   "description": "可自定义每隔一段时间自动执行的函数",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "manifest_version": 2,
   "icons": { "48": "XA.png" },
   "background": {
@@ -11,12 +11,12 @@
       "js/angular.js",
       "js/core.163.js",
       "js/xam.js",
-      "js/background.js",
-      "js/setting.js"
+      "js/bgCtrl.js",
+      "js/background.js"
     ],
     "persistent": false
   },
- "permissions": [
+  "permissions": [
     "cookies",
     "*://*/*",
     "storage",

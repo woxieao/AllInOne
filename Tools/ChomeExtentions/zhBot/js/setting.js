@@ -6,7 +6,7 @@ app.controller('GetFuncListCtrl', function ($scope) {
     $scope.FuncList;
     $scope.TestRun = function (code) {
         try {
-            bg.BgApi.CallFunc(code);
+            eval(code);
             bg.chromeMethods.CreateNotification({ msg: "执行成功" });
         } catch (e) {
             bg.chromeMethods.CreateNotification({ msg: "执行失败\n" + e });
@@ -45,7 +45,8 @@ app.controller('GetFuncListCtrl', function ($scope) {
         }
     }
     $scope.AddFunc = function (funcInfo) {
-        bg.FuncHandler.AddFunc(funcInfo, () => { location.reload() });
+        bg.FuncHandler.AddFunc(funcInfo);
+    //    location.reload();
     }
     $scope.SysFunc();
 });

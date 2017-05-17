@@ -1,7 +1,6 @@
 ﻿var storage = chrome.storage.local;
 
 
-
 chrome.extension.onMessage.addListener(function (request) {
     console.log(request);
 });
@@ -27,22 +26,29 @@ function injectScript(code) {
 };
 
 
-
+var TestFunc;
 function TestPage(code) {
-    $.ajax({ url: "data:text/html," + code, cache: true, jsonp: false, dataType: "jsonp" })
-   
+    $.ajax({
+        url: 'data:application/javascript,TestFunc={Test:function (){return 23}}',
+        // dataType: "json",
+        success: function (r) {
+            console.log("succ");
+            console.log(r);
+
+        },
+        error: function (r) {
+            console.log("err");
+            console.log(r)
+        }
+    })
 }
 chrome.webNavigation.onCompleted.addListener(function (details) {
 
 });
 
 chrome.tabs.onCreated.addListener(function (tab) {
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        //  alert(tabs[0].url);
-    });
-
-    chrome.tabs.executeScript(tab.id,
-        { url: "data:text/html,console.log(1)" });
+    TestPage();
+    //TestFunc.Test();
 });
 
 chrome.tabs.onRemoved.addListener(function (tabId) {
