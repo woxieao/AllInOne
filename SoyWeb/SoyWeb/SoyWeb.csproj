@@ -103,6 +103,9 @@
     <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="SensitiveWordFilter">
+      <HintPath>..\..\..\jr\SensitiveWordFilter\SensitiveWordFilter\SensitiveWordFilter\bin\Release\SensitiveWordFilter.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -248,6 +251,7 @@
     <Content Include="Files\test.docx" />
     <Content Include="Files\test.mht" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Mess\jr_tasker.js" />
     <None Include="Scripts\Mess\darft - 复制.js_" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min - 复制.js" />

@@ -114,18 +114,7 @@ namespace SoyWeb.Controllers
         {
 
 
-            var file = new StreamReader(@"C:\Data\Qfile\计分牌修改.docx");
-            var doc = new XWPFDocument(file.BaseStream);
-            var extractor = new XWPFWordExtractor(doc);
-            var xxxx = extractor.Document.GetAllEmbedds();
-            foreach (var x in xxxx)
-            {
-            
-            }
-         
-            return null;
-
-            String text = extractor.Text;
+          
 
             return View();
         }

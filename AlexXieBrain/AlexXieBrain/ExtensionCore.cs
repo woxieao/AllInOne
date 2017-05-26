@@ -122,8 +122,21 @@ namespace AlexXieBrain
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, source);
                 stream.Seek(0, SeekOrigin.Begin);
-                return (T) formatter.Deserialize(stream);
+                return (T)formatter.Deserialize(stream);
             }
+        }
+
+        public static T As<T>(this byte[] bytes)
+        {
+            return JsonConvert.DeserializeObject<T>(System.Text.Encoding.UTF8.GetString(bytes));
+        }
+
+        public static void When_<T>(this T val, params Action<Func<T, bool>>[] cases)
+        {
+            //if (check(val))
+            //{
+            //    act();
+            //}
         }
     }
 }
