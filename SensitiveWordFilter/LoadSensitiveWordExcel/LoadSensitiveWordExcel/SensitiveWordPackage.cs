@@ -1,0 +1,18 @@
+﻿using System.Collections.Generic;
+
+namespace LoadSensitiveWordExcel
+{
+    public class SensitiveWordPackage
+    {
+        public SensitiveWordPackage()
+        {
+            VerbList = new List<string>();
+            NounList = new List<string>();
+            ExclusiveNounsList = new List<string>();
+        }
+        public string Type { get; set; }
+        public List<string> VerbList { get; set; }
+        public List<string> NounList { get; set; }
+        public List<string> ExclusiveNounsList { get; set; }
+    }
+}

@@ -1,146 +1,77 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
-using NPOI.XSSF.UserModel;
 
 namespace SensitiveWordFilter
 {
     public class SensitiveWordFilter
     {
-        public static readonly List<SensitiveWordPackage> SensitiveWordPackagesList = GetSensitiveWordPackageList();
-        public static List<string> SensitiveWordList = GetSensitiveWordList(SensitiveWordPackagesList);
-        private static List<List<string>> LoadSensitiveWordFromExcel()
+        public static HashSet<string> SensitiveWordList;
+        public static DateTime ExcelLastWriteTime;
+        public static readonly string TextFilePath;
+        public const string SensitiveWordsExcelFileName = "SensitiveWords.txt";
+
+        static SensitiveWordFilter()
         {
-            using (var stream = new MemoryStream(Properties.Resources.SensitiveWords))
+            TextFilePath = string.IsNullOrEmpty(ConfigurationManager.AppSettings["SensitiveWordsPath"]) ? System.Web.HttpContext.Current.Server.MapPath($"~/{SensitiveWordsExcelFileName}") : ConfigurationManager.AppSettings["SensitiveWordsPath"];
+
+            var fileInfo = new FileInfo(TextFilePath);
+            if (!fileInfo.Exists)
             {
-                var workbook = new XSSFWorkbook(stream);
-                var sheet = workbook.GetSheetAt(0);
-                var rows = sheet.GetRowEnumerator();
-                var data = new List<List<string>>();
-                while (rows.MoveNext())
-                {
-                    var row = (XSSFRow)rows.Current;
-                    var tempRow = new List<string>();
-                    var isEmptyRow = true;
-                    for (var i = 0; i < sheet.GetRow(0).LastCellNum; i++)
-                    {
-                        var cell = row.GetCell(i);
-                        var cellText = cell?.ToString() ?? string.Empty;
-                        if (!string.IsNullOrEmpty(cellText))
-                        {
-                            isEmptyRow = false;
-                        }
-                        tempRow.Add(cellText);
-                    }
-                    if (!isEmptyRow)
-                    {
-                        data.Add(tempRow);
-                    }
-                }
-                return data;
+                throw new FileNotFoundException($"敏感词文件[{fileInfo.FullName}]不存在,\n" +
+                                                $"请将敏感词文件{SensitiveWordsExcelFileName}放入项目根目录\n"
+                                                + $"或\n配置web.config中的\"SensitiveWordsPath\"字段为路径后重试");
             }
         }
-        private static List<SensitiveWordPackage> GetSensitiveWordPackageList()
+        public SensitiveWordFilter()
         {
-            const int dataStartRow = 3;
-            var data = LoadSensitiveWordFromExcel();
-            var mainTypeList = new List<int>();
-            var firstRow = data[0];
-            var maxCellNum = firstRow.Count;
-            for (var i = 0; i < maxCellNum; i++)
+            if (SensitiveWordList == null || IsUpdated(TextFilePath))
             {
-                if (!string.IsNullOrEmpty(firstRow[i]))
-                {
-                    mainTypeList.Add(i);
-                }
+                InitWordsData(TextFilePath);
             }
-            var sensitiveWordPackageList = new List<SensitiveWordPackage>();
-            foreach (var currentMainTypeIndex in mainTypeList)
-            {
-                var sensitiveWordPackage = new SensitiveWordPackage();
-                var isVerbFinish = false;
-                var isNounFinish = false;
-                var isExclusiveNounsFinish = false;
-                for (var y = dataStartRow; y < data.Count; y++)
-                {
-                    var currentRow = data[y];
-                    sensitiveWordPackage.Type = firstRow[currentMainTypeIndex];
-                    if (!isVerbFinish)
-                    {
-                        var verb = currentRow[currentMainTypeIndex];
-                        if (!string.IsNullOrEmpty(verb))
-                        {
-                            sensitiveWordPackage.VerbList.Add(verb);
-                        }
-                        else
-                        {
-                            isVerbFinish = true;
-                        }
-                    }
-                    if (!isNounFinish)
-                    {
-                        var noun = currentRow[currentMainTypeIndex + 2];
-                        if (!string.IsNullOrEmpty(noun))
-                        {
-                            sensitiveWordPackage.NounList.Add(noun);
-                        }
-                        else
-                        {
-                            isNounFinish = true;
-                        }
-                    }
-                    if (!isExclusiveNounsFinish)
-                    {
-                        var exclusiveNouns = currentRow[currentMainTypeIndex + 4];
-                        if (!string.IsNullOrEmpty(exclusiveNouns))
-                        {
-                            sensitiveWordPackage.ExclusiveNounsList.Add(exclusiveNouns);
-                        }
-                        else
-                        {
-                            isExclusiveNounsFinish = true;
-                        }
-                    }
-                    if (isVerbFinish && isNounFinish && isExclusiveNounsFinish)
-                    {
-                        break;
-                    }
-                }
-                sensitiveWordPackageList.Add(sensitiveWordPackage);
-            }
-            return sensitiveWordPackageList;
         }
-        private static List<string> GetSensitiveWordList(List<SensitiveWordPackage> sensitiveWordPackageList)
+        private void InitWordsData(string filePath)
         {
-            var strList = new List<string>();
-            foreach (var type in sensitiveWordPackageList)
+            using (var sr = new StreamReader(filePath))
             {
-                var hasVerb = type.VerbList.Any();
-                foreach (var noun in type.NounList)
+                if (SensitiveWordList != null)
                 {
-                    if (hasVerb)
-                    {
-                        foreach (var verb in type.VerbList)
-                        {
-                            strList.Add($"{verb}{noun}");
-                        }
-                    }
-                    else
-                    {
-                        strList.Add(noun);
-                    }
+                    SensitiveWordList.Clear();
                 }
-                foreach (var exclusiveNounsList in type.ExclusiveNounsList)
+                else
                 {
-                    strList.Add(exclusiveNounsList);
+                    SensitiveWordList = new HashSet<string>();
+                }
+                while (sr.Peek() > -1)
+                {
+                    var word = sr.ReadLine();
+                    if (!string.IsNullOrEmpty(word))
+                    {
+                        SensitiveWordList.Add(word);
+                    }
                 }
             }
-            return strList;
+        }
+        private bool IsUpdated(string filePath)
+        {
+            var fileInfo = new FileInfo(filePath);
+            return fileInfo.Exists && fileInfo.LastWriteTime > ExcelLastWriteTime;
         }
 
-        public static string HasSensitiveWord(string str)
+        private IEnumerable<string> LoadWords(string filePath)
         {
-            var result = SensitiveWordList.FirstOrDefault(str.Contains);
+            if (IsUpdated(filePath))
+            {
+                InitWordsData(filePath);
+            }
+            return SensitiveWordList;
+        }
+        public string HasSensitiveWord(string str)
+        {
+            var wordsData = LoadWords(TextFilePath);
+            var result = wordsData.FirstOrDefault(i => str.IndexOf(i, StringComparison.CurrentCultureIgnoreCase) != -1);
             return result ?? string.Empty;
         }
     }

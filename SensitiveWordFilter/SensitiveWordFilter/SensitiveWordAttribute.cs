@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -20,22 +22,39 @@ namespace SensitiveWordFilter
         {
             var queryStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.QueryString.ToString());
             var formStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.Form.ToString());
-            var result = SensitiveWordFilter.HasSensitiveWord(queryStr + formStr);
+            var urlStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.RawUrl);
+            var result = new SensitiveWordFilter().HasSensitiveWord(queryStr + formStr + urlStr);
             if (!string.IsNullOrEmpty(result))
             {
-                var msg = HttpUtility.UrlEncode($"由于请求中包含敏感词[{result}],请求失败!");
-                if (string.IsNullOrEmpty(_hasSensitiveWordRectUrl))
+                var oriMsg = $"由于请求中包含敏感词[{result}],请求已被拦截!";
+                var msg = HttpUtility.UrlEncode(oriMsg);
+                if (filterContext.RequestContext.HttpContext.Request.IsAjaxRequest())
                 {
+                    var response = filterContext.RequestContext.HttpContext.Response;
+                    response.Clear();
+                    response.StatusCode = (int)HttpStatusCode.Forbidden;
                     filterContext.Result = new ContentResult
                     {
-                        ContentType = "text/html; charset=UTF-8",
-                        Content = $"<script>alert(decodeURIComponent('{msg}'));history.go(-1);</script>",
+                        ContentType = "text/javascript; charset=UTF-8",
+                        Content = $"'{oriMsg}'",
                         ContentEncoding = Encoding.UTF8
                     };
                 }
                 else
                 {
-                    filterContext.Result = new RedirectResult($"{_hasSensitiveWordRectUrl}?msg={msg}"); ;
+                    if (string.IsNullOrEmpty(_hasSensitiveWordRectUrl))
+                    {
+                        filterContext.Result = new ContentResult
+                        {
+                            ContentType = "text/html; charset=UTF-8",
+                            Content = $"<script>alert(decodeURIComponent('{msg}'));history.go(-1);</script>",
+                            ContentEncoding = Encoding.UTF8
+                        };
+                    }
+                    else
+                    {
+                        filterContext.Result = new RedirectResult($"{_hasSensitiveWordRectUrl}?msg={Convert.ToBase64String(Encoding.UTF8.GetBytes(msg))}"); ;
+                    }
                 }
             }
             else
