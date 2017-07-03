@@ -69,7 +69,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SensitiveWordAttribute.cs" />
-    <Compile Include="SensitiveWordFilter.cs" />
+    <Compile Include="SensitiveWordPackage.cs" />
+    <Compile Include="SensitiveWordCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

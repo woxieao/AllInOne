@@ -101,6 +101,11 @@ namespace AlexXieBrain
             return resultList;
         }
 
+        public static dynamic Filter<T>(this T sourceData, Action<T> act)
+        {
+
+            return 1;
+        }
         public static T SimpleClone<T>(this T source)
         {
             var serialized = JsonConvert.SerializeObject(source);
@@ -131,12 +136,6 @@ namespace AlexXieBrain
             return JsonConvert.DeserializeObject<T>(System.Text.Encoding.UTF8.GetString(bytes));
         }
 
-        public static void When_<T>(this T val, params Action<Func<T, bool>>[] cases)
-        {
-            //if (check(val))
-            //{
-            //    act();
-            //}
-        }
+
     }
 }

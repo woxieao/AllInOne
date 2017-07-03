@@ -9,7 +9,7 @@ namespace SoyWeb
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new SensitiveWordAttribute("/Error/ShowMsg"));
+         //   filters.Add(new SensitiveWordAttribute("/Error/ShowMsg"));
         }
     }
 }

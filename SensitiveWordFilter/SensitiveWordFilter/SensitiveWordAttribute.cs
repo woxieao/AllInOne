@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace SensitiveWordFilter
@@ -18,26 +21,45 @@ namespace SensitiveWordFilter
         {
             _hasSensitiveWordRectUrl = redirectUrl;
         }
+
+
+        /// <summary>
+        /// 用AuthorizeAttribute会有问题
+        /// </summary>
+        /// <param name="filterContext"></param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var queryStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.QueryString.ToString());
-            var formStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.Form.ToString());
-            var urlStr = HttpUtility.UrlDecode(filterContext.RequestContext.HttpContext.Request.RawUrl);
-            var result = new SensitiveWordFilter().HasSensitiveWord(queryStr + formStr + urlStr);
+            var parms = new StringBuilder();
+            var parameters = filterContext.ActionDescriptor.GetParameters();
+            foreach (var parameter in parameters)
+            {
+                if (parameter.ParameterType != typeof(HttpPostedFileBase))
+                {
+                    var arg = filterContext.ActionParameters[parameter.ParameterName];
+                    parms.AppendLine(Json.Encode(arg));
+                }
+            }
+            var unvalidatedRequest = filterContext.RequestContext.HttpContext.Request.Unvalidated;
+            var urlStr = HttpUtility.UrlDecode(unvalidatedRequest.RawUrl);
+            var bodyStr = HttpUtility.UrlDecode(unvalidatedRequest.Form.ToString());
+            parms.AppendLine(urlStr);
+            parms.AppendLine(bodyStr);
+            var result = new SensitiveWordCore().HasSensitiveWord(parms.ToString());
             if (!string.IsNullOrEmpty(result))
             {
+                var response = filterContext.RequestContext.HttpContext.Response;
+                response.Clear();
+                response.AddHeader("HasSensitiveWord", "true");
                 var oriMsg = $"由于请求中包含敏感词[{result}],请求已被拦截!";
                 var msg = HttpUtility.UrlEncode(oriMsg);
                 if (filterContext.RequestContext.HttpContext.Request.IsAjaxRequest())
                 {
-                    var response = filterContext.RequestContext.HttpContext.Response;
-                    response.Clear();
                     response.StatusCode = (int)HttpStatusCode.Forbidden;
                     filterContext.Result = new ContentResult
                     {
                         ContentType = "text/javascript; charset=UTF-8",
-                        Content = $"'{oriMsg}'",
-                        ContentEncoding = Encoding.UTF8
+                        Content = $"{oriMsg}",
+                        ContentEncoding = Encoding.UTF8,
                     };
                 }
                 else
@@ -56,6 +78,7 @@ namespace SensitiveWordFilter
                         filterContext.Result = new RedirectResult($"{_hasSensitiveWordRectUrl}?msg={Convert.ToBase64String(Encoding.UTF8.GetBytes(msg))}"); ;
                     }
                 }
+                response.End();
             }
             else
             {

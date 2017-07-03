@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using NPOI.XSSF.UserModel;
 
 namespace LoadSensitiveWordExcel
@@ -94,14 +97,14 @@ namespace LoadSensitiveWordExcel
                         verbNotFinish = verbNotFinish && lastCellNum >= currentMainTypeIndex;
                         nounNotFinish = nounNotFinish && lastCellNum >= currentMainTypeIndex + 2;
                         exclusiveNounsNotFinish = exclusiveNounsNotFinish && lastCellNum >= currentMainTypeIndex + 4;
-
                         sensitiveWordPackage.Type = firstRow[currentMainTypeIndex];
                         if (verbNotFinish)
                         {
                             var verb = currentRow[currentMainTypeIndex];
                             if (!string.IsNullOrEmpty(verb))
                             {
-                                sensitiveWordPackage.VerbList.Add(verb);
+
+                                sensitiveWordPackage.VerbList.Add(verb.ToUpper());
                             }
                             else
                             {
@@ -113,7 +116,7 @@ namespace LoadSensitiveWordExcel
                             var noun = currentRow[currentMainTypeIndex + 2];
                             if (!string.IsNullOrEmpty(noun))
                             {
-                                sensitiveWordPackage.NounList.Add(noun);
+                                sensitiveWordPackage.NounList.Add(noun.ToUpper());
                             }
                             else
                             {
@@ -125,7 +128,7 @@ namespace LoadSensitiveWordExcel
                             var exclusiveNouns = currentRow[currentMainTypeIndex + 4];
                             if (!string.IsNullOrEmpty(exclusiveNouns))
                             {
-                                sensitiveWordPackage.ExclusiveNounsList.Add(exclusiveNouns);
+                                sensitiveWordPackage.ExclusiveNounsList.Add(exclusiveNouns.ToUpper());
                             }
                             else
                             {
@@ -136,6 +139,7 @@ namespace LoadSensitiveWordExcel
                         {
                             break;
                         }
+
                     }
                     sensitiveWordPackageList.Add(sensitiveWordPackage);
                 }
@@ -148,42 +152,63 @@ namespace LoadSensitiveWordExcel
         }
 
 
-        private static List<string> GetSensitiveWordList(List<SensitiveWordPackage> sensitiveWordPackageList)
-        {
-            var strList = new List<string>();
-            foreach (var type in sensitiveWordPackageList)
-            {
-                var hasVerb = type.VerbList.Any();
-                foreach (var noun in type.NounList)
-                {
-                    if (hasVerb)
-                    {
-                        foreach (var verb in type.VerbList)
-                        {
-                            strList.Add($"{verb}{noun}");
-                        }
-                    }
-                    else
-                    {
-                        strList.Add(noun);
-                    }
-                }
-                foreach (var exclusiveNounsList in type.ExclusiveNounsList)
-                {
-                    strList.Add(exclusiveNounsList);
-                }
-            }
-            return strList;
-        }
+        //private static List<string> GetSensitiveWordList(List<SensitiveWordPackage> sensitiveWordPackageList)
+        //{
+        //    var strList = new List<string>();
+        //    foreach (var type in sensitiveWordPackageList)
+        //    {
+        //        var hasVerb = type.VerbList.Any();
+        //        foreach (var noun in type.NounList)
+        //        {
+        //            if (hasVerb)
+        //            {
+        //                foreach (var verb in type.VerbList)
+        //                {
+        //                    strList.Add($"{verb}{noun}");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                strList.Add(noun);
+        //            }
+        //        }
+        //        foreach (var exclusiveNounsList in type.ExclusiveNounsList)
+        //        {
+        //            strList.Add(exclusiveNounsList);
+        //        }
+        //    }
+        //    return strList;
+        //}
         static void Main(string[] args)
         {
             using (var sw = new StreamWriter("SensitiveWords.txt", false))
             {
-                var wrods = GetSensitiveWordList(GetSensitiveWordPackageList());
-                foreach (var word in wrods)
+                var list = GetSensitiveWordPackageList();
+                var sb = new StringBuilder();
+                foreach (var wordPackage in list)
                 {
-                    sw.WriteLine(word);
+                    sb.AppendLine("#p#");
+                    sb.AppendLine("#v#");
+                    foreach (var verb in wordPackage.VerbList)
+                    {
+                        sb.AppendLine(verb);
+                    }
+                    sb.AppendLine("#ve#");
+                    sb.AppendLine("#n#");
+                    foreach (var noun in wordPackage.NounList)
+                    {
+                        sb.AppendLine(noun);
+                    }
+                    sb.AppendLine("#ne#");
+                    sb.AppendLine("#e#");
+                    foreach (var exclusiveNouns in wordPackage.ExclusiveNounsList)
+                    {
+                        sb.AppendLine(exclusiveNouns);
+                    }
+                    sb.AppendLine("#ee#");
+                    sb.AppendLine("#pe#");
                 }
+                sw.Write(sb);
             }
         }
     }

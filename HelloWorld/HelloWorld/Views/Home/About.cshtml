@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<p>Use this area to provide additional information.</p>
+
+<form action="/home/index">
+    <input name="msg" placeholder="你想说啥" />
+    <input type="submit" />
+</form>
+<a href="/home/index?msg=123">点我点我</a>
+<br>
+<a href="/home/test?msg=说了别点我啊啊啊">别点我</a>
+<br>
+<input class="form-control" id="thisIsAnId" value="XA是帅哥" placeholder="请说出你的心里话"/>
+<button onclick="TestII($('#thisIsAnId').val())" class="btn btn-success">起飞</button>
+<script>
+    function TestII(someData) {
+        $.ajax({ url: "/home/testII", type: "POST", data: "data="+someData, success: function (r) { alert("你刚才说啥???\n我说:" + r); } });
+    }
+    </script>
