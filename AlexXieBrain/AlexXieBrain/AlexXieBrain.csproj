@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models.cs" />
     <Compile Include="ExceptionCore.cs" />
     <Content Include="MvcCore\FrontEnd\js\angular-1.2.js" />
     <Content Include="MvcCore\FrontEnd\js\commonFunc.js" />

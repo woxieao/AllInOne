@@ -36,5 +36,11 @@ namespace AlexXieBrain
         {
             return ex.InnerException == null ? ex : ex.InnerException.InnermostEx();
         }
+
+        public static T GetException<T>(this Exception ex) where T : Exception
+        {
+            return ex as T;
+        }
     }
+
 }

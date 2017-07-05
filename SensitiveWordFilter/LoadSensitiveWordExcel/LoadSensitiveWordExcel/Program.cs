@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -183,32 +184,28 @@ namespace LoadSensitiveWordExcel
         {
             using (var sw = new StreamWriter("SensitiveWords.txt", false))
             {
-                var list = GetSensitiveWordPackageList();
-                var sb = new StringBuilder();
-                foreach (var wordPackage in list)
+                var packageList = GetSensitiveWordPackageList();
+                var stringList = new List<string>();
+                foreach (var package in packageList)
                 {
-                    sb.AppendLine("#p#");
-                    sb.AppendLine("#v#");
-                    foreach (var verb in wordPackage.VerbList)
+                    foreach (var verb in package.VerbList)
                     {
-                        sb.AppendLine(verb);
+                        foreach (var noun in package.NounList)
+                        {
+                            stringList.Add(verb + noun);
+                        }
                     }
-                    sb.AppendLine("#ve#");
-                    sb.AppendLine("#n#");
-                    foreach (var noun in wordPackage.NounList)
+                    foreach (var exclusiveNouns in package.ExclusiveNounsList)
                     {
-                        sb.AppendLine(noun);
+                        stringList.Add(exclusiveNouns);
                     }
-                    sb.AppendLine("#ne#");
-                    sb.AppendLine("#e#");
-                    foreach (var exclusiveNouns in wordPackage.ExclusiveNounsList)
-                    {
-                        sb.AppendLine(exclusiveNouns);
-                    }
-                    sb.AppendLine("#ee#");
-                    sb.AppendLine("#pe#");
                 }
-                sw.Write(sb);
+                var sb = new StringBuilder();
+                foreach (var str in stringList)
+                {
+                    sb.AppendLine(str);
+                }
+                sw.Write(sb.ToString());
             }
         }
     }

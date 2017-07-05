@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Dynamic;
 using System.IO;
@@ -136,6 +137,71 @@ namespace AlexXieBrain
             return JsonConvert.DeserializeObject<T>(System.Text.Encoding.UTF8.GetString(bytes));
         }
 
-
+        /// <summary>
+        /// run action ant reckon time 
+        /// </summary>
+        /// <param name="act"></param>
+        /// <param name="times"></param>
+        /// <param name="description"></param>
+        /// <returns>Action Run ElapsedTicks</returns>
+        public static long RunAndTime(this Action act, int times = 1, string description = "")
+        {
+            times = times <= 0 ? 1 : times;
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            for (var i = 0; i < times; i++)
+            {
+                act();
+            }
+            var ticks = stopWatch.ElapsedTicks;
+            if (!string.IsNullOrEmpty(description))
+            {
+                Console.WriteLine($"[{description}][EachTurn]:{ticks / times}");
+            }
+            return ticks;
+        }
+        private static string FastCheckStr(this string strToCheck, int currentIndex, WordTree wordTree)
+        {
+            if (currentIndex >= strToCheck.Length)
+            {
+                return null;
+            }
+            else
+            {
+                if (wordTree.Children.TryGetValue(strToCheck[currentIndex], out WordTree dict))
+                {
+                    return dict.IsEnd ? dict.WhoAmI() : strToCheck.FastCheckStr(++currentIndex, dict);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        public static string IsContains(string str, IEnumerable<string> strList)
+        {
+            if (string.IsNullOrEmpty(str) || strList == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                var wordTree = new WordTree();
+                foreach (var s in strList)
+                {
+                    wordTree.PushIn(s);
+                }
+                str = str.ToUpper();
+                for (var i = 0; i < str.Length; i++)
+                {
+                    var word = str.FastCheckStr(i, wordTree);
+                    if (word != null)
+                    {
+                        return word;
+                    }
+                }
+                return string.Empty;
+            }
+        }
     }
 }
