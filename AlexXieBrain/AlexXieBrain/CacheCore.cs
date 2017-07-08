@@ -50,7 +50,7 @@ namespace AlexXieBrain
         /// <param name="func">委托</param>
         /// <param name="paramList">委托方法的参数集合</param>
         /// <returns>缓存名</returns>
-        private static string FormatCacheName(Delegate func, params object[] paramList)
+        private static string FormatCacheName(Delegate func, params dynamic[] paramList)
         {
             try
             {
@@ -89,18 +89,10 @@ namespace AlexXieBrain
             return cacheItemPolicy;
         }
 
-        /// <summary>
-        /// 调用委托方法并将结果存入缓存
-        /// </summary>
-        /// <typeparam name="TResult">委托的返回值类型</typeparam>
-        /// <param name="func">委托</param>
-        /// <param name="cacheTime">缓存时间</param>
-        /// <param name="isRefresh">是否强制刷新</param>
-        /// <param name="isAbsoluteExpiration">true:绝对过期时间/false:相对过期时间</param>
-        /// <returns>委托的返回值</returns>
+
         public static TResult GetCache<TResult>(Func<TResult> func,
-            int cacheTime = CacheTime,
-            bool isRefresh = false, bool isAbsoluteExpiration = true)
+        int cacheTime = CacheTime,
+        bool isRefresh = false, bool isAbsoluteExpiration = true)
         {
             try
             {
@@ -122,7 +114,6 @@ namespace AlexXieBrain
                 throw new Exception("处理缓存时出错 " + ex.Message, ex);
             }
         }
-
         /// <summary>
         /// 调用委托方法并将结果存入缓存
         /// </summary>
@@ -248,6 +239,7 @@ namespace AlexXieBrain
                 throw new Exception("处理缓存时出错 " + ex.Message, ex);
             }
         }
+
 
         public static TResult GetCache<T0, T1, T2, T3, T4, TResult>(
             Func<T0, T1, T2, T3, T4, TResult> func,

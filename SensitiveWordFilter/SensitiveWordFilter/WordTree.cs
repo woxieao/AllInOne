@@ -1,19 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace SensitiveWordFilter
 {
+    public class MyDict<T, TResult> : Dictionary<T, TResult>
+    {
+        public override int GetHashCode()
+        {
+            string aa = null;
+            var xx = aa.Length;
+            return base.GetHashCode();
+        }
+    }
+
     public class WordTree
     {
         private bool HasChild()
         {
-            return Children.Any();
+            return OriginalChildren.Any() || CapitalChildren.Any();
         }
 
         public WordTree()
         {
-            Children = new Dictionary<char, WordTree>();
+            OriginalChildren = new Dictionary<char, WordTree>();
+            CapitalChildren = new Dictionary<char, WordTree>();
         }
         public string WhoAmI()
         {
@@ -32,6 +44,10 @@ namespace SensitiveWordFilter
             }
             return sbResult.ToString();
         }
+        private bool IsCapital(char ch)
+        {
+            return ch >= 'A' && ch <= 'Z';
+        }
         public void PushIn(string word)
         {
             if (string.IsNullOrEmpty(word))
@@ -40,33 +56,80 @@ namespace SensitiveWordFilter
                 return;
             }
             var key = word[0];
-            if (Children.ContainsKey(key))
+            var isCapital = IsCapital(key);
+
+            Action<Dictionary<char, WordTree>> pushToChild = (tree) =>
+             {
+                 if (tree.TryGetValue(key, out WordTree oldChild))
+                 {
+                     if (!HasChild())
+                     {
+                         return;
+                     }
+                     else
+                     {
+                         oldChild.PushIn(word.Substring(1));
+                     }
+                 }
+                 else
+                 {
+                     var child = new WordTree()
+                     {
+                         Key = key,
+                         Papa = this
+                     };
+                     child.PushIn(word.Substring(1));
+                     tree.Add(key, child);
+                 }
+             };
+            pushToChild(isCapital ? CapitalChildren : OriginalChildren);
+            if (OriginalChildren.Any() && CapitalChildren.Any())
             {
-                if (!HasChild())
-                {
-                    return;
-                }
-                else
-                {
-                    var child = Children[key];
-                    child.PushIn(word.Substring(1));
-                }
+                TryGetChild = GetAllChildren;
             }
             else
             {
-                var child = new WordTree
+                if (OriginalChildren.Any())
                 {
-                    Key = key,
-                    Papa = this,
-                };
-                child.PushIn(word.Substring(1));
-                Children.Add(key, child);
-                Children = Children.OrderByDescending(i => i.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
+                    TryGetChild = GetOriChildren;
+                }
+                if (CapitalChildren.Any())
+                {
+                    TryGetChild = GetCapitalChildren;
+                }
             }
         }
-        public bool IsEnd { get; set; }
-        public char Key { get; set; }
-        public WordTree Papa { get; set; }
-        public Dictionary<char, WordTree> Children { get; set; }
+
+        private bool GetAllChildren(char key, out WordTree wordTree)
+        {
+            return GetCapitalChildren(key, out wordTree) || GetOriChildren(key, out wordTree);
+        }
+
+        private bool GetCapitalChildren(char key, out WordTree wordTree)
+        {
+            if (key >= 'a' && key <= 'z')
+            {
+                key = (char)(key - 32);
+            }
+            return CapitalChildren.TryGetValue(key, out wordTree);
+        }
+
+        private bool GetOriChildren(char key, out WordTree wordTree)
+        {
+            return OriginalChildren.TryGetValue(key, out wordTree);
+        }
+
+        public delegate bool TryGetChildDelegate(char input, out WordTree output);
+        public bool IsEnd;/*{ get; set; }*/
+        protected char Key;/* { get; set; }*/
+        protected WordTree Papa; /*{ get; set; }*/
+        public TryGetChildDelegate TryGetChild;
+        protected Dictionary<char, WordTree> OriginalChildren;/* { get; set; }*/
+        protected Dictionary<char, WordTree> CapitalChildren; /*{ get; set; }*/
+    }
+    public class WordPoint
+    {
+
+
     }
 }

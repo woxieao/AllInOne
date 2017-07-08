@@ -11,7 +11,7 @@ namespace SensitiveWordFilter
     {
 
         /// <summary>
-        /// 用AuthorizeAttribute会有问题
+        /// 
         /// </summary>
         /// <param name="filterContext"></param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -35,8 +35,11 @@ namespace SensitiveWordFilter
                     {
                         foreach (var pi in parameter.ParameterType.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(i => i.CanRead && i.CanWrite).Where(i => i.PropertyType == typeof(string)))
                         {
-                            var val = pi.GetValue(arg) ?? string.Empty;
-                            parms.AppendLine(val.ToString());
+                            if (arg != null)
+                            {
+                                var val = pi.GetValue(arg) ?? string.Empty;
+                                parms.AppendLine(val.ToString());
+                            }
                         }
                     }
                 }
