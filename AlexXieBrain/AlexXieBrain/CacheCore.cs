@@ -1,13 +1,36 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.Caching;
 using Newtonsoft.Json;
 
+
 namespace AlexXieBrain
 {
+    public delegate T MulitFunc<out T>(params object[] objects);
+    public static class FuncHelpers
+    {
+        public static MulitFunc<TOut> Func2Mulit<TOut>(this Func<TOut> func)
+        {
+            return x => func();
+        }
+        public static MulitFunc<TOut> Func2Mulit<T0, TOut>(this Func<T0, TOut> func, T0 arg0)
+        {
+            return x => func(arg0);
+        }
+        public static MulitFunc<TOut> Func2Mulit<T0, T1, TOut>(this Func<T0, T1, TOut> func, T0 arg0, T1 arg1)
+        {
+            return x => func(arg0, arg1);
+        }
 
+        public static MulitFunc<TOut> Func2Mulit<T0, T1, T2, TOut>(this Func<T0, T1, T2, TOut> func, T0 arg0, T1 arg1, T2 arg2)
+        {
+            return x => func(arg0, arg1, arg2);
+        }
+    }
     public class CacheCore
 
     {
+
         /// <summary>
         /// 默认缓存时间
         /// </summary>
@@ -54,14 +77,7 @@ namespace AlexXieBrain
         {
             try
             {
-                var funcName = $"{func.Target}.{func.Method}";
-                var argsStr = string.Empty;
-                foreach (var param in paramList)
-                {
-                    var valueType = param?.GetType().ToString() ?? "NULL";
-                    argsStr += $"[{valueType}:{JsonConvert.SerializeObject(param)}]";
-                }
-                return $"{funcName}[{ EncryptCore.GetMd5(argsStr)}]";
+                return $"[{func.GetMethodInfo().MetadataToken}]({EncryptCore.GetMd5(JsonConvert.SerializeObject(paramList))})";
             }
             catch (Exception ex)
             {

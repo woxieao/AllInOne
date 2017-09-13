@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Dynamic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -14,15 +12,14 @@ namespace AlexXieBrain
     {
         public static string GetTimeStamp()
         {
-            return DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
+            return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
 
         private static void SetVal<T>(T sourceDataRef, IDictionary<string, object> resultRef) where T : class
         {
-            var localData = sourceDataRef.SimpleClone();
-            foreach (var pi in localData.GetType().GetProperties())
+            foreach (var pi in sourceDataRef.GetType().GetProperties())
             {
-                var val = pi.GetValue(localData);
+                var val = pi.GetValue(sourceDataRef);
                 resultRef[pi.Name] = val;
             }
         }

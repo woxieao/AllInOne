@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace AlexXieBrain
 {
@@ -108,16 +111,50 @@ namespace AlexXieBrain
                 return mem.GetBuffer();
             }
         }
-        public virtual byte[] GetXaPicBytes(Color fontColor, Image backGroundImg, bool inverseColor = false)
+
+
+        private Bitmap EmptyBackground(Color specColor, Bitmap backGroundPic, Bitmap xaPic, Func<Bitmap, Bitmap, Bitmap> combinePic)
         {
-            var backGroundPic = (Bitmap)backGroundImg;
-            var width = backGroundPic.Width > backGroundPic.Height ? backGroundPic.Height : backGroundPic.Width;
-            var picMem = new MemoryStream(GetXaPicBytes(width, fontColor, Color.Empty, inverseColor));
-            var baseXaPic = (Bitmap)Image.FromStream(picMem);
-            var pic = CombinePic(baseXaPic, backGroundPic);
+            var staticColor = Color.FromArgb(1, 2, 3);
+            for (var i = 0; i < backGroundPic.Width; i++)
+            {
+                for (var j = 0; j < backGroundPic.Height; j++)
+                {
+                    var currentColor = backGroundPic.GetPixel(i, j);
+                    if (currentColor.ToArgb() == specColor.ToArgb())
+                    {
+                        backGroundPic.SetPixel(i, j, staticColor);
+                    }
+                }
+            }
+
+            var picResult = combinePic(xaPic, backGroundPic);
+            for (var i = 0; i < picResult.Width; i++)
+            {
+                for (var j = 0; j < picResult.Height; j++)
+                {
+                    var currentColor = picResult.GetPixel(i, j);
+                    if (currentColor.ToArgb() == specColor.ToArgb())
+                    {
+                        picResult.SetPixel(i, j, Color.Empty);
+                    }
+                    else if (currentColor.ToArgb() == staticColor.ToArgb())
+                    {
+                        picResult.SetPixel(i, j, specColor);
+                    }
+                }
+            }
+            return picResult;
+        }
+        private Bitmap Byte2Bitmap(byte[] picBytes)
+        {
+            return new Bitmap(new MemoryStream(picBytes));
+        }
+
+        private byte[] Bitmap2Byte(Bitmap image)
+        {
             using (var mem = new MemoryStream())
             {
-                var image = pic;
                 image.Save(mem, System.Drawing.Imaging.ImageFormat.Png);
                 var byData = new byte[mem.Length];
                 mem.Position = 0;
@@ -126,17 +163,112 @@ namespace AlexXieBrain
             }
         }
 
-        public async void Draw(string picUrl, bool inverseColor = true)
+        public virtual byte[] GetXaPicBytes(Color fontColor, Bitmap backGroundPic, bool emptyBackground)
         {
-            //if (fontColor.ToArgb() == default(Color).ToArgb())
-            //{
-            //    fontColor = Color.White;
-            //}
-            await TaskCore.AsyncRun(() => Core.Spider.Get(picUrl), result =>
-             {
-                 var img = new Bitmap(new MemoryStream(result));
-                 Core.File.SaveFile(GetXaPicBytes(Color.White, img, inverseColor), $"XA_Icon/{ExtensionCore.GetTimeStamp()}.xa.png");
-             });
+            var width = backGroundPic.Width > backGroundPic.Height ? backGroundPic.Height : backGroundPic.Width;
+            var baseXaPic = Byte2Bitmap(GetXaPicBytes(width, fontColor, Color.Empty, true));
+            var pic = emptyBackground ? EmptyBackground(fontColor, backGroundPic, baseXaPic, CombinePic) : CombinePic(baseXaPic, backGroundPic);
+            return Bitmap2Byte(pic);
+        }
+        public Bitmap InverseHalfColor(Bitmap pic)
+        {
+            for (var i = pic.Width / 2 - 1; i < pic.Width; i++)
+            {
+                for (var j = 0; j < pic.Height; j++)
+                {
+                    var currentColor = pic.GetPixel(i, j);
+                    pic.SetPixel(i, j, Color.FromArgb(currentColor.ToArgb() ^ 0xffffff));
+                }
+            }
+            return pic;
+        }
+
+
+        public Bitmap InverseColor(Bitmap pic)
+        {
+            for (var i = 0; i < pic.Width; i++)
+            {
+                for (var j = 0; j < pic.Height; j++)
+                {
+                    var currentColor = pic.GetPixel(i, j);
+                    pic.SetPixel(i, j, Color.FromArgb(currentColor.ToArgb() ^ 0xffffff));
+                }
+            }
+            return pic;
+        }
+
+        public async void Draw(string picPath)
+        {
+            var picList = picPath.Split(' ');
+            if (picList.Length > 1)
+            {
+                picPath = picList[picList.Length - 1];
+            }
+            //163music replace
+            picPath = picPath.Split(new[] { "?param=" }, StringSplitOptions.None)[0];
+            Func<byte[]> getPicStream;
+            if (File.Exists(picPath))
+            {
+                getPicStream = () => File.ReadAllBytes(picPath);
+            }
+            else
+            {
+                getPicStream = () => Core.Spider.Get(picPath);
+            }
+            await TaskCore.AsyncRun(getPicStream, result =>
+                {
+                    var rootPath = $"XA_Icon/{ExtensionCore.GetTimeStamp()}";
+                    Core.File.SaveFile(result, $"{rootPath}/0.original.png");
+                    Core.File.SaveFile(GetXaPicBytes(Color.White, Byte2Bitmap(result), false), $"{rootPath}/1.xa.png");
+                    Core.File.SaveFile(GetXaPicBytes(Color.White, Byte2Bitmap(result), true), $"{rootPath}/2.empty.xa.png");
+                    Core.File.SaveFile(GetXaPicBytes(Color.White, InverseColor(Byte2Bitmap(result)), false), $"{rootPath}/3.inverse.xa.png");
+                    Core.File.SaveFile(GetXaPicBytes(Color.White, InverseColor(Byte2Bitmap(result)), true), $"{rootPath}/4.inverse.empty.xa.png");
+                    DrawTattooAi($"{rootPath}/2.empty.xa.png", $"{rootPath}/5.ai.xa.png");
+                    //Core.File.SaveFile(GetXaPicBytes(Color.White, InverseHalfColor(Byte2Bitmap(result)), false), $"{rootPath}/5.inverse.xa.png");
+                    //Core.File.SaveFile(GetXaPicBytes(Color.White, InverseHalfColor(Byte2Bitmap(result)), true), $"{rootPath}/6.inverse.empty.xa.png");
+                });
+        }
+        //@"C:\Data\Github\scripts\PowerShell\XA_Icon\NotBad\20170809164319\2.empty.xa.png"
+        public async void DrawTattooAi(string path, string savepath)
+        {
+            await Task.Run(() =>
+                 {
+                     var xIndex = 0;
+                     var tempXaImg = Byte2Bitmap(File.ReadAllBytes(path));
+                     var xaImg = (Bitmap)tempXaImg.GetThumbnailImage(530, 530, () => false, IntPtr.Zero);
+                     for (var x = 0; x < xaImg.Width; x++)
+                     {
+                         for (var y = xaImg.Height - 1; y >= 0; y--)
+                         {
+                             if (xaImg.GetPixel(x, y).ToArgb() != 0)
+                             {
+                                 xIndex = x;
+                                 break;
+                             }
+                         }
+                         if (xIndex != 0)
+                         {
+                             break;
+                         }
+                     }
+                     var tempImg = new Bitmap(xaImg.Width - xIndex * 2 + 70, xaImg.Height + 70);
+                     for (var x = xIndex; x < xaImg.Width - xIndex; x++)
+                     {
+                         for (var y = 0; y < xaImg.Height; y++)
+                         {
+                             tempImg.SetPixel(x - xIndex, y, xaImg.GetPixel(x, y));
+                         }
+                     }
+                     var img = new Bitmap(210 * 10, 297 * 10);
+                     for (var y = 0; y < img.Height; y++)
+                     {
+                         for (var x = 0; x < img.Width; x++)
+                         {
+                             img.SetPixel(x, y, tempImg.GetPixel(x % tempImg.Width, y % tempImg.Height));
+                         }
+                     }
+                     img.Save(savepath);
+                 });
         }
     }
 }

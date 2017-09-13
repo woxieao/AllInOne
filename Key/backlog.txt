@@ -1,3 +1,4 @@
+jf.xinstudy.cn
 addeventlisten/remove
 更新时间插件bugfix
 代码混淆,方法更新
@@ -24,3 +25,13 @@ kotlin
 chrome extension right click
 hexo 博客
 测试ef速度
+redis
+看招聘条件学技术
+缓存 集群 分布式 负载均衡
+Nginx/NLB负载均衡
+2进制转128进制压缩
+js rpg游戏
+大鱼吃小鱼游戏
+{
+打败怪兽可以升级,被怪兽打败 怪兽会升级
+}

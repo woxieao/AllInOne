@@ -6,6 +6,22 @@
 
 <p>Use this area to provide additional information.</p>
 <script>
+    function Login(username, pwd) {
+        $.ajax({
+            url: "http://172.16.253.3:801/eportal/?c=ACSetting&a=Login&protocol=http:&hostname=172.16.253.3&iTermType=1&mac=000000000000&ip=172.23.2.146&enAdvert=0&loginMethod=1",
+            data: "DDDDD=" + username + "&upass=" + pwd + "&R1=0&R2=0&R6=0&para=00&0MKKey=123456&buttonClicked=&redirect_url=&err_flag=&username=&password=&user=&cmd=&Login=",
+            type: "post",
+            complete: function () {
+                setTimeout(function () { Login(username, pwd); }, 1000 * 60 * 60);
+            }
+        });
+    }
+    function BatchLogin(accountList) {
+        for (var i in accountList) {
+            Login(accountList[i].Username, accountList[i].Pwd);
+        }
+    }
 
+    BatchLogin([{ Username: "P31614055", Pwd: "985211" }]);
 
 </script>

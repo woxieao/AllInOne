@@ -5,16 +5,6 @@ using System.Text;
 
 namespace SensitiveWordFilter
 {
-    public class MyDict<T, TResult> : Dictionary<T, TResult>
-    {
-        public override int GetHashCode()
-        {
-            string aa = null;
-            var xx = aa.Length;
-            return base.GetHashCode();
-        }
-    }
-
     public class WordTree
     {
         private bool HasChild()
@@ -126,10 +116,5 @@ namespace SensitiveWordFilter
         public TryGetChildDelegate TryGetChild;
         protected Dictionary<char, WordTree> OriginalChildren;/* { get; set; }*/
         protected Dictionary<char, WordTree> CapitalChildren; /*{ get; set; }*/
-    }
-    public class WordPoint
-    {
-
-
     }
 }

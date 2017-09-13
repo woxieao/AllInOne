@@ -7,7 +7,7 @@ namespace SensitiveWordFilter
         public static long Counter2 = 0;
         public static long Counter3 = 0;
 
-        public static  string FastCheckStr(this string strToCheck, int currentIndex, int strLen, WordTree wordTree)
+        public static string FastCheckStr(this string strToCheck, int currentIndex, int strLen, WordTree wordTree)
         {
             while (true)
             {

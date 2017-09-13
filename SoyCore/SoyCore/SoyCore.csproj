@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="ClassLibrary1">
+      <HintPath>..\..\..\..\Users\woxieao\Documents\Visual Studio 2017\Projects\ClassLibrary1\ClassLibrary1\bin\Debug\netstandard2.0\ClassLibrary1.dll</HintPath>
+    </Reference>
+    <Reference Include="SensitiveWordFilter">
+      <HintPath>..\..\..\jr\2017云南学习平台\SourceCode\Tools\Lib\SensitiveWordFilter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -5,32 +5,43 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Web;
 
 namespace AlexXieBrain
 {
     public class SpiderCore
     {
-        private HttpClient _client;
-        public SpiderCore()//string baseAddress
-        {
-            //_client = new HttpClient
-            //{
-            //    BaseAddress = new Uri(baseAddress),
-            //};
-        }
 
-
-        public byte[] Get(string url)
+        public byte[] Get(string url, string cookieStr = "")
         {
-            using (var client = new HttpClient
+            var cookieList = cookieStr.Split(';');
+            var baseAddress = new Uri(url);
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
             {
-                BaseAddress = new Uri(url)
-            })
-            {
-                return client.GetAsync(new Uri(url)).Result.Content.ReadAsByteArrayAsync().Result;
+                foreach (var cookieInfo in cookieList)
+                {
+                    var cookieData = cookieInfo.Split('=');
+                    if (cookieData.Length >= 2)
+                    {
+                        cookieContainer.Add(baseAddress, new Cookie(HttpUtility.UrlEncode(cookieData[0].Trim()), HttpUtility.UrlEncode(cookieData[1])));
+                    }
+                }
+                using (var client = new HttpClient(handler)
+                {
+                    BaseAddress = baseAddress,
+                })
+                {
+                    return client.GetAsync(new Uri(url)).Result.Content.ReadAsByteArrayAsync().Result;
+                }
             }
+
+        }
+        public string GetStr(string url, string cookieStr = "")
+        {
+            return Encoding.UTF8.GetString(Get(url, cookieStr));
         }
 
         //public IEnumerable<string> GetAsync(string url, int times = 1)
@@ -64,6 +75,16 @@ namespace AlexXieBrain
                 return client.PostAsync(url, new StringContent(content)).Result.Content.ReadAsByteArrayAsync().Result;
             }
         }
+        public string PostStr(string url, string content)
+        {
+            using (var client = new HttpClient
+            {
+                BaseAddress = new Uri(url)
+            })
+            {
+                return client.PostAsync(url, new StringContent(content)).Result.Content.ReadAsStringAsync().Result;
+            }
+        }
     }
     public static class HttpClientExtensions
     {
@@ -94,7 +115,7 @@ namespace AlexXieBrain
 
         public static Task<HttpResponseMessage> PostAsyncEx(this HttpClient client, string requestUri, HttpContent content = null, Action<ApiLogInfo> logAct = null)
         {
-            var dataStr = content==null?string.Empty:content.ReadAsStringAsync().Result;
+            var dataStr = content == null ? string.Empty : content.ReadAsStringAsync().Result;
             var result = client.PostAsync(requestUri, content);
             EnsureSuccessStatusCode(result, logAct, dataStr);
             return result;

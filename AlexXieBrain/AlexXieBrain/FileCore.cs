@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace AlexXieBrain
 {
@@ -16,7 +17,7 @@ namespace AlexXieBrain
 
         public void SaveAsString(string stuff, string savePath, bool append = true)
         {
-            CreateIfNotExist(savePath);
+            CreateDirectoryIfNotExist(savePath);
             using (var sw = new StreamWriter(savePath, append, Encoding.UTF8))
             {
                 sw.Write(stuff);
@@ -24,16 +25,16 @@ namespace AlexXieBrain
         }
         public void SaveAsJson<T>(string savePath, T stuff, bool append = true)
         {
-            CreateIfNotExist(savePath);
+            CreateDirectoryIfNotExist(savePath);
             using (var sw = new StreamWriter(savePath, append, Encoding.UTF8))
             {
-                sw.Write(stuff.SerializeToJsonStr() + "\r\n");
+                sw.Write(JsonConvert.SerializeObject(stuff) + "\r\n");
             }
         }
 
         public T ReadAsJson<T>(string savePath)
         {
-            return ReadAsString(savePath).ConverTo<T>();
+            return JsonConvert.DeserializeObject<T>(ReadAsString(savePath));
         }
 
         public string ReadAsString(string savePath)
@@ -44,7 +45,7 @@ namespace AlexXieBrain
             }
         }
 
-        public void CreateIfNotExist(string filePath)
+        public void CreateDirectoryIfNotExist(string filePath)
         {
             var directoryInfo = new FileInfo(filePath).Directory;
             if (directoryInfo != null)
@@ -59,7 +60,7 @@ namespace AlexXieBrain
 
         public void SaveFile(byte[] buffer, string fileFullPath)
         {
-            CreateIfNotExist(fileFullPath);
+            CreateDirectoryIfNotExist(fileFullPath);
             File.WriteAllBytes(fileFullPath, buffer);
         }
     }
