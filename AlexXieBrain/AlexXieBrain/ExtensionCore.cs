@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AlexXieBrain
 {
@@ -14,14 +15,30 @@ namespace AlexXieBrain
         {
             return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
-
-        private static void SetVal<T>(T sourceDataRef, IDictionary<string, object> resultRef) where T : class
+        public static string GetTimeStamp()
         {
-            foreach (var pi in sourceDataRef.GetType().GetProperties())
+            return DateTime.Now.ToString("yyyyMMddHHmmss");
+        }
+        private static void Copy2Dynamic<T>(T sourceData, IDictionary<string, object> resultRef) where T : class
+        {
+            if (sourceData == null)
             {
-                var val = pi.GetValue(sourceDataRef);
-                resultRef[pi.Name] = val;
+                return;
             }
+            foreach (var pi in sourceData.ToJobj().Properties())
+            {
+                resultRef[pi.Name] = pi.Value;
+            }
+        }
+
+        private static void SetVal<T0>(Func<T0, object> combineValFunc, T0 sourceData, IDictionary<string, object> resultRef) where T0 : class
+        {
+            if (sourceData == null)
+            {
+                return;
+            }
+            var result = combineValFunc(sourceData);
+            Copy2Dynamic(result, resultRef);
         }
 
         /// <summary>
@@ -30,10 +47,10 @@ namespace AlexXieBrain
         /// <typeparam name="T"></typeparam>
         /// <param name="sourceData">sourceData</param>
         /// <returns>new dynamic object not reference sourceData</returns>
-        public static dynamic ToDynamic<T>(this T sourceData) where T : class
+        public static IDictionary<string, object> ToDynamic<T>(this T sourceData) where T : class
         {
             IDictionary<string, object> result = new ExpandoObject();
-            SetVal(sourceData, result);
+            Copy2Dynamic(sourceData, result);
             return result;
         }
 
@@ -45,39 +62,39 @@ namespace AlexXieBrain
         /// <param name="sourceData">sourceData</param>
         /// <param name="combineVal">combineValue</param>
         /// <returns>new dynamic object not reference sourceData</returns>
-        public static dynamic ToDynamic<T0, T1>(this T0 sourceData, T1 combineVal)
+        public static IDictionary<string, object> ToDynamic<T0, T1>(this T0 sourceData, T1 combineVal)
             where T0 : class
             where T1 : class
         {
             IDictionary<string, object> result = new ExpandoObject();
-            SetVal(sourceData, result);
-            SetVal(combineVal, result);
+            Copy2Dynamic(sourceData, result);
+            Copy2Dynamic(combineVal, result);
             return result;
         }
 
-        public static dynamic ToDynamic<T0, T1>(this T0 sourceData, Func<T0, T1> combineValFunc)
+        public static IDictionary<string, object> ToDynamic<T0, T1>(this T0 sourceData, Func<T0, T1> combineValFunc)
             where T0 : class
             where T1 : class
         {
             IDictionary<string, object> result = new ExpandoObject();
-            SetVal(sourceData, result);
-            SetVal(combineValFunc(sourceData), result);
+            Copy2Dynamic(sourceData, result);
+            SetVal(combineValFunc, sourceData, result);
             return result;
         }
 
-        public static dynamic ToDynamic<T0, T1, T2>(this T0 sourceData, T1 combineVal0, T2 combineVal1)
+        public static IDictionary<string, object> ToDynamic<T0, T1, T2>(this T0 sourceData, T1 combineVal0, T2 combineVal1)
             where T0 : class
             where T1 : class
             where T2 : class
         {
             IDictionary<string, object> result = new ExpandoObject();
-            SetVal(sourceData, result);
-            SetVal(combineVal0, result);
-            SetVal(combineVal1, result);
+            Copy2Dynamic(sourceData, result);
+            Copy2Dynamic(combineVal0, result);
+            Copy2Dynamic(combineVal1, result);
             return result;
         }
 
-        public static IEnumerable<dynamic> ToDynamicList<T>(this IEnumerable<T> sourceDataList) where T : class
+        public static IEnumerable<IDictionary<string, object>> ToDynamicList<T>(this IEnumerable<T> sourceDataList) where T : class
         {
             var resultList = new List<IDictionary<string, object>>();
             foreach (var sourceData in sourceDataList)
@@ -87,28 +104,31 @@ namespace AlexXieBrain
             return resultList;
         }
 
-        public static IEnumerable<dynamic> ToDynamicList<T0, T1>(this IEnumerable<T0> sourceDataList, Func<T0, T1> func)
+        public static IEnumerable<IDictionary<string, object>> ToDynamicList<T0, T1>(this IEnumerable<T0> sourceDataList, Func<T0, T1> func)
             where T0 : class
             where T1 : class
         {
             var resultList = new List<IDictionary<string, object>>();
             foreach (var sourceData in sourceDataList)
             {
-                resultList.Add(sourceData.ToDynamic(func(sourceData)));
+                resultList.Add(sourceData.ToDynamic(func));
             }
             return resultList;
         }
 
-        public static dynamic Filter<T>(this T sourceData, Action<T> act)
-        {
 
-            return 1;
+        public static JObject ToJobj<T>(this T source)
+        {
+            var serialized = JsonConvert.SerializeObject(source);
+            return JObject.Parse(serialized);
+            //return JsonConvert.DeserializeObject<T>(serialized);
         }
-        public static T SimpleClone<T>(this T source)
+        public static T SimpleClone<T>(this T source) where T : class
         {
             var serialized = JsonConvert.SerializeObject(source);
             return JsonConvert.DeserializeObject<T>(serialized);
         }
+
 
         public static T DeepClone<T>(this T source)
         {
