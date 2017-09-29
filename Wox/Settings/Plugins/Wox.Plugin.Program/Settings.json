@@ -1,0 +1,11 @@
+{
+  "ProgramSources": [],
+  "ProgramSuffixes": [
+    "bat",
+    "appref-ms",
+    "exe",
+    "lnk"
+  ],
+  "EnableStartMenuSource": true,
+  "EnableRegistrySource": true
+}

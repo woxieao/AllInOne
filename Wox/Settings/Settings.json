@@ -1,0 +1,213 @@
+{
+  "Hotkey": "F1",
+  "Language": "zh-cn",
+  "Theme": "BlurBlack",
+  "QueryBoxFont": "OCR A",
+  "QueryBoxFontStyle": "Normal",
+  "QueryBoxFontWeight": "Normal",
+  "QueryBoxFontStretch": "Normal",
+  "ResultFont": "OCR A",
+  "ResultFontStyle": null,
+  "ResultFontWeight": null,
+  "ResultFontStretch": null,
+  "AutoUpdates": false,
+  "WindowLeft": 283.0,
+  "WindowTop": 170.5,
+  "MaxResultsToShow": 10,
+  "ActivateTimes": 139,
+  "CustomPluginHotkeys": [],
+  "Opacity": 1.0,
+  "OpacityMode": 0,
+  "DontPromptUpdateMsg": false,
+  "EnableUpdateLog": false,
+  "StartWoxOnSystemStartup": true,
+  "HideOnStartup": true,
+  "LeaveCmdOpen": false,
+  "HideWhenDeactive": false,
+  "RememberLastLaunchLocation": true,
+  "IgnoreHotkeysOnFullscreen": false,
+  "Proxy": {
+    "Enabled": false,
+    "Server": null,
+    "Port": 0,
+    "UserName": null,
+    "Password": null
+  },
+  "LastQueryMode": "Selected",
+  "PluginSettings": {
+    "PythonDirectory": null,
+    "Plugins": {
+      "2f4e384e-76ce-45c3-aea2-b16f5e5c328f": {
+        "ID": "2f4e384e-76ce-45c3-aea2-b16f5e5c328f",
+        "Name": "Hello World Python",
+        "ActionKeywords": [
+          "h"
+        ],
+        "Disabled": false
+      },
+      "CEA0FDFC6D3B4085823D60DC76F28855": {
+        "ID": "CEA0FDFC6D3B4085823D60DC76F28855",
+        "Name": "Calculator",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "9B36CE6181FC47FBB597AA2C29CD9B0A": {
+        "ID": "9B36CE6181FC47FBB597AA2C29CD9B0A",
+        "Name": "Colors",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "209621585B9B4D81813913C507C058C6": {
+        "ID": "209621585B9B4D81813913C507C058C6",
+        "Name": "Control Panel",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "D2D2C23B084D411DB66FE0C79D6C2A6E": {
+        "ID": "D2D2C23B084D411DB66FE0C79D6C2A6E",
+        "Name": "Everything",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "B4D3B69656E14D44865C8D818EAE47C4": {
+        "ID": "B4D3B69656E14D44865C8D818EAE47C4",
+        "Name": "Folder",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "6A122269676E40EB86EB543B945932B9": {
+        "ID": "6A122269676E40EB86EB543B945932B9",
+        "Name": "Plugin Indicator",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "D2D2C23B084D422DB66FE0C79D6C2A6A": {
+        "ID": "D2D2C23B084D422DB66FE0C79D6C2A6A",
+        "Name": "Wox Plugin Management",
+        "ActionKeywords": [
+          "wpm"
+        ],
+        "Disabled": false
+      },
+      "791FC278BA414111B8D1886DFE447410": {
+        "ID": "791FC278BA414111B8D1886DFE447410",
+        "Name": "Program",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "D409510CD0D2481F853690A07E6DC426": {
+        "ID": "D409510CD0D2481F853690A07E6DC426",
+        "Name": "Shell",
+        "ActionKeywords": [
+          ">"
+        ],
+        "Disabled": false
+      },
+      "CEA08895D2544B019B2E9C5009600DF4": {
+        "ID": "CEA08895D2544B019B2E9C5009600DF4",
+        "Name": "System Commands",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "0308FD86DE0A4DEE8D62B9B535370992": {
+        "ID": "0308FD86DE0A4DEE8D62B9B535370992",
+        "Name": "URL",
+        "ActionKeywords": [
+          "*"
+        ],
+        "Disabled": false
+      },
+      "565B73353DBF4806919830B9202EE3BF": {
+        "ID": "565B73353DBF4806919830B9202EE3BF",
+        "Name": "Web Searches",
+        "ActionKeywords": [
+          "g",
+          "wiki",
+          "findicon",
+          "facebook",
+          "twitter",
+          "maps",
+          "translate",
+          "duckduckgo",
+          "github",
+          "gist",
+          "gmail",
+          "drive",
+          "wolframalpha",
+          "stackoverflow",
+          "lucky",
+          "image",
+          "youtube",
+          "bing",
+          "yahoo",
+          "bd"
+        ],
+        "Disabled": false
+      },
+      "095A6AE3A254432EBBD78F05A71D4981": {
+        "ID": "095A6AE3A254432EBBD78F05A71D4981",
+        "Name": "有道翻译",
+        "ActionKeywords": [
+          "yd"
+        ],
+        "Disabled": true
+      },
+      "D2D2C23B084D411DB66FE0C79D6C2A6C": {
+        "ID": "D2D2C23B084D411DB66FE0C79D6C2A6C",
+        "Name": "Clipboard History",
+        "ActionKeywords": [
+          "cb"
+        ],
+        "Disabled": false
+      },
+      "D2D2C23B084D411DB66EE0C79D6C2A6C": {
+        "ID": "D2D2C23B084D411DB66EE0C79D6C2A6C",
+        "Name": "Wox.Plugin.ProcessKiller",
+        "ActionKeywords": [
+          "kill"
+        ],
+        "Disabled": false
+      },
+      "FD6F596596184119B027D6D81D0C2742": {
+        "ID": "FD6F596596184119B027D6D81D0C2742",
+        "Name": "Google Translate",
+        "ActionKeywords": [
+          "t"
+        ],
+        "Disabled": true
+      },
+      "82DA4FBBDCFC47A0B95156213A69441E": {
+        "ID": "82DA4FBBDCFC47A0B95156213A69441E",
+        "Name": "Wox.Plugin.SimpleClock",
+        "ActionKeywords": [
+          "clock"
+        ],
+        "Disabled": true
+      },
+      "5B7E53D506844D2D8B7001AA19F5EF8F": {
+        "ID": "5B7E53D506844D2D8B7001AA19F5EF8F",
+        "Name": "Todos",
+        "ActionKeywords": [
+          "todo"
+        ],
+        "Disabled": false
+      }
+    }
+  }
+}

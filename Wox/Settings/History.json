@@ -1,0 +1,104 @@
+{
+  "Items": [
+    {
+      "Query": "> w",
+      "ExecutedDateTime": "2017-09-25T14:48:17.9310935+08:00"
+    },
+    {
+      "Query": "> 163m",
+      "ExecutedDateTime": "2017-09-25T14:48:31.1412641+08:00"
+    },
+    {
+      "Query": "h",
+      "ExecutedDateTime": "2017-09-25T14:57:23.9162177+08:00"
+    },
+    {
+      "Query": "h 1",
+      "ExecutedDateTime": "2017-09-25T14:57:30.8689021+08:00"
+    },
+    {
+      "Query": "yd",
+      "ExecutedDateTime": "2017-09-25T15:00:17.1305983+08:00"
+    },
+    {
+      "Query": "wpm install Google Translate",
+      "ExecutedDateTime": "2017-09-25T15:05:20.0263604+08:00"
+    },
+    {
+      "Query": "t",
+      "ExecutedDateTime": "2017-09-25T15:08:30.58539+08:00"
+    },
+    {
+      "Query": "t zh-CN",
+      "ExecutedDateTime": "2017-09-25T15:08:45.678016+08:00"
+    },
+    {
+      "Query": "k",
+      "ExecutedDateTime": "2017-09-25T15:09:15.8439273+08:00"
+    },
+    {
+      "Query": "kill",
+      "ExecutedDateTime": "2017-09-25T15:09:31.5795006+08:00"
+    },
+    {
+      "Query": "td",
+      "ExecutedDateTime": "2017-09-25T15:20:03.278864+08:00"
+    },
+    {
+      "Query": "td -h",
+      "ExecutedDateTime": "2017-09-25T15:20:07.5440568+08:00"
+    },
+    {
+      "Query": "td -a test",
+      "ExecutedDateTime": "2017-09-25T15:20:15.9369269+08:00"
+    },
+    {
+      "Query": "td",
+      "ExecutedDateTime": "2017-09-25T15:20:17.7656061+08:00"
+    },
+    {
+      "Query": "td -r",
+      "ExecutedDateTime": "2017-09-25T15:20:29.0394526+08:00"
+    },
+    {
+      "Query": "td -a test",
+      "ExecutedDateTime": "2017-09-25T15:21:05.0067609+08:00"
+    },
+    {
+      "Query": "td -a test2",
+      "ExecutedDateTime": "2017-09-25T15:21:53.8867165+08:00"
+    },
+    {
+      "Query": "td -r testr",
+      "ExecutedDateTime": "2017-09-25T15:22:01.4039329+08:00"
+    },
+    {
+      "Query": "td -r",
+      "ExecutedDateTime": "2017-09-25T15:22:12.9207159+08:00"
+    },
+    {
+      "Query": "wpm list",
+      "ExecutedDateTime": "2017-09-25T15:31:35.0041535+08:00"
+    },
+    {
+      "Query": "wpm",
+      "ExecutedDateTime": "2017-09-25T15:32:21.6349817+08:00"
+    },
+    {
+      "Query": "w",
+      "ExecutedDateTime": "2017-09-25T15:33:03.724926+08:00"
+    },
+    {
+      "Query": "wpm",
+      "ExecutedDateTime": "2017-09-25T15:33:05.1005886+08:00"
+    },
+    {
+      "Query": "wpm uninstall",
+      "ExecutedDateTime": "2017-09-25T15:33:21.526853+08:00"
+    },
+    {
+      "Query": "wpm uninstall Google Translate",
+      "ExecutedDateTime": "2017-09-25T15:33:36.4358357+08:00"
+    }
+  ]
+}

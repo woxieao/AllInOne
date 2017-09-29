@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace AlexXieBrain
@@ -68,5 +69,19 @@ namespace AlexXieBrain
         public char Key { get; set; }
         public WordTree Papa { get; set; }
         public Dictionary<char, WordTree> Children { get; set; }
+    }
+
+    internal class SwapVisitor : ExpressionVisitor
+    {
+        private readonly Expression _from, _to;
+        public SwapVisitor(Expression from, Expression to)
+        {
+            this._from = from;
+            this._to = to;
+        }
+        public override Expression Visit(Expression node)
+        {
+            return node == _from ? _to : base.Visit(node);
+        }
     }
 }

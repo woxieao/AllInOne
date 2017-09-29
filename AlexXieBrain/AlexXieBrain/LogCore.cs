@@ -1,4 +1,5 @@
 ﻿using System;
+using AlexXieBrain.Helpers;
 using Newtonsoft.Json;
 
 namespace AlexXieBrain

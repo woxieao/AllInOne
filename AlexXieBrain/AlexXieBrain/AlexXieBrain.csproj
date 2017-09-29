@@ -46,6 +46,8 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataBase\DbBase.cs" />
+    <Compile Include="DataBase\DalHelper.cs" />
     <Compile Include="JsonConvert.cs" />
     <Compile Include="Models.cs" />
     <Compile Include="ExceptionCore.cs" />
@@ -56,7 +58,7 @@
     <Compile Include="JsonCore.cs" />
     <Compile Include="FunnyStuff.cs" />
     <Compile Include="Core.cs" />
-    <Compile Include="ExtensionCore.cs" />
+    <Compile Include="Helpers\ExtensionCore.cs" />
     <Compile Include="TestCore.cs" />
     <Compile Include="SpiderCore.cs" />
     <Compile Include="FileCore.cs" />
