@@ -7,11 +7,13 @@ namespace SensitiveWordFilter
         public static long Counter2 = 0;
         public static long Counter3 = 0;
 
-        public static string FastCheckStr(this string strToCheck, int currentIndex, int strLen, WordTree wordTree)
+
+        public static string FastCheckStr(this string strToCheck, WordTree wordTree)
         {
-            while (true)
+            var currentWordTree = wordTree;
+            foreach (var t in strToCheck)
             {
-                if (wordTree.TryGetChild(strToCheck[currentIndex], out var dict))
+                if (currentWordTree.TryGetChild(t, out var dict))
                 {
                     if (dict.IsEnd)
                     {
@@ -19,51 +21,44 @@ namespace SensitiveWordFilter
                     }
                     else
                     {
-                        if (++currentIndex >= strLen)
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            wordTree = dict;
-                        }
+                        currentWordTree = dict;
                     }
                 }
                 else
                 {
-                    return null;
+                    currentWordTree = wordTree;
                 }
             }
+            return string.Empty;
         }
 
-
-        public static unsafe string UnsafeFastCheckStr(char* pointer, WordTree wordTree)
-        {
-            while (true)
-            {
-                if (wordTree.TryGetChild(*pointer, out var dict))
-                {
-                    if (dict.IsEnd)
-                    {
-                        return dict.WhoAmI();
-                    }
-                    else
-                    {
-                        if (*++pointer == 0)
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            wordTree = dict;
-                        }
-                    }
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+        //public static unsafe string UnsafeFastCheckStr(char* pointer, WordTree wordTree)
+        //{
+        //    while (true)
+        //    {
+        //        if (wordTree.TryGetChild(*pointer, out var dict))
+        //        {
+        //            if (dict.IsEnd)
+        //            {
+        //                return dict.WhoAmI();
+        //            }
+        //            else
+        //            {
+        //                if (*++pointer == 0)
+        //                {
+        //                    return null;
+        //                }
+        //                else
+        //                {
+        //                    wordTree = dict;
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //}
     }
 }

@@ -84,47 +84,39 @@ namespace SensitiveWordFilter
             else
             {
                 var wordTree = checkSensitiveWordListUpdate || _sensitiveWordList == null ? GetSensitiveWordPackage() : _sensitiveWordList;
-                var strLen = str.Length;
-                for (var i = 0; i < strLen; i++)
-                {
-                    var word = str.FastCheckStr(i, strLen, wordTree);
-                    if (word != null)
-                    {
-                        return word;
-                    }
-                }
-                return string.Empty;
+                return str.FastCheckStr(wordTree);
             }
         }
 
-        public unsafe string UnsafeCheckSensitiveStr(string str, bool checkSensitiveWordListUpdate = true)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return string.Empty;
-            }
-            else
-            {
-                str = str.Replace("\0", string.Empty);
-                var wordTree = checkSensitiveWordListUpdate || _sensitiveWordList == null ? GetSensitiveWordPackage() : _sensitiveWordList;
-                fixed (char* pointer = str)
-                {
-                    var tempPointer = pointer;
-                    while (true)
-                    {
-                        var word = SensitiveWordHelper.UnsafeFastCheckStr(tempPointer, wordTree);
-                        if (word != null)
-                        {
-                            return word;
-                        }
-                        if (*++tempPointer == 0)
-                        {
-                            return string.Empty;
-                        }
-                    }
-                }
-            }
-        }
+        //todo
+        //public unsafe string UnsafeCheckSensitiveStr(string str, bool checkSensitiveWordListUpdate = true)
+        //{
+        //    if (string.IsNullOrEmpty(str))
+        //    {
+        //        return string.Empty;
+        //    }
+        //    else
+        //    {
+        //        str = str.Replace("\0", string.Empty);
+        //        var wordTree = checkSensitiveWordListUpdate || _sensitiveWordList == null ? GetSensitiveWordPackage() : _sensitiveWordList;
+        //        fixed (char* pointer = str)
+        //        {
+        //            var tempPointer = pointer;
+        //            while (true)
+        //            {
+        //                var word = SensitiveWordHelper.UnsafeFastCheckStr(tempPointer, wordTree);
+        //                if (word != null)
+        //                {
+        //                    return word;
+        //                }
+        //                if (*++tempPointer == 0)
+        //                {
+        //                    return string.Empty;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         #endregion
         public enum TestCaseEnum
         {
@@ -146,10 +138,10 @@ namespace SensitiveWordFilter
         /// </summary>
         /// <param name="strToCheck"></param>
         /// <returns></returns>
-        public string UnsafeCheckSensitiveStrNoCheckFileUpdate(string strToCheck)
-        {
-            return UnsafeCheckSensitiveStr(strToCheck, false);
-        }
+        //public string UnsafeCheckSensitiveStrNoCheckFileUpdate(string strToCheck)
+        //{
+        //    return UnsafeCheckSensitiveStr(strToCheck, false);
+        //}
         public string TestCase(Func<string, string> checkFunc, int stringLen = 1024 * 10, int times = 10, TestCaseEnum testCase = TestCaseEnum.NoSensitiveWord, string appendToString = "")
         {
             var sb = new StringBuilder();
@@ -157,7 +149,8 @@ namespace SensitiveWordFilter
             for (var i = 0; i < stringLen; i++)
             {
                 //  sb.Append("免定金东京丸井MARUIPSG0123456789abcdefghijklmopqrstuvwxyz");
-                sb.Append("abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                //  sb.Append("0123456789");
+                sb.Append("aaaaaaaaaa");
             }
 
             var strToCheck = sb.ToString();
@@ -190,7 +183,7 @@ namespace SensitiveWordFilter
             var result = string.Empty;
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            for (var i = 0; i < times; i++)
+            for (var i = 0; i <= times; i++)
             {
                 result = checkFunc(strToCheck);
                 if (i == 0)
@@ -203,7 +196,7 @@ namespace SensitiveWordFilter
                    $"[Times]:{times}\n" +
                    $"[Ticks]:{ticks}\n" +
                    $"[FirstTicks]:{firstTicks}\n" +
-                   $"[AverageTime]:{ticks / times}\n" +
+                   $"[AverageTime]:{(ticks - firstTicks) / times / 1000}ms\n" +
                    $"[SensitiveWord]:{senWord}\n" +
                    $"[CheckResult]:{result}\n" +
                    $"[StringLength]:{strToCheck.Length}\n";

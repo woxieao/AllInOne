@@ -13,5 +13,5 @@ namespace AlexXieBrain.DataBase
         public bool DelFlag { get; set; }
         public DateTime CreateDate { get; set; }
     }
-    
+
 }

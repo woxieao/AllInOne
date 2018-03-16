@@ -12,7 +12,7 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 function WriteLine($arg0){return write-host $arg0  -foreground Green}
 function pow([double]$num0,[int]$num1){ return [math]::pow($num0,$num1)}
 function json($str){return   ConvertFrom-Json -InputObject $str }
-[void][reflection.assembly]::LoadFile("C:\Data\Github\AlexXieBrain\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll")
+[void][reflection.assembly]::LoadFile("C:\Data\Github\AlexXieBrain\packages\Newtonsoft.Json.3.5.8\lib\35\Newtonsoft.Json.dll")
 [void][reflection.assembly]::LoadFile("C:\Data\Github\AlexXieBrain\AlexXieBrain\bin\Release\AlexXieBrain.dll")
 #[void][reflection.assembly]::LoadFile("C:\Data\Github\AlexXieBrain\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll")
 $L=New-Object AlexXieBrain.LogCore

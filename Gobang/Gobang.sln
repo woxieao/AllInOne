@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gobang", "Gobang\Gobang.csproj", "{13207B3E-4EAB-4A7A-9341-C6777AD10807}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gobang", "Gobang\Gobang.csproj", "{CD9CF219-E0EA-420A-A66E-880C444732E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{13207B3E-4EAB-4A7A-9341-C6777AD10807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13207B3E-4EAB-4A7A-9341-C6777AD10807}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13207B3E-4EAB-4A7A-9341-C6777AD10807}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13207B3E-4EAB-4A7A-9341-C6777AD10807}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD9CF219-E0EA-420A-A66E-880C444732E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD9CF219-E0EA-420A-A66E-880C444732E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD9CF219-E0EA-420A-A66E-880C444732E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD9CF219-E0EA-420A-A66E-880C444732E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {99CDA01E-1D6A-48F9-AB06-2831C05A4316}
 	EndGlobalSection
 EndGlobal

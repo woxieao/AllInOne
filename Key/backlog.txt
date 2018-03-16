@@ -14,10 +14,12 @@ data:text/html,<body></body><script src="http://libs.baidu.com/jquery/1.9.1/jque
 data online
 好乐买记录收藏金额
 chrome插件
+网页框架,sql框架
+在线存储json
+typescript
 
 
 
-					写任务日志
 
 kotlin
 .net core
@@ -43,11 +45,18 @@ js rpg游戏
 110 
 111
 
+nuget 发布工具
+
 二进制转换成十进制,十进制转换成十六进制
 再保存为二进制
 再转成10进制
+练打字
 
 大鱼吃小鱼游戏
 {
 打败怪兽可以升级,被怪兽打败 怪兽会升级
 }
+
+树莓派
+
+github db_password 

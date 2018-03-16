@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -17,12 +16,13 @@ namespace SensitiveWordFilter
             OriginalChildren = new Dictionary<char, WordTree>();
             CapitalChildren = new Dictionary<char, WordTree>();
         }
+
         public string WhoAmI()
         {
             var sb = new StringBuilder();
             sb.Append(Key);
             var papa = Papa;
-            while (papa != null && papa.Papa != null)
+            while (papa?.Papa != null)
             {
                 sb.Append(papa.Key);
                 papa = papa.Papa;
@@ -34,10 +34,38 @@ namespace SensitiveWordFilter
             }
             return sbResult.ToString();
         }
-        private bool IsCapital(char ch)
+
+        private static bool IsCapital(char ch)
         {
             return ch >= 'A' && ch <= 'Z';
         }
+
+        private void PushToChild(char key, string word, IDictionary<char, WordTree> tree)
+        {
+
+            if (tree.TryGetValue(key, out WordTree oldChild))
+            {
+                if (!HasChild())
+                {
+                    return;
+                }
+                else
+                {
+                    oldChild.PushIn(word.Substring(1));
+                }
+            }
+            else
+            {
+                var child = new WordTree()
+                {
+                    Key = key,
+                    Papa = this
+                };
+                child.PushIn(word.Substring(1));
+                tree.Add(key, child);
+            }
+        }
+
         public void PushIn(string word)
         {
             if (string.IsNullOrEmpty(word))
@@ -47,32 +75,7 @@ namespace SensitiveWordFilter
             }
             var key = word[0];
             var isCapital = IsCapital(key);
-
-            Action<Dictionary<char, WordTree>> pushToChild = (tree) =>
-             {
-                 if (tree.TryGetValue(key, out WordTree oldChild))
-                 {
-                     if (!HasChild())
-                     {
-                         return;
-                     }
-                     else
-                     {
-                         oldChild.PushIn(word.Substring(1));
-                     }
-                 }
-                 else
-                 {
-                     var child = new WordTree()
-                     {
-                         Key = key,
-                         Papa = this
-                     };
-                     child.PushIn(word.Substring(1));
-                     tree.Add(key, child);
-                 }
-             };
-            pushToChild(isCapital ? CapitalChildren : OriginalChildren);
+            PushToChild(key, word, isCapital ? CapitalChildren : OriginalChildren);
             if (OriginalChildren.Any() && CapitalChildren.Any())
             {
                 TryGetChild = GetAllChildren;
@@ -109,7 +112,6 @@ namespace SensitiveWordFilter
             return OriginalChildren.TryGetValue(key, out wordTree);
         }
 
-        public delegate bool TryGetChildDelegate(char input, out WordTree output);
         public bool IsEnd;/*{ get; set; }*/
         protected char Key;/* { get; set; }*/
         protected WordTree Papa; /*{ get; set; }*/
@@ -117,4 +119,6 @@ namespace SensitiveWordFilter
         protected Dictionary<char, WordTree> OriginalChildren;/* { get; set; }*/
         protected Dictionary<char, WordTree> CapitalChildren; /*{ get; set; }*/
     }
+
+    public delegate bool TryGetChildDelegate(char input, out WordTree output);
 }

@@ -6,14 +6,17 @@
 <!--<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.js"></script>-->
 <script>
     var app = angular.module('app', []);
-app.controller('test1', function($scope) {
+    app.controller('test1', function ($scope, $sce) {
     $scope.firstName = "John";
     $scope.lastName = "Doe";
 });
-app.controller('test2', function($scope) {
+    app.controller('test2', function ($scope, $sce) {
     $scope.firstName = "John";
     $scope.lastName = "Doe";
 });
+    app.filter('sce', ['$sce', function ($sce) {
+        return $sce.trustAsHtml;
+    }]);
 </script>
 </head>
 <body ng-app="app">
@@ -22,10 +25,13 @@ app.controller('test2', function($scope) {
    	<span ng-model="name" contenteditable="true">2</span>
  <input type="text" ng-model="name">
   </div>
-  <div ng-controller="test2">
-   	<p>名字 : <input type="text" ng-model="name"></p>
-   	<h1>Hello {{name}}</h1>
-  </div>
+<div ng-controller="test2">
+    <p>名字 : <input type="text" ng-model="name"></p>
+    <h1>Hello {{name}}</h1>
+</div>
+    <div class="com text-justify" ng-bind-html="item.Content| sce">
+
+    </div>
 </body>
 
 </html>

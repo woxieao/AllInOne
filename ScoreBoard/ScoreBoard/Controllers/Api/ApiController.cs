@@ -95,7 +95,7 @@ namespace ScoreBoard.Controllers.Api
             var stream = httpClient.GetAsync(new Uri(p)).Result.Content.ReadAsStreamAsync().Result;
             var img = Image.FromStream(stream);
             Response.ContentType = "image/png";
-            Response.BinaryWrite(new DrawCore().GetXaPicBytes(Color.FromName(f), img, r));
+            Response.BinaryWrite(new DrawCore().GetXaPicBytes(Color.FromName(f), (Bitmap)img, r));
         }
         [Route("api/XA2")]
         public void CreateXa(int w = 3600, string f = "black", string b = "white", bool r = false)

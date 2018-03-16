@@ -1,0 +1,1 @@
+sc create memcached11211 binPath= "d:\memcached\memcached.exe -d runservice  -p 11211" start= auto DisplayName= "memcached11211"
