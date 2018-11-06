@@ -1,0 +1,19 @@
+﻿<script>
+var s="";
+function GetString(){
+console.clear();
+s=document.getElementById('string').value;
+return s;
+}
+function Run(){
+eval(document.getElementById('script').value);
+
+}
+</script>
+<strong>string</strong>
+<textarea id='string' style='height:200px;width:100%' onchange='GetString()'></textarea>
+
+<strong>script</strong>
+<textarea id='script' style='height:360px;width:100%' ></textarea>
+<button onclick="Run()">Run</button>
+

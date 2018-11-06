@@ -1,0 +1,26 @@
+USE master
+GO
+RESTORE FILELISTONLY
+   FROM disk='D:\BackUp\db_20180415.bak'
+
+RESTORE DATABASE --test
+   FROM disk='D:\BackUp\db_20180415.bak'
+   WITH RECOVERY ,replace ,
+   MOVE 'Contract_TurboOne' TO 'D:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\DATA\test.MDF', 
+   MOVE 'Contract_TurboOne_log' TO 'D:\Program Files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\DATA\test.LDF'
+GO
+
+
+
+
+USE master
+GO
+RESTORE FILELISTONLY
+   FROM disk='C:\Users\woxieao\Desktop\10-30.bak'
+
+RESTORE DATABASE wh_metro_test
+   FROM disk='C:\Users\woxieao\Desktop\10-30.bak'
+   WITH RECOVERY ,replace ,
+   MOVE 'Contract_TurboOne' TO 'e:\romob\test.MDF', 
+   MOVE 'Contract_TurboOne_log' TO 'e:\romob\test.LDF'
+GO

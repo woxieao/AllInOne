@@ -3,170 +3,321 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.UI.WebControls;
+using Newtonsoft.Json;
 
 namespace AlexXieBrain
 {
-    public class SpiderCore
+    public static class HttpHelper
     {
-
-        public byte[] Get(string url, string cookieStr = "")
+        public static T As<T>(this HttpResponse response)
         {
-            var cookieList = cookieStr.Split(';');
-            var baseAddress = new Uri(url);
-            var cookieContainer = new CookieContainer();
-            using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
+            return JsonConvert.DeserializeObject<T>(response.ResponseStr);
+        }
+    }
+
+    public class HttpResponse
+    {
+        public HttpStatusCode StatusCode { get; set; }
+        public byte[] ResponseBytes { get; set; }
+        public string ResponseStr { get; set; }
+        public string SetCookie { get; set; }
+    }
+    public class Header
+    {
+        public Header(string keyName, string value)
+        {
+            KeyName = keyName;
+            Value = value;
+        }
+        public Header(string str)
+        {
+            var index = str.IndexOf(":", StringComparison.Ordinal);
+            if (index != -1)
             {
+                KeyName = str.Substring(0, index);
+                Value = str.Substring(index + 1);
+            }
+        }
+        public string KeyName { get; set; }
+        public string Value { get; set; }
+    }
+    public class CookieInfo
+    {
+        internal CookieContainer GetCookieContainer()
+        {
+            var cookieContainer = new CookieContainer();
+            if (!string.IsNullOrEmpty(CookieStr))
+            {
+                var cookieList = CookieStr.Split(';');
                 foreach (var cookieInfo in cookieList)
                 {
                     var cookieData = cookieInfo.Split('=');
                     if (cookieData.Length >= 2)
                     {
-                        cookieContainer.Add(baseAddress, new Cookie(HttpUtility.UrlEncode(cookieData[0].Trim()), HttpUtility.UrlEncode(cookieData[1])));
+                        cookieContainer.Add(new Uri(_domain), new Cookie(System.Uri.EscapeDataString(Uri.UnescapeDataString(cookieData[0].Trim())), Uri.EscapeDataString(Uri.UnescapeDataString(cookieData[1]))));
                     }
                 }
-                using (var client = new HttpClient(handler)
+            }
+            return cookieContainer;
+        }
+        public string CookieStr { get; }
+        private readonly string _domain;
+
+        public CookieInfo(string domain, string cookieStr)
+        {
+            _domain = domain;
+            CookieStr = cookieStr;
+        }
+    }
+    public class RequestData
+    {
+        public RequestData()
+        {
+            Headers = new List<Header>();
+            Accept = string.Empty;
+            FailedReplayCount = 5;
+            TimeOutMilliseconds = 30 * 1000;
+        }
+        //public string Domain { get; set; }
+        //public bool NotEncodeCookie { get; set; }
+        public List<Header> Headers { get; set; }
+        public bool UseCookies { get; set; }
+        public CookieInfo Cookie { get; set; }
+        /// <summary>
+        /// eg http://1.1.1.1:8080
+        /// </summary>
+        public string ProxyUri { get; set; }
+        /// <summary>
+        /// 为空时则为随机字符串,否则为指定ip
+        /// </summary>
+        public string XForwardedFor { get; set; }
+        /// <summary>
+        /// 请求失败的重发次数,默认重发五次
+        /// </summary>
+        public int FailedReplayCount { get; set; }
+        /// <summary>
+        /// "application/json"
+        /// </summary>
+        public string Accept { get; set; }
+        public int TimeOutMilliseconds { get; set; }
+    }
+    public class RequestLogBase
+    {
+        public int RequestId { get; set; }
+        public string RequestContent { get; set; }
+        public string RequestHeader { get; set; }
+        public string Url { get; set; }
+        public string ResponseContent { get; set; }
+        public string ResponseCookie { get; set; }
+        public System.DateTime CreateTime { get; set; }
+        public string Remark { get; set; }
+    }
+    public class SpiderCore
+    {
+        private static readonly Random Seed = new Random();
+
+        private readonly RequestData _requestData = new RequestData();
+        public static Action<string> LogoutAction;
+        readonly HttpClient _httpClient;
+        public SpiderCore() { _httpClient = new HttpClient(); }
+        public SpiderCore(RequestData requestData)
+        {
+            _requestData = requestData;
+
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = requestData.Cookie?.GetCookieContainer() ?? new CookieContainer(),
+            };
+            if (!string.IsNullOrEmpty(requestData.ProxyUri))
+            {
+                handler.Proxy = new WebProxy()
                 {
-                    BaseAddress = baseAddress,
-                })
+                    Address = new Uri(requestData.ProxyUri),
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,
+                };
+            }
+            if (requestData.UseCookies)
+            {
+                handler.UseCookies = requestData.UseCookies;
+            }
+            _httpClient = new HttpClient(handler)
+            {
+
+            };
+            if (requestData.TimeOutMilliseconds > 0)
+            {
+                _httpClient.Timeout = new TimeSpan(0, 0, 0, 0, requestData.TimeOutMilliseconds);
+            }
+
+            if (!string.IsNullOrEmpty(requestData.Accept))
+            {
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(requestData.Accept));
+            }
+            foreach (var header in requestData.Headers)
+            {
+                _httpClient.DefaultRequestHeaders.Add(header.KeyName, header.Value);
+            }
+            _httpClient.DefaultRequestHeaders.Add("X-Forwarded-For",
+                string.IsNullOrEmpty(requestData.XForwardedFor)
+                    ? $"{Seed.Next(255)}.{Seed.Next(255)}.{Seed.Next(255)}.{Seed.Next(255)}"
+                    : requestData.XForwardedFor);
+        }
+
+        private HttpResponse FuncCounter(Func<HttpResponse> func, Guid flag, string desc = "", int counter = 0)
+        {
+            ++counter;
+            var flagStr = $"[{flag}](+{counter})\n";
+            try
+            {
+                var result = func();
+                if (counter != 1)
                 {
-                    return client.GetAsync(new Uri(url)).Result.Content.ReadAsByteArrayAsync().Result;
+                    Console.WriteLine($"{flagStr}重发成功");
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                if (counter >= _requestData.FailedReplayCount)
+                {
+                    throw new MsgException($"{flagStr}超过失败重发次数上限{_requestData.FailedReplayCount}次");
+                }
+                else
+                {
+                    Console.WriteLine($"{desc}\n{flagStr}发送请求时出错:[{e.Message}],重发中");
+                    var resp = FuncCounter(func, flag, desc, counter);
+                    return resp;
                 }
             }
-
         }
-        public string GetStr(string url, string cookieStr = "")
+        public HttpResponse Get(string url)
         {
-            return Encoding.UTF8.GetString(Get(url, cookieStr));
-        }
-
-        //public IEnumerable<string> GetAsync(string url, int times = 1)
-        //{
-        //    //var uri = new Uri(url);
-        //    // uri.PathAndQuery;
-        //    for (var i = 0; i < times; i++)
-        //    {
-        //        var fileInfo = new FileInfo($"{Environment.CurrentDirectory}/{ExtensionCore.GetTimeStamp()}_i.txt");
-        //        TaskCore.AsyncRun(() => Get(url), result => { Core.File.SaveFile(result, fileInfo.FullName); });
-        //        yield return $"response saved to:[{fileInfo.FullName}]";
-        //    }
-        //}
-        //public IEnumerable<string> PostAsync(string url, string content = "", int times = 1)
-        //{
-        //    for (var i = 0; i < times; i++)
-        //    {
-        //        var fileInfo = new FileInfo($"{Environment.CurrentDirectory}/{ExtensionCore.GetTimeStamp()}_i.txt");
-        //        TaskCore.AsyncRun(() => Post(url, content), result => { Core.File.SaveFile(result, fileInfo.FullName); });
-        //        yield return $"response saved to:[{fileInfo.FullName}]";
-        //    }
-        //}
-
-        public byte[] Post(string url, string content)
-        {
-            using (var client = new HttpClient
+            var id = Guid.NewGuid();
+            return FuncCounter(() =>
             {
-                BaseAddress = new Uri(url)
-            })
-            {
-                return client.PostAsync(url, new StringContent(content)).Result.Content.ReadAsByteArrayAsync().Result;
-            }
-        }
-        public string PostStr(string url, string content)
-        {
-            using (var client = new HttpClient
-            {
-                BaseAddress = new Uri(url)
-            })
-            {
-                return client.PostAsync(url, new StringContent(content)).Result.Content.ReadAsStringAsync().Result;
-            }
-        }
-    }
-    public static class HttpClientExtensions
-    {
-        private static readonly Action<ApiLogInfo> LogAct = (data) => { };
-        private static readonly bool TurnOnLog = ConfigurationManager.AppSettings[nameof(TurnOnLog)] != "false";
-        private static readonly LogCore LogHelper = Core.Log;
-
-
-        private static void EnsureSuccessStatusCode(Task<HttpResponseMessage> result, Action<ApiLogInfo> logAct, string content = null)
-        {
-            if (TurnOnLog)
-            {
-                var act = logAct ?? LogAct;
-                var httpInfo = result.Result;
-                act(new ApiLogInfo
+                if (_httpClient.BaseAddress == null)
+                { _httpClient.BaseAddress = new Uri(url); }
+                var result = _httpClient.GetAsync(new Uri(url)).Result;
+                var header = result.Headers;
+                var cookie = header.FirstOrDefault(i => i.Key == "Set-Cookie");
+                var setCookie = string.Empty;
+                if (cookie.Key != null && cookie.Value != null)
                 {
+                    setCookie = string.Join(";", cookie.Value);
+                }
+
+                var response = new HttpResponse
+                {
+                    ResponseBytes = result.Content.ReadAsByteArrayAsync().Result,
+                    ResponseStr = result.Content.ReadAsStringAsync().Result,
+                    SetCookie = setCookie,
+                    StatusCode = result.StatusCode
+                };
+                LogoutAction?.Invoke(JsonConvert.SerializeObject(new RequestLogBase
+                {
+                    Url = url,
                     CreateTime = DateTime.Now,
-                    Remark = string.Empty,
-                    RequestData = content,
-                    ResponseData = httpInfo.Content.ReadAsStringAsync().Result,
-                    StatusCode = httpInfo.StatusCode,
-                    Type = httpInfo.RequestMessage.Method.ToString(),
-                    Url = httpInfo.RequestMessage.RequestUri.ToString(),
-                    IsSuccess = true,
-                });
-            }
+                    ResponseContent = response.ResponseStr,
+                    ResponseCookie = setCookie,
+                    RequestHeader = JsonConvert.SerializeObject(_requestData)
+                }));
+                return response;
+
+            }, id, $"Url:{url },Proxy:{_requestData.ProxyUri}");
         }
 
-        public static Task<HttpResponseMessage> PostAsyncEx(this HttpClient client, string requestUri, HttpContent content = null, Action<ApiLogInfo> logAct = null)
+        public string IpTest()
         {
-            var dataStr = content == null ? string.Empty : content.ReadAsStringAsync().Result;
-            var result = client.PostAsync(requestUri, content);
-            EnsureSuccessStatusCode(result, logAct, dataStr);
-            return result;
+            var resp = new Regex("\\[[\\d\\.]+\\]").Match(Get("http://2018.ip138.com/ic.asp").ResponseStr).Value;
+            Console.WriteLine(resp);
+            return resp;
         }
+        public HttpResponse Post<T>(string url, T content, string contentType = "application/json")
+        {
+            var id = Guid.NewGuid();
+            return FuncCounter(() =>
+            {
+                if (_httpClient.BaseAddress == null)
+                { _httpClient.BaseAddress = new Uri(url); }
+                var strContent = content is string ? content as string : JsonConvert.SerializeObject(content);
 
-        public static Task<HttpResponseMessage> DeleteAsyncEx(this HttpClient client, string requestUri, Action<ApiLogInfo> logAct = null)
-        {
-            var result = client.DeleteAsync(requestUri);
-            EnsureSuccessStatusCode(result, logAct);
-            return result;
+                var result = _httpClient.PostAsync(url, new StringContent(strContent, Encoding.UTF8, contentType)).Result;
+                var header = result.Headers;
+                var cookie = header.FirstOrDefault(i => i.Key == "Set-Cookie");
+                var setCookie = string.Empty;
+                if (cookie.Key != null && cookie.Value != null)
+                {
+                    setCookie = string.Join(";", cookie.Value);
+                }
+                var response = new HttpResponse
+                {
+                    ResponseBytes = result.Content.ReadAsByteArrayAsync().Result,
+                    ResponseStr = result.Content.ReadAsStringAsync().Result,
+                    SetCookie = setCookie,
+                    StatusCode = result.StatusCode
+                };
+                LogoutAction?.Invoke(JsonConvert.SerializeObject(new RequestLogBase
+                {
+                    Url = url,
+                    CreateTime = DateTime.Now,
+                    ResponseContent = response.ResponseStr,
+                    ResponseCookie = setCookie,
+                    RequestContent = strContent,
+                    RequestHeader = JsonConvert.SerializeObject(_requestData)
+                }));
+                return response;
+            }, id, $"URL:{url },Proxy:{_requestData.ProxyUri}");
         }
-        public static Task<HttpResponseMessage> PutAsyncEx(this HttpClient client, string requestUri, HttpContent content = null, Action<ApiLogInfo> logAct = null)
+        public HttpResponse Post<T>(string url, T content, string contentType = "application/json", params Header[] headers)
         {
-            var dataStr = content == null ? string.Empty : content.ReadAsStringAsync().Result;
-            var result = client.PutAsync(requestUri, content);
-            EnsureSuccessStatusCode(result, logAct, dataStr);
-            return result;
+            var id = Guid.NewGuid();
+            return FuncCounter(() =>
+            {
+                if (_httpClient.BaseAddress == null)
+                { _httpClient.BaseAddress = new Uri(url); }
+                _httpClient.DefaultRequestHeaders.Clear();
+                foreach (var h in headers)
+                {
+                    _httpClient.DefaultRequestHeaders.Add(h.KeyName, h.Value);
+                }
+                var strContent = content is string ? content as string : JsonConvert.SerializeObject(content);
+                var result = _httpClient.PostAsync(url, new StringContent(strContent, Encoding.UTF8, contentType)).Result;
+                var header = result.Headers;
+                var cookie = header.FirstOrDefault(i => i.Key == "Set-Cookie");
+                var setCookie = string.Empty;
+                if (cookie.Key != null && cookie.Value != null)
+                {
+                    setCookie = string.Join(";", cookie.Value);
+                }
+                var response = new HttpResponse
+                {
+                    ResponseBytes = result.Content.ReadAsByteArrayAsync().Result,
+                    ResponseStr = result.Content.ReadAsStringAsync().Result,
+                    SetCookie = setCookie,
+                    StatusCode = result.StatusCode
+                };
+                LogoutAction?.Invoke(JsonConvert.SerializeObject(new RequestLogBase
+                {
+                    Url = url,
+                    CreateTime = DateTime.Now,
+                    ResponseContent = response.ResponseStr,
+                    ResponseCookie = setCookie,
+                    RequestContent = strContent,
+                    RequestHeader = JsonConvert.SerializeObject(_requestData)
+                }));
+                return response;
+            }, id, $"URL:{url },Proxy:{_requestData.ProxyUri}");
         }
-        //public static Task<HttpResponseMessage> PutAsJsonAsyncEx<T>(this HttpClient client, string requestUri, T value)
-        //{
-        //    //var stopwatch = new Stopwatch();
-        //    //stopwatch.Start();
-        //    //var result = client.PutAsJsonAsync(requestUri, value);
-        //    //EnsureSuccessStatusCode(result, value);
-        //    //return result;
-        //}
-        public static Task<HttpResponseMessage> GetAsyncEx(this HttpClient client, string requestUri, Action<ApiLogInfo> logAct = null)
-        {
-            var result = client.GetAsync(requestUri);
-            EnsureSuccessStatusCode(result, logAct);
-            return result;
-        }
-
-        //public static T ReadAsAsync<T>(this Task<HttpResponseMessage> result)
-        //{
-        //   // return result.Result.Content.ReadAsAsync<T>().Result;
-        //}
-    }
-    public class ApiLogInfo
-    {
-        public ApiLogInfo()
-        {
-            CreateTime = DateTime.Now;
-        }
-        public string Url { get; set; }
-        public string RequestData { get; set; }
-        public string Type { get; set; }
-        public string ResponseData { get; set; }
-        public string Remark { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
-        public DateTime CreateTime { get; set; }
-        public bool IsSuccess { get; set; }
     }
 }
+

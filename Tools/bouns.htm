@@ -1,0 +1,45 @@
+﻿<script>
+    function InitBounNumber(number, suffixLenth) {
+        number = number.replace(/ /g, '');
+        var numberList = { RedBalls: [], BlueBalls: [] }
+        for (var i = 1; i < number.length; i++) {
+            if (i % 2 === 1) {
+                numberList[i < (number.length - (suffixLenth * 2)) ? "RedBalls" : "BlueBalls"].push(number[i - 1] + "" + number[i]);
+            }
+        }
+        return numberList;
+    }
+    function CheckMatchNumber(bounsList, myNumList, keyName) {
+        var matchesKeyName = keyName + "Matches";
+        var matchesStrKeyName = keyName + "MatchesStr";
+        myNumList[matchesKeyName] = [];
+        myNumList[matchesStrKeyName] = "";
+        for (var i in bounsList[keyName]) {
+            if (myNumList[keyName].indexOf(bounsList[keyName][i]) !== -1) {
+                myNumList[matchesKeyName].push(bounsList[keyName][i]);
+                myNumList[matchesStrKeyName] += bounsList[keyName][i] + " ";
+            }
+        }
+    }
+    function Match(target, myNum, suffixLenth) {
+        var bounsList = InitBounNumber(target, suffixLenth);
+        var myNumList = InitBounNumber(myNum, suffixLenth);
+        CheckMatchNumber(bounsList, myNumList, "RedBalls");
+        CheckMatchNumber(bounsList, myNumList, "BlueBalls");
+        if (myNumList.RedBallsMatches.length > 0) {
+            alert("Red ball matches:" + myNumList.RedBallsMatchesStr + "\n" + myNumList.RedBallsMatches.length + " balls");
+        }
+        if (myNumList.BlueBallsMatches.length > 0) {
+            alert("Blue ball matches:" + myNumList.BlueBallsMatchesStr + "\n" + myNumList.BlueBallsMatches.length + " balls");
+        }
+    }
+
+</script>
+<strong>target</strong>
+<textarea id='target' style='height:200px;width:100%'></textarea>
+
+<strong>myNum</strong>
+<textarea id='myNum' style='height:320px;width:100%'></textarea>
+<button style="float: right" onclick="Match(document.getElementById('target').value,document.getElementById('myNum').value,1)">Match 双色球 </button>
+<button style="float: right" onclick="Match(document.getElementById('target').value,document.getElementById('myNum').value,2)">Match 大乐透 </button>
+

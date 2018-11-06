@@ -1,3 +1,154 @@
+
+http://localhost:3485/Modules/Workflow/AffairDetail.aspx?ProcID=18082400002&TaskID=1
+概算余额=概算批复金额-合同金额  BudgetMoneyRemain=TaskBudgetMoney-ListMoney
+概算执行比=(概算批复金额-概算余额)/概算批复金额  FinishRate=(TaskBudgetMoney-BudgetMoneyRemain)/TaskBudgetMoney
+实际计量金额=已计量的金额(已计量明细列表总和)  ListPayedMoney=
+合同执行比=计量金额/合同金额
+新增 结算金额=合同结算审批流程的 合同概算比的金额
+--新用户
+INSERT INTO[dbo].[SEC_User]([Id],[Name],[Type],[LoginId],[Sex],[Status],[OrgId],[Rank],[IsDefaultAccount],[CreatedBy],[CreatedDate],[LastUpdatedBy],[LastUpdatedDate],[IsMainAccount])VALUES(@env_User__Id_,'方大春','local','fangdachun_ht'	,'M','enabled',	@OrgId_,8,	1,'c4165527-19b0-49a5-87db-4d9286b21115',getdate(),'c4165527-19b0-49a5-87db-4d9286b21115',getdate(),		1)
+
+AppWorkflowDataServices$GetReport
+
+概算余额     BudgetMoneyRemain
+概算批复金额 TaskBudgetMoney
+合同金额     ListMoney
+概算执行比   FinishRate
+实际计量金额 ListPayedMoney
+合同执行比   PayRate
+结算金额     new
+
+logo拆分为红黄蓝
+Ⅷ2-TJ-01-03
+
+cmstation,
+attach.ascx
+--加页面时,先加入应用程序设计=>网站导航管理=>安全管理=>功能管理 
+再去角色类型信息里面加页面 功能管理里面要urlencode逗号 要不然403
+
+代码优化 概算报表导出excel和ajax合并 优先级低
+手动添加用户的存储过程
+查log失效原因 
+--user附近语法错误
+补丁
+zsuwy@163.com
+swy1985
+更改密码,备份服务器,写个程序备份数据库,日志要开启
+
+员工编号=>需抓取,提交时,根据序号排序
+
+hf
+上级部门不能看到子集部门excel
+
+--删除公司
+--其他 下面的 其他 改为集团公司其他
+--增加排序字段
+--同步建设工程 改为 同步建设
+--同步建设物业工程 改为 物业开发
+正线没有子集只能选择正线
+--市政项目删掉
+--市政建设 改为 市政项目
+同步物业删掉--底下有很多关联了的项目,不能删
+--其他和集团公司其他合并
+子公司项目名称改为 ***项目1
+--排序如图
+--集团公司其他 放到市政项目前面
+
+
+
+--部署到正式环境
+--合同签订在供应商那个里面有个
+--流程完成时excel汇总
+
+--合肥update,excel权限
+
+
+--表只筛选指定sheet优化
+
+合同计量=>期中支付=>其它计价款项=>材料调差,
+合同计量=>期中支付=>表二,增加新增的四个字段显示
+合同计量=>期中支付=>甲供付款公司
+合同计量=>其它计价款项=>添加计量计价明细 隐藏
+
+https://60.174.200.183:7445
+handOATest
+Handser666
+
+bingosoft\KFT_sunwuyang
+VWCrb3mm
+
+bingosoft\KFT_wangzhongchun
+KFRSxdfg3
+黄劲松
+SET_AGENT_INFO
+页面逻辑
+
+项目招标采购申请(计划合约部)=>招标文件审批
+http://localhost:1234/Modules/Workflow/AffairDetail.aspx?AppCode=1181&ActionType=0&randomCode=1526983688991
+//todo excel
+todo 编辑验工计价款
+工程,查看,编辑
+ChoosePaymentType
+5-9 3种计量合同
+
+HF_CmContractMeasuresService$GetReportData
+
+http://localhost:1234/Modules/ContractPayment/HF_CmContractMeasuresDetailList1.aspx?canEditForm=True&ContractUid=BCAA83CE-7918-404B-AEEF-0C7F626EE83A&CONTRACTMEASURESUID=116B8901-43CC-4C07-A95C-1A8684EAA212&ContractSuppliersUid=8D257310-D470-492C-A1B2-057730A613C4&ContractCurrencyType=CNY&AppCode=848&CONTRACTMEASURESYM=2018-05&CONTRACTMEASURESAPPLYDATE=2018%2f5%2f9+11%3a46%3a15&ContractMeasuresAttribute1=FOU&DeductionOfPrepayments=&iframeId=MeasuresFrame
+
+
+http://localhost:1234/Modules/Workflow/AffairDetail.aspx?ProcID=18051700009&TaskID=1
+
+todo 工程的没有项也能导入
+
+备份文件写个程序跑
+pageoffice文件目录干掉
+
+语言包 使用文档
+
+个人资料修改
+机构资料修改
+
+写注释
+多语言 BusinessId,companyId
+
+单元测试 restful/web
+
+短信,管理员登录
+细分领域的校验
+所有save的校验
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 jf.xinstudy.cn
 addeventlisten/remove
 更新时间插件bugfix

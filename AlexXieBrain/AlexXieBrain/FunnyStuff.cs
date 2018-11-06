@@ -214,7 +214,7 @@ namespace AlexXieBrain
             }
             else
             {
-                getPicStream = () => Core.Spider.Get(picPath);
+                getPicStream = () => new SpiderCore().Get(picPath).ResponseBytes;
             }
             await TaskCore.AsyncRun(getPicStream, result =>
                 {

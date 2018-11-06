@@ -1,99 +1,158 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using ThreadState = System.Threading.ThreadState;
 
 namespace AlexXieBrain
 {
     public class ThreadCore
     {
-        public const int DefaultThreadCountLimit = 100;
+        public const int DefaultThreadCountLimit = 500;
         private readonly int _maxThreadCountLimit;
-        public readonly List<Thread> ThreadList = new List<Thread>();
-        private Action _allDoneAction = null;
-        private bool _canWeGo;
+        private readonly Action _allDoneAction = null;
+        private readonly Action _ranFinishAct = null;
+        private readonly Action<Exception> _onExceptionAct = null;
 
-        public void PushInThreadList(Action act, Action onExceptionAct = null)
-        {
-            ThreadList.Add(new Thread(() =>
-            {
-                try
-                {
-                    act();
-                }
-                catch
-                {
-                    //todo log ex
-                    onExceptionAct?.Invoke();
-                }
-            }));
-        }
-
-        public Task<bool> StartThread(Action allDoneCallBack = null)
-        {
-            _allDoneAction = allDoneCallBack ?? _allDoneAction;
-            return Task.Run(() =>
-               {
-                   _canWeGo = true;
-                   while (_canWeGo && !IsAllThreadDone())
-                   {
-                       var unstartList = ThreadList.Where(i => i.ThreadState == ThreadState.Unstarted);
-                       foreach (var thread in unstartList)
-                       {
-                           if (GetLiveThreadCount() >= _maxThreadCountLimit)
-                           {
-                               break;
-                           }
-                           else
-                           {
-                               thread.Start();
-                           }
-                       }
-                   }
-                   if (IsAllThreadDone())
-                   {
-                       _allDoneAction?.Invoke();
-                       _allDoneAction = null;
-                   }
-                   return IsAllThreadDone();
-               });
-        }
-
-
-        public void DisposeAllThread()
-        {
-            ThreadList.Clear();
-        }
-
-        public ThreadCore(int maxThread = DefaultThreadCountLimit)
-        {
-            _maxThreadCountLimit = maxThread;
-        }
-
-        public int GetLiveThreadCount()
-        {
-            return ThreadList.Count(i => i.IsAlive);
-        }
-        public int GetUnstartedThreadCount()
-        {
-            return ThreadList.Count(i => i.ThreadState == ThreadState.Unstarted);
-        }
-
-        public bool IsAllThreadDone()
-        {
-            return ThreadList.All(i => !i.IsAlive && i.ThreadState != ThreadState.Unstarted);
-        }
-
+        public readonly int[] Counter = { 0 };
+        public readonly int[] CurrentThreadCount = { 0 };
+        public readonly Stopwatch Timer = new Stopwatch();
         /// <summary>
-        /// pause thread and get unstarted thread count
+        /// 已经运行多少个
         /// </summary>
-        /// <returns>return Unstarted Thread Count</returns>
-        public int PauseThread()
+        public int ThreadRanCount = 0;
+
+        private readonly bool[] _canRun = { false };
+
+        //public void Run<T>(Action act, Func<bool> canStop = null)
+        //{
+        //    Timer.Start();
+        //    Timer.Start();
+        //    int[] counter = { 0 };
+        //    int[] threadRanCount = { 0 };
+        //    while (!_canRun[0])
+        //    {
+        //        new Thread(() =>
+        //        {
+        //            lock (CurrentThreadCount)
+        //            {
+        //                ++CurrentThreadCount[0];
+        //            }
+        //            try
+        //            {
+        //                act();
+        //                if (canStop?.Invoke() == true)
+        //                {
+        //                    Stop();
+        //                }
+        //                lock (Counter)
+        //                {
+        //                    Counter[0]++;
+        //                }
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                _onExceptionAct?.Invoke(e);
+        //            }
+        //            finally
+        //            {
+        //                ++ThreadRanCount;
+        //                try
+        //                {
+        //                    _ranFinishAct?.Invoke();
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    Console.WriteLine(e);
+        //                }
+        //                lock (CurrentThreadCount)
+        //                {
+        //                    --CurrentThreadCount[0];
+        //                }
+        //            }
+        //        }
+        //        ).Start();
+        //        {
+        //            while (CurrentThreadCount[0] >= _maxThreadCountLimit)
+        //            {
+        //                Thread.Sleep(5);
+        //            }
+        //        }
+        //    }
+        //}
+        private void SafeRun(Action act)
         {
-            _canWeGo = false;
-            return GetUnstartedThreadCount();
+            try
+            {
+                act?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public void Run<T>(Action<T> act, List<T> list)
+        {
+            Timer.Start();
+            int[] counter = { 0 };
+            int[] threadRanCount = { 0 };
+            foreach (var item in list)
+            {
+                var itemLocal = item;
+                new Thread(() =>
+                {
+                    lock (CurrentThreadCount)
+                    {
+                        ++CurrentThreadCount[0];
+                    }
+                    try
+                    {
+                        act(itemLocal);
+                        SafeRun(_ranFinishAct);
+                    }
+                    catch (Exception e)
+                    {
+                        SafeRun(() => { _onExceptionAct(e); });
+                    }
+                    finally
+                    {
+                        lock (threadRanCount)
+                        {
+                            ++threadRanCount[0];
+                        }
+                        Console.WriteLine($"[{DateTime.Now}]已执行{threadRanCount[0]}个线程,耗时{Timer.ElapsedMilliseconds}ms({Timer.ElapsedMilliseconds / threadRanCount[0]}ms/thread)");
+                        lock (CurrentThreadCount)
+                        {
+                            --CurrentThreadCount[0];
+                        }
+                        lock (counter)
+                        {
+                            if (++counter[0] == list.Count)
+                            {
+                                SafeRun(_allDoneAction);
+                            }
+                        }
+                    }
+                }).Start();
+                {
+                    while (CurrentThreadCount[0] >= _maxThreadCountLimit)
+                    {
+                        Thread.Sleep(5);
+                    }
+                }
+            }
+        }
+
+        private void Stop()
+        {
+            _canRun[0] = true;
+        }
+
+        public ThreadCore(int maxThread = DefaultThreadCountLimit, Action ranFinishAct = null, Action<Exception> onExceptionAct = null, Action allDoneAction = null)
+        {
+            _allDoneAction = allDoneAction;
+            _ranFinishAct = ranFinishAct;
+            _onExceptionAct = onExceptionAct;
+            _maxThreadCountLimit = maxThread;
         }
     }
 }

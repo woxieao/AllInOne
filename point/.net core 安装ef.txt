@@ -1,0 +1,1 @@
+Scaffold-DbContext "data source=PC_OF_ALEXXIE;initial catalog=Novel;integrated security=True;MultipleActiveResultSets=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models 

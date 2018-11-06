@@ -1,0 +1,24 @@
+<h1>Memo List</h1>
+
+
+
+<p *ngIf="!forecasts"><em>Loading...</em></p>
+
+<table class='table' *ngIf="forecasts">
+    <thead>
+        <tr>
+            <th>详情</th>
+            <th>创建时间</th>
+            <th>最后更新时间</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of forecasts">
+            <td><textarea class="form-control" [ngModel]="item.content"></textarea> </td>
+            <td>{{item.createDate}}</td>
+            <td>{{item.lastUpdateTime}}</td>
+            <td><button class="btn btn-success">更新</button></td>
+        </tr>
+    </tbody>
+</table>

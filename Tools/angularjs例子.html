@@ -11,7 +11,9 @@
     $scope.lastName = "Doe";
 });
     app.controller('test2', function ($scope, $sce) {
-    $scope.firstName = "John";
+  
+$scope.list=[1,2,3,4,5,6,7,8];
+  $scope.firstName = "John";
     $scope.lastName = "Doe";
 });
     app.filter('sce', ['$sce', function ($sce) {
@@ -26,12 +28,20 @@
  <input type="text" ng-model="name">
   </div>
 <div ng-controller="test2">
-    <p>名字 : <input type="text" ng-model="name"></p>
+ 
+
+<span ng-repeat="item in list"> I'm{{item}}<br></span>
+
+   <p>名字 : <input type="text" ng-model="name"></p>
     <h1>Hello {{name}}</h1>
 </div>
     <div class="com text-justify" ng-bind-html="item.Content| sce">
 
+
     </div>
+
+
+
 </body>
 
 </html>
